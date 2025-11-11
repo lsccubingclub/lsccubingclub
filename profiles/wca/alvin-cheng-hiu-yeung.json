@@ -3175,6 +3175,106 @@
       "worst_index": 2,
       "regional_single_record": null,
       "regional_average_record": null
+    },
+    {
+      "id": 7651132,
+      "pos": 3,
+      "round_id": 905473,
+      "best": 18799,
+      "average": 20532,
+      "name": "Alvin Cheng Hiu Yeung (鄭曉洋)",
+      "country_iso2": "HK",
+      "competition_id": "Pickering Favourites Fall 2025",
+      "event_id": "777",
+      "round_type_id": "c",
+      "format_id": "m",
+      "wca_id": "2019YEUN01",
+      "attempts": [
+        21703,
+        21095,
+        18799,
+        0,
+        0
+      ],
+      "best_index": 2,
+      "worst_index": 0,
+      "regional_single_record": null,
+      "regional_average_record": null
+    },
+    {
+      "id": 7651184,
+      "pos": 3,
+      "round_id": 905476,
+      "best": 4340,
+      "average": 5081,
+      "name": "Alvin Cheng Hiu Yeung (鄭曉洋)",
+      "country_iso2": "HK",
+      "competition_id": "Pickering Favourites Fall 2025",
+      "event_id": "minx",
+      "round_type_id": "c",
+      "format_id": "a",
+      "wca_id": "2019YEUN01",
+      "attempts": [
+        6792,
+        4817,
+        5475,
+        4950,
+        4340
+      ],
+      "best_index": 4,
+      "worst_index": 0,
+      "regional_single_record": null,
+      "regional_average_record": null
+    },
+    {
+      "id": 7651244,
+      "pos": 16,
+      "round_id": 905475,
+      "best": 602,
+      "average": -1,
+      "name": "Alvin Cheng Hiu Yeung (鄭曉洋)",
+      "country_iso2": "HK",
+      "competition_id": "Pickering Favourites Fall 2025",
+      "event_id": "clock",
+      "round_type_id": "c",
+      "format_id": "a",
+      "wca_id": "2019YEUN01",
+      "attempts": [
+        -1,
+        668,
+        -1,
+        746,
+        602
+      ],
+      "best_index": 4,
+      "worst_index": 2,
+      "regional_single_record": null,
+      "regional_average_record": null
+    },
+    {
+      "id": 7651297,
+      "pos": 2,
+      "round_id": 905479,
+      "best": 996,
+      "average": 1120,
+      "name": "Alvin Cheng Hiu Yeung (鄭曉洋)",
+      "country_iso2": "HK",
+      "competition_id": "Pickering Favourites Fall 2025",
+      "event_id": "sq1",
+      "round_type_id": "c",
+      "format_id": "a",
+      "wca_id": "2019YEUN01",
+      "attempts": [
+        1248,
+        1237,
+        996,
+        1059,
+        1063
+      ],
+      "best_index": 2,
+      "worst_index": 0,
+      "regional_single_record": null,
+      "regional_average_record": null
     }
   ]
 }
