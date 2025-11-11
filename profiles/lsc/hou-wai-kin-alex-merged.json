@@ -1,0 +1,30 @@
+{
+  "wcaid": null,
+  "person": {
+    "name": "Hou Wai Kin Alex"
+  },
+  "results": [
+    {
+      "pos": 21,
+      "competition_id": "LSC Cube Day 2024",
+      "event_id": "333",
+      "round_type_id": "1",
+      "format_id": "a",
+      "attempts": [
+        -1,
+        4109,
+        3174,
+        3334,
+        3460
+      ],
+      "best": 3174,
+      "average": 3634,
+      "best_index": 2,
+      "worst_index": 0,
+      "round_tab": "3x3x3 Cube - First Roundpublic",
+      "round_name": "3x3x3 Cube - First Round",
+      "round_date": "2024-12-12",
+      "name": "Hou Wai Kin Alex"
+    }
+  ]
+}

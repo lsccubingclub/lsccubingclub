@@ -1,0 +1,30 @@
+{
+  "wcaid": null,
+  "person": {
+    "name": "Ying Wan Tung"
+  },
+  "results": [
+    {
+      "pos": 30,
+      "competition_id": "LSC Cube Day 2024",
+      "event_id": "333",
+      "round_type_id": "1",
+      "format_id": "a",
+      "attempts": [
+        4986,
+        5841,
+        3816,
+        5015,
+        6410
+      ],
+      "best": 3816,
+      "average": 5281,
+      "best_index": 2,
+      "worst_index": 4,
+      "round_tab": "3x3x3 Cube - First Roundpublic",
+      "round_name": "3x3x3 Cube - First Round",
+      "round_date": "2024-12-12",
+      "name": "Ying Wan Tung"
+    }
+  ]
+}

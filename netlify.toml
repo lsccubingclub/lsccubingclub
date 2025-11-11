@@ -1,0 +1,15 @@
+[build]
+  publish   = "."
+  functions = "functions"
+
+# Send API calls to Netlify Functions
+[[redirects]]
+  from   = "/api/*"
+  to     = "/.netlify/functions/:splat"
+  status = 200
+
+# SPA history fallback: serve index.html for all other routes
+[[redirects]]
+  from   = "/*"
+  to     = "/index.html"
+  status = 200

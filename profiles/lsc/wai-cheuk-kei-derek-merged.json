@@ -1,0 +1,96 @@
+{
+  "wcaid": null,
+  "person": {
+    "name": "Wai Cheuk Kei Derek"
+  },
+  "results": [
+    {
+      "pos": 20,
+      "competition_id": "LSC Cube Day 2024",
+      "event_id": "333",
+      "round_type_id": "1",
+      "format_id": "a",
+      "attempts": [
+        3262,
+        5663,
+        3228,
+        2621,
+        4267
+      ],
+      "best": 2621,
+      "average": 3586,
+      "best_index": 3,
+      "worst_index": 1,
+      "round_tab": "3x3x3 Cube - First Roundpublic",
+      "round_name": "3x3x3 Cube - First Round",
+      "round_date": "2024-12-12",
+      "name": "Wai Cheuk Kei Derek"
+    },
+    {
+      "pos": 14,
+      "competition_id": "LSC Championship 2025",
+      "event_id": "333",
+      "round_type_id": "1",
+      "format_id": "a",
+      "attempts": [
+        2446,
+        3876,
+        2079,
+        2425,
+        2383
+      ],
+      "best": 2079,
+      "average": 2418,
+      "best_index": 2,
+      "worst_index": 1,
+      "round_tab": "3x3x3 Cube - First Roundpublic",
+      "round_name": "3x3x3 Cube - First Round",
+      "round_date": "2025-03-26",
+      "name": "Wai Cheuk Kei Derek"
+    },
+    {
+      "pos": 8,
+      "competition_id": "LSC Championship 2025",
+      "event_id": "222",
+      "round_type_id": "1",
+      "format_id": "a",
+      "attempts": [
+        861,
+        668,
+        594,
+        653,
+        937
+      ],
+      "best": 594,
+      "average": 727,
+      "best_index": 2,
+      "worst_index": 4,
+      "round_tab": "2x2x2 Cube - First Roundpublic",
+      "round_name": "2x2x2 Cube - First Round",
+      "round_date": "2025-03-27",
+      "name": "Wai Cheuk Kei Derek"
+    },
+    {
+      "pos": 8,
+      "competition_id": "LSC Championship 2025",
+      "event_id": "222",
+      "round_type_id": "f",
+      "format_id": "a",
+      "attempts": [
+        856,
+        533,
+        765,
+        555,
+        716
+      ],
+      "best": 533,
+      "average": 679,
+      "best_index": 1,
+      "worst_index": 0,
+      "round_tab": "2x2x2 Cube - Finalpublic",
+      "round_name": "2x2x2 Cube - Final",
+      "round_date": "2025-03-27",
+      "name": "Wai Cheuk Kei Derek"
+    }
+  ]
+}

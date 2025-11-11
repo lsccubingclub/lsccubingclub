@@ -1,0 +1,680 @@
+{
+  "pyram": {
+    "single": [
+      {
+        "person_name": "Liu Shing Chak",
+        "wcaid": "2024CHAK03",
+        "competition_id": "HKRCU 20th Anniversary 2025",
+        "round_name": null,
+        "value": 302,
+        "type": "single",
+        "attempt_index": 1,
+        "attempts": [
+          500,
+          302,
+          663,
+          560,
+          351
+        ],
+        "best_index": 1,
+        "worst_index": 2
+      }
+    ],
+    "average": [
+      {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
+        "competition_id": "Rubik's WCA World Championship 2023",
+        "round_name": null,
+        "value": 425,
+        "type": "average",
+        "attempts": [
+          401,
+          456,
+          384,
+          419,
+          475
+        ],
+        "best_index": 2,
+        "worst_index": 4
+      }
+    ]
+  },
+  "333bf": {
+    "single": [
+      {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
+        "competition_id": "Hong Kong Blind Legends 2024",
+        "round_name": null,
+        "value": 2218,
+        "type": "single",
+        "attempt_index": 0,
+        "attempts": [
+          2218,
+          -1,
+          -1,
+          0,
+          0
+        ],
+        "best_index": 0,
+        "worst_index": 2
+      }
+    ],
+    "average": [
+      {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
+        "competition_id": "Rubik's WCA World Championship 2025",
+        "round_name": null,
+        "value": 2554,
+        "type": "average",
+        "attempts": [
+          2680,
+          2455,
+          2526,
+          0,
+          0
+        ],
+        "best_index": 1,
+        "worst_index": 0
+      }
+    ]
+  },
+  "sq1": {
+    "single": [
+      {
+        "person_name": "Liu Yik Yung",
+        "wcaid": "2023YUNG02",
+        "competition_id": "Hong Kong Cube Day 2024",
+        "round_name": null,
+        "value": 430,
+        "type": "single",
+        "attempt_index": 2,
+        "attempts": [
+          1240,
+          2042,
+          430,
+          1125,
+          1094
+        ],
+        "best_index": 2,
+        "worst_index": 1
+      }
+    ],
+    "average": [
+      {
+        "person_name": "Liu Yik Yung",
+        "wcaid": "2023YUNG02",
+        "competition_id": "Hong Kong Side Event Day 2025",
+        "round_name": null,
+        "value": 749,
+        "type": "average",
+        "attempts": [
+          795,
+          837,
+          561,
+          616,
+          999
+        ],
+        "best_index": 2,
+        "worst_index": 4
+      }
+    ]
+  },
+  "555bf": {
+    "single": [
+      {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
+        "competition_id": "Toronto Blindfolded 2025",
+        "round_name": null,
+        "value": 25542,
+        "type": "single",
+        "attempt_index": 0,
+        "attempts": [
+          25542,
+          -1,
+          -1,
+          0,
+          0
+        ],
+        "best_index": 0,
+        "worst_index": 2
+      }
+    ],
+    "average": []
+  },
+  "333mbf": {
+    "single": [
+      {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
+        "competition_id": "Big 'n Blind Guangzhou 2019",
+        "round_name": null,
+        "value": 980305906,
+        "type": "single",
+        "attempt_index": 0,
+        "attempts": [
+          980305906,
+          960207203,
+          0,
+          0,
+          0
+        ],
+        "best_index": 1,
+        "worst_index": 0
+      }
+    ],
+    "average": []
+  },
+  "444bf": {
+    "single": [
+      {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
+        "competition_id": "Gros Jouets à Montréal 2025",
+        "round_name": null,
+        "value": 10206,
+        "type": "single",
+        "attempt_index": 0,
+        "attempts": [
+          10206,
+          11389,
+          14256,
+          0,
+          0
+        ],
+        "best_index": 0,
+        "worst_index": 2
+      }
+    ],
+    "average": [
+      {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
+        "competition_id": "Gros Jouets à Montréal 2025",
+        "round_name": null,
+        "value": 11950,
+        "type": "average",
+        "attempts": [
+          10206,
+          11389,
+          14256,
+          0,
+          0
+        ],
+        "best_index": 0,
+        "worst_index": 2
+      }
+    ]
+  },
+  "clock": {
+    "single": [
+      {
+        "person_name": "Matthew Advani",
+        "wcaid": "2023ADVA01",
+        "competition_id": "Hong Kong Side Event Day 2025",
+        "round_name": null,
+        "value": 263,
+        "type": "single",
+        "attempt_index": 3,
+        "attempts": [
+          415,
+          464,
+          311,
+          263,
+          453
+        ],
+        "best_index": 3,
+        "worst_index": 1
+      }
+    ],
+    "average": [
+      {
+        "person_name": "Matthew Advani",
+        "wcaid": "2023ADVA01",
+        "competition_id": "Rubik's WCA World Championship 2025",
+        "round_name": null,
+        "value": 362,
+        "type": "average",
+        "attempts": [
+          338,
+          346,
+          408,
+          302,
+          403
+        ],
+        "best_index": 3,
+        "worst_index": 2
+      }
+    ]
+  },
+  "skewb": {
+    "single": [
+      {
+        "person_name": "Lai Pak Kiu",
+        "wcaid": "2024KIUL01",
+        "competition_id": "Hong Kong Side Event Day 2025",
+        "round_name": null,
+        "value": 218,
+        "type": "single",
+        "attempt_index": 4,
+        "attempts": [
+          438,
+          468,
+          409,
+          632,
+          218
+        ],
+        "best_index": 4,
+        "worst_index": 3
+      }
+    ],
+    "average": [
+      {
+        "person_name": "Lai Pak Kiu",
+        "wcaid": "2024KIUL01",
+        "competition_id": "Jiangmen Open 2025",
+        "round_name": null,
+        "value": 434,
+        "type": "average",
+        "attempts": [
+          470,
+          315,
+          483,
+          435,
+          398
+        ],
+        "best_index": 1,
+        "worst_index": 2
+      }
+    ]
+  },
+  "333fm": {
+    "single": [
+      {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
+        "competition_id": "Hong Kong FMC Championship 2024",
+        "round_name": null,
+        "value": 20,
+        "type": "single",
+        "attempt_index": 1,
+        "attempts": [
+          21,
+          20,
+          25,
+          0,
+          0
+        ],
+        "best_index": 1,
+        "worst_index": 2
+      }
+    ],
+    "average": [
+      {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
+        "competition_id": "Hong Kong FMC Championship 2024",
+        "round_name": null,
+        "value": 2200,
+        "type": "average",
+        "attempts": [
+          21,
+          20,
+          25,
+          0,
+          0
+        ],
+        "best_index": 1,
+        "worst_index": 2
+      }
+    ]
+  },
+  "555": {
+    "single": [
+      {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
+        "competition_id": "Gros Jouets à Montréal 2025",
+        "round_name": null,
+        "value": 6162,
+        "type": "single",
+        "attempt_index": 3,
+        "attempts": [
+          7686,
+          7105,
+          8408,
+          6162,
+          7542
+        ],
+        "best_index": 3,
+        "worst_index": 2
+      }
+    ],
+    "average": [
+      {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
+        "competition_id": "Gros Jouets à Montréal 2025",
+        "round_name": null,
+        "value": 7134,
+        "type": "average",
+        "attempts": [
+          7129,
+          7267,
+          7454,
+          7007,
+          6976
+        ],
+        "best_index": 4,
+        "worst_index": 2
+      }
+    ]
+  },
+  "666": {
+    "single": [
+      {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
+        "competition_id": "Gros Jouets à Montréal 2025",
+        "round_name": null,
+        "value": 12020,
+        "type": "single",
+        "attempt_index": 1,
+        "attempts": [
+          12867,
+          12020,
+          13267,
+          0,
+          0
+        ],
+        "best_index": 1,
+        "worst_index": 2
+      }
+    ],
+    "average": [
+      {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
+        "competition_id": "Gros Jouets à Montréal 2025",
+        "round_name": null,
+        "value": 12684,
+        "type": "average",
+        "attempts": [
+          12136,
+          13591,
+          12326,
+          0,
+          0
+        ],
+        "best_index": 0,
+        "worst_index": 1
+      }
+    ]
+  },
+  "777": {
+    "single": [
+      {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
+        "competition_id": "Cube Camp in Nakhon Nayok 2024",
+        "round_name": null,
+        "value": 18201,
+        "type": "single",
+        "attempt_index": 2,
+        "attempts": [
+          22459,
+          20181,
+          18201,
+          0,
+          0
+        ],
+        "best_index": 2,
+        "worst_index": 0
+      }
+    ],
+    "average": [
+      {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
+        "competition_id": "Gros Jouets à Montréal 2025",
+        "round_name": null,
+        "value": 19802,
+        "type": "average",
+        "attempts": [
+          20375,
+          18684,
+          20346,
+          0,
+          0
+        ],
+        "best_index": 1,
+        "worst_index": 0
+      }
+    ]
+  },
+  "minx": {
+    "single": [
+      {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
+        "competition_id": "Washtenaw Slow Fall 2025",
+        "round_name": null,
+        "value": 4880,
+        "type": "single",
+        "attempt_index": 4,
+        "attempts": [
+          5595,
+          5823,
+          5139,
+          5838,
+          4880
+        ],
+        "best_index": 4,
+        "worst_index": 3
+      }
+    ],
+    "average": [
+      {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
+        "competition_id": "Washtenaw Slow Fall 2025",
+        "round_name": null,
+        "value": 5358,
+        "type": "average",
+        "attempts": [
+          5773,
+          5223,
+          5078,
+          4940,
+          5934
+        ],
+        "best_index": 3,
+        "worst_index": 4
+      }
+    ]
+  },
+  "333": {
+    "single": [
+      {
+        "person_name": "Lai Pak Kiu",
+        "wcaid": "2024KIUL01",
+        "competition_id": "HKRCU 20th Anniversary 2025",
+        "round_name": null,
+        "value": 621,
+        "type": "single",
+        "attempt_index": 2,
+        "attempts": [
+          886,
+          -1,
+          621,
+          817,
+          710
+        ],
+        "best_index": 2,
+        "worst_index": 1
+      }
+    ],
+    "average": [
+      {
+        "person_name": "Lai Pak Kiu",
+        "wcaid": "2024KIUL01",
+        "competition_id": "HKRCU 20th Anniversary 2025",
+        "round_name": null,
+        "value": 750,
+        "type": "average",
+        "attempts": [
+          688,
+          634,
+          935,
+          766,
+          797
+        ],
+        "best_index": 1,
+        "worst_index": 2
+      }
+    ]
+  },
+  "222": {
+    "single": [
+      {
+        "person_name": "Tang Ue Tze",
+        "wcaid": "2024TZET01",
+        "competition_id": "HKRCU 20th Anniversary 2025",
+        "round_name": null,
+        "value": 101,
+        "type": "single",
+        "attempt_index": 2,
+        "attempts": [
+          275,
+          -1,
+          101,
+          340,
+          391
+        ],
+        "best_index": 2,
+        "worst_index": 1
+      }
+    ],
+    "average": [
+      {
+        "person_name": "Ip Pak Tou Zachary",
+        "wcaid": "2023TOUZ01",
+        "competition_id": "HKRCU 20th Anniversary 2025",
+        "round_name": null,
+        "value": 268,
+        "type": "average",
+        "attempts": [
+          226,
+          233,
+          480,
+          346,
+          154
+        ],
+        "best_index": 4,
+        "worst_index": 2
+      },
+      {
+        "person_name": "Liu Shing Chak",
+        "wcaid": "2024CHAK03",
+        "competition_id": "LSC Championship 2025",
+        "round_name": "2x2x2 Cube - First Round",
+        "value": 268,
+        "type": "average",
+        "attempts": [
+          548,
+          266,
+          241,
+          243,
+          294
+        ],
+        "best_index": 2,
+        "worst_index": 0
+      }
+    ]
+  },
+  "444": {
+    "single": [
+      {
+        "person_name": "Lai Pak Kiu",
+        "wcaid": "2024KIUL01",
+        "competition_id": "Hong Kong Cube Day 2025",
+        "round_name": null,
+        "value": 2579,
+        "type": "single",
+        "attempt_index": 0,
+        "attempts": [
+          2579,
+          3708,
+          3353,
+          3607,
+          4218
+        ],
+        "best_index": 0,
+        "worst_index": 4
+      }
+    ],
+    "average": [
+      {
+        "person_name": "Lai Pak Kiu",
+        "wcaid": "2024KIUL01",
+        "competition_id": "Jiangmen Open 2025",
+        "round_name": null,
+        "value": 3168,
+        "type": "average",
+        "attempts": [
+          3147,
+          3060,
+          3373,
+          3298,
+          2697
+        ],
+        "best_index": 4,
+        "worst_index": 2
+      }
+    ]
+  },
+  "333oh": {
+    "single": [
+      {
+        "person_name": "Liu Yik Yung",
+        "wcaid": "2023YUNG02",
+        "competition_id": "Welcome Back Hong Kong 2024",
+        "round_name": null,
+        "value": 1165,
+        "type": "single",
+        "attempt_index": 0,
+        "attempts": [
+          1165,
+          1802,
+          1536,
+          2158,
+          2162
+        ],
+        "best_index": 0,
+        "worst_index": 4
+      }
+    ],
+    "average": [
+      {
+        "person_name": "Lai Pak Kiu",
+        "wcaid": "2024KIUL01",
+        "competition_id": "Hong Kong Cube Day 2025",
+        "round_name": null,
+        "value": 1442,
+        "type": "average",
+        "attempts": [
+          1430,
+          1394,
+          1425,
+          1472,
+          -1
+        ],
+        "best_index": 1,
+        "worst_index": 4
+      }
+    ]
+  }
+}

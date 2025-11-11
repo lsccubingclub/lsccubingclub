@@ -1,0 +1,52 @@
+{
+  "wcaid": null,
+  "person": {
+    "name": "Tang Joy Yen Kurt"
+  },
+  "results": [
+    {
+      "pos": 32,
+      "competition_id": "LSC Cube Day 2024",
+      "event_id": "333",
+      "round_type_id": "1",
+      "format_id": "a",
+      "attempts": [
+        7704,
+        6566,
+        12088,
+        7468,
+        7290
+      ],
+      "best": 6566,
+      "average": 7487,
+      "best_index": 1,
+      "worst_index": 2,
+      "round_tab": "3x3x3 Cube - First Roundpublic",
+      "round_name": "3x3x3 Cube - First Round",
+      "round_date": "2024-12-12",
+      "name": "Tang Joy Yen Kurt"
+    },
+    {
+      "pos": 20,
+      "competition_id": "LSC Championship 2025",
+      "event_id": "333",
+      "round_type_id": "1",
+      "format_id": "a",
+      "attempts": [
+        10180,
+        8239,
+        0,
+        0,
+        0
+      ],
+      "best": 8239,
+      "average": null,
+      "best_index": 1,
+      "worst_index": 0,
+      "round_tab": "3x3x3 Cube - First Roundpublic",
+      "round_name": "3x3x3 Cube - First Round",
+      "round_date": "2025-03-26",
+      "name": "Tang Joy Yen Kurt"
+    }
+  ]
+}

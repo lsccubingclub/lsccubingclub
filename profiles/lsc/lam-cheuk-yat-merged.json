@@ -1,0 +1,30 @@
+{
+  "wcaid": null,
+  "person": {
+    "name": "Lam Cheuk Yat"
+  },
+  "results": [
+    {
+      "pos": 24,
+      "competition_id": "LSC Cube Day 2024",
+      "event_id": "333",
+      "round_type_id": "1",
+      "format_id": "a",
+      "attempts": [
+        4190,
+        4333,
+        6837,
+        3721,
+        4360
+      ],
+      "best": 3721,
+      "average": 4294,
+      "best_index": 3,
+      "worst_index": 2,
+      "round_tab": "3x3x3 Cube - First Roundpublic",
+      "round_name": "3x3x3 Cube - First Round",
+      "round_date": "2024-12-12",
+      "name": "Lam Cheuk Yat"
+    }
+  ]
+}

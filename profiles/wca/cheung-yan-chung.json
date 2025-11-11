@@ -1,0 +1,30 @@
+{
+  "wcaid": "2019CHUN04",
+  "results": [
+    {
+      "id": 2793517,
+      "pos": 111,
+      "round_id": 147307,
+      "best": 2226,
+      "average": 2536,
+      "name": "Cheung Yan Chung (張殷誦)",
+      "country_iso2": "HK",
+      "competition_id": "Hong Kong Cube Day 2019",
+      "event_id": "333",
+      "round_type_id": "1",
+      "format_id": "a",
+      "wca_id": "2019CHUN04",
+      "attempts": [
+        2539,
+        2911,
+        2226,
+        2537,
+        2533
+      ],
+      "best_index": 2,
+      "worst_index": 1,
+      "regional_single_record": null,
+      "regional_average_record": null
+    }
+  ]
+}

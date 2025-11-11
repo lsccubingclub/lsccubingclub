@@ -1,0 +1,24 @@
+{
+  "name": "website_main",
+  "version": "1.0.0",
+  "description": "",
+  "main": "merge_wca_with_lsc.js",
+  "dependencies": {
+    "cheerio": "^1.1.2",
+    "cors": "^2.8.5",
+    "data-uri-to-buffer": "^4.0.1",
+    "fetch-blob": "^3.2.0",
+    "formdata-polyfill": "^4.0.10",
+    "node-domexception": "^1.0.0",
+    "node-fetch": "^2.7.0",
+    "object-assign": "^4.1.1",
+    "vary": "^1.1.2",
+    "web-streams-polyfill": "^3.3.3"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

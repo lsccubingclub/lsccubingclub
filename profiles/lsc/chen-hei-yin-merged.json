@@ -1,0 +1,96 @@
+{
+  "wcaid": null,
+  "person": {
+    "name": "Chen Hei Yin"
+  },
+  "results": [
+    {
+      "pos": 19,
+      "competition_id": "LSC Cube Day 2024",
+      "event_id": "333",
+      "round_type_id": "1",
+      "format_id": "a",
+      "attempts": [
+        -1,
+        3152,
+        3526,
+        3065,
+        2780
+      ],
+      "best": 2780,
+      "average": 3248,
+      "best_index": 4,
+      "worst_index": 0,
+      "round_tab": "3x3x3 Cube - First Roundpublic",
+      "round_name": "3x3x3 Cube - First Round",
+      "round_date": "2024-12-12",
+      "name": "Chen Hei Yin"
+    },
+    {
+      "pos": 15,
+      "competition_id": "LSC Championship 2025",
+      "event_id": "333",
+      "round_type_id": "1",
+      "format_id": "a",
+      "attempts": [
+        2758,
+        2456,
+        2513,
+        2042,
+        2876
+      ],
+      "best": 2042,
+      "average": 2576,
+      "best_index": 3,
+      "worst_index": 4,
+      "round_tab": "3x3x3 Cube - First Roundpublic",
+      "round_name": "3x3x3 Cube - First Round",
+      "round_date": "2025-03-26",
+      "name": "Chen Hei Yin"
+    },
+    {
+      "pos": 10,
+      "competition_id": "LSC Championship 2025",
+      "event_id": "222",
+      "round_type_id": "1",
+      "format_id": "a",
+      "attempts": [
+        806,
+        1495,
+        1027,
+        672,
+        853
+      ],
+      "best": 672,
+      "average": 895,
+      "best_index": 3,
+      "worst_index": 1,
+      "round_tab": "2x2x2 Cube - First Roundpublic",
+      "round_name": "2x2x2 Cube - First Round",
+      "round_date": "2025-03-27",
+      "name": "Chen Hei Yin"
+    },
+    {
+      "pos": 4,
+      "competition_id": "LSC Championship 2025",
+      "event_id": "pyram",
+      "round_type_id": "f",
+      "format_id": "a",
+      "attempts": [
+        928,
+        -1,
+        806,
+        1379,
+        1092
+      ],
+      "best": 806,
+      "average": 1133,
+      "best_index": 2,
+      "worst_index": 1,
+      "round_tab": "Pyraminx - Finalpublic",
+      "round_name": "Pyraminx - Final",
+      "round_date": "2025-03-27",
+      "name": "Chen Hei Yin"
+    }
+  ]
+}

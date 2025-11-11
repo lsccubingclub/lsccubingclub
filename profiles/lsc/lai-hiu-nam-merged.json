@@ -1,0 +1,118 @@
+{
+  "wcaid": null,
+  "person": {
+    "name": "Lai Hiu Nam"
+  },
+  "results": [
+    {
+      "pos": 8,
+      "competition_id": "LSC Championship 2025",
+      "event_id": "333",
+      "round_type_id": "1",
+      "format_id": "a",
+      "attempts": [
+        1624,
+        2707,
+        1733,
+        1181,
+        1309
+      ],
+      "best": 1181,
+      "average": 1555,
+      "best_index": 3,
+      "worst_index": 1,
+      "round_tab": "3x3x3 Cube - First Roundpublic",
+      "round_name": "3x3x3 Cube - First Round",
+      "round_date": "2025-03-26",
+      "name": "Lai Hiu Nam"
+    },
+    {
+      "pos": 7,
+      "competition_id": "LSC Championship 2025",
+      "event_id": "222",
+      "round_type_id": "1",
+      "format_id": "a",
+      "attempts": [
+        640,
+        596,
+        241,
+        570,
+        862
+      ],
+      "best": 241,
+      "average": 602,
+      "best_index": 2,
+      "worst_index": 4,
+      "round_tab": "2x2x2 Cube - First Roundpublic",
+      "round_name": "2x2x2 Cube - First Round",
+      "round_date": "2025-03-27",
+      "name": "Lai Hiu Nam"
+    },
+    {
+      "pos": 7,
+      "competition_id": "LSC Championship 2025",
+      "event_id": "222",
+      "round_type_id": "f",
+      "format_id": "a",
+      "attempts": [
+        826,
+        536,
+        532,
+        581,
+        652
+      ],
+      "best": 532,
+      "average": 590,
+      "best_index": 2,
+      "worst_index": 0,
+      "round_tab": "2x2x2 Cube - Finalpublic",
+      "round_name": "2x2x2 Cube - Final",
+      "round_date": "2025-03-27",
+      "name": "Lai Hiu Nam"
+    },
+    {
+      "pos": 8,
+      "competition_id": "LSC Championship 2025",
+      "event_id": "333",
+      "round_type_id": "f",
+      "format_id": "a",
+      "attempts": [
+        2149,
+        1633,
+        1131,
+        1511,
+        1600
+      ],
+      "best": 1131,
+      "average": 1581,
+      "best_index": 2,
+      "worst_index": 0,
+      "round_tab": "3x3x3 Cube - Finalpublic",
+      "round_name": "3x3x3 Cube - Final",
+      "round_date": "2025-03-28",
+      "name": "Lai Hiu Nam"
+    },
+    {
+      "pos": 3,
+      "competition_id": "LSC FMC Championship 2025",
+      "event_id": "333fm",
+      "round_type_id": "f",
+      "format_id": "3",
+      "attempts": [
+        -1,
+        38,
+        -1,
+        0,
+        0
+      ],
+      "best": 38,
+      "average": null,
+      "best_index": 1,
+      "worst_index": 0,
+      "round_tab": "3x3x3 Fewest Moves - Finalpublic",
+      "round_name": "3x3x3 Fewest Moves - Final",
+      "round_date": "2025-05-21",
+      "name": "Lai Hiu Nam"
+    }
+  ]
+}

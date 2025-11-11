@@ -1,0 +1,77 @@
+{
+  "wcaid": "2025HINA01",
+  "results": [
+    {
+      "id": 7191122,
+      "pos": 120,
+      "round_id": 893762,
+      "best": 1571,
+      "average": 1942,
+      "name": "Au Yeung Ching Hin (歐陽政軒)",
+      "country_iso2": "HK",
+      "competition_id": "Hong Kong Cube Day 2025",
+      "event_id": "333",
+      "round_type_id": "1",
+      "format_id": "a",
+      "wca_id": "2025HINA01",
+      "attempts": [
+        1897,
+        1708,
+        1571,
+        2229,
+        2220
+      ],
+      "best_index": 2,
+      "worst_index": 3,
+      "regional_single_record": null,
+      "regional_average_record": null
+    },
+    {
+      "pos": 15,
+      "competition_id": "LSC Cube Day 2024",
+      "event_id": "333",
+      "round_type_id": "1",
+      "format_id": "a",
+      "attempts": [
+        2253,
+        1836,
+        1756,
+        3109,
+        1650
+      ],
+      "best": 1650,
+      "average": 1948,
+      "best_index": 4,
+      "worst_index": 3,
+      "round_tab": "3x3x3 Cube - First Roundpublic",
+      "round_name": "3x3x3 Cube - First Round",
+      "round_date": "2024-12-12",
+      "name": "Au Yeung Ching Hin"
+    },
+    {
+      "pos": 11,
+      "competition_id": "LSC Championship 2025",
+      "event_id": "333",
+      "round_type_id": "1",
+      "format_id": "a",
+      "attempts": [
+        1357,
+        1986,
+        2444,
+        2006,
+        1746
+      ],
+      "best": 1357,
+      "average": 1913,
+      "best_index": 0,
+      "worst_index": 2,
+      "round_tab": "3x3x3 Cube - First Roundpublic",
+      "round_name": "3x3x3 Cube - First Round",
+      "round_date": "2025-03-26",
+      "name": "Au Yeung Ching Hin"
+    }
+  ],
+  "person": {
+    "name": "Au Yeung Ching Hin"
+  }
+}

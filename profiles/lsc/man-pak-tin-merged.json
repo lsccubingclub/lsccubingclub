@@ -1,0 +1,30 @@
+{
+  "wcaid": null,
+  "person": {
+    "name": "Man Pak Tin"
+  },
+  "results": [
+    {
+      "pos": 22,
+      "competition_id": "LSC Cube Day 2024",
+      "event_id": "333",
+      "round_type_id": "1",
+      "format_id": "a",
+      "attempts": [
+        3574,
+        3791,
+        3446,
+        3969,
+        3540
+      ],
+      "best": 3446,
+      "average": 3635,
+      "best_index": 2,
+      "worst_index": 3,
+      "round_tab": "3x3x3 Cube - First Roundpublic",
+      "round_name": "3x3x3 Cube - First Round",
+      "round_date": "2024-12-12",
+      "name": "Man Pak Tin"
+    }
+  ]
+}

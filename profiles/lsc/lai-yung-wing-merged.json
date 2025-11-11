@@ -1,0 +1,96 @@
+{
+  "wcaid": null,
+  "person": {
+    "name": "Lai Yung Wing"
+  },
+  "results": [
+    {
+      "pos": 7,
+      "competition_id": "LSC Cube Day 2024",
+      "event_id": "333",
+      "round_type_id": "1",
+      "format_id": "a",
+      "attempts": [
+        -1,
+        1510,
+        1286,
+        1249,
+        1242
+      ],
+      "best": 1242,
+      "average": 1348,
+      "best_index": 4,
+      "worst_index": 0,
+      "round_tab": "3x3x3 Cube - First Roundpublic",
+      "round_name": "3x3x3 Cube - First Round",
+      "round_date": "2024-12-12",
+      "name": "Lai Yung Wing"
+    },
+    {
+      "pos": 6,
+      "competition_id": "LSC Cube Day 2024",
+      "event_id": "333",
+      "round_type_id": "f",
+      "format_id": "a",
+      "attempts": [
+        1452,
+        1270,
+        1118,
+        1292,
+        1401
+      ],
+      "best": 1118,
+      "average": 1321,
+      "best_index": 2,
+      "worst_index": 0,
+      "round_tab": "3x3x3 Cube - Finalpublic",
+      "round_name": "3x3x3 Cube - Final",
+      "round_date": "2024-12-16",
+      "name": "Lai Yung Wing"
+    },
+    {
+      "pos": 19,
+      "competition_id": "LSC Championship 2025",
+      "event_id": "333",
+      "round_type_id": "1",
+      "format_id": "a",
+      "attempts": [
+        2976,
+        -1,
+        1237,
+        -1,
+        -1
+      ],
+      "best": 1237,
+      "average": -1,
+      "best_index": 2,
+      "worst_index": 1,
+      "round_tab": "3x3x3 Cube - First Roundpublic",
+      "round_name": "3x3x3 Cube - First Round",
+      "round_date": "2025-03-26",
+      "name": "Lai Yung Wing"
+    },
+    {
+      "pos": 6,
+      "competition_id": "LSC FMC Championship 2025",
+      "event_id": "333fm",
+      "round_type_id": "f",
+      "format_id": "3",
+      "attempts": [
+        -2,
+        -2,
+        40,
+        0,
+        0
+      ],
+      "best": 40,
+      "average": null,
+      "best_index": 2,
+      "worst_index": 0,
+      "round_tab": "3x3x3 Fewest Moves - Finalpublic",
+      "round_name": "3x3x3 Fewest Moves - Final",
+      "round_date": "2025-05-21",
+      "name": "Lai Yung Wing"
+    }
+  ]
+}

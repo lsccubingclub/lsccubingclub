@@ -1,0 +1,5 @@
+# Local Netlify folder
+.netlify
+service_account.json
+.venv/
+__pycache__/

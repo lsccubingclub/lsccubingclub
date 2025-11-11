@@ -1,0 +1,52 @@
+{
+  "wcaid": null,
+  "person": {
+    "name": "Cheong Constantine"
+  },
+  "results": [
+    {
+      "pos": 28,
+      "competition_id": "LSC Cube Day 2024",
+      "event_id": "333",
+      "round_type_id": "1",
+      "format_id": "a",
+      "attempts": [
+        4424,
+        4816,
+        3887,
+        5271,
+        -1
+      ],
+      "best": 3887,
+      "average": 4837,
+      "best_index": 2,
+      "worst_index": 4,
+      "round_tab": "3x3x3 Cube - First Roundpublic",
+      "round_name": "3x3x3 Cube - First Round",
+      "round_date": "2024-12-12",
+      "name": "Cheong Constantine"
+    },
+    {
+      "pos": 12,
+      "competition_id": "LSC Championship 2025",
+      "event_id": "222",
+      "round_type_id": "1",
+      "format_id": "a",
+      "attempts": [
+        1213,
+        860,
+        1958,
+        1475,
+        895
+      ],
+      "best": 860,
+      "average": 1194,
+      "best_index": 1,
+      "worst_index": 2,
+      "round_tab": "2x2x2 Cube - First Roundpublic",
+      "round_name": "2x2x2 Cube - First Round",
+      "round_date": "2025-03-27",
+      "name": "Cheong Constantine"
+    }
+  ]
+}
