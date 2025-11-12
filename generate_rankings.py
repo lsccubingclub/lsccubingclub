@@ -23,6 +23,18 @@ os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 INVALID_VALUES = {-1, -2, 0}
 
+def remove_old_outputs(filenames):
+    # Remove previous output files if present so we always produce fresh files
+    for fn in filenames:
+        path = os.path.join(OUTPUT_DIR, fn)
+        try:
+            if os.path.exists(path):
+                os.remove(path)
+        except Exception:
+            # non-fatal if cleanup fails
+            pass
+
+
 def collect_event_entries(profiles):
     """
     Build per-event entries.
@@ -273,6 +285,12 @@ def save_json(obj, filename):
         json.dump(obj, f, ensure_ascii=False, indent=2)
 
 def main():
+    remove_old_outputs([
+        "rankings_by_results.json",
+        "rankings_by_person.json",
+        "records.json"
+    ])
+
     profiles = load_merged_profiles(MERGED_DIR)
     by_event = collect_event_entries(profiles)
     rankings_by_results = build_rankings_by_results(by_event)
@@ -283,6 +301,7 @@ def main():
     save_json(rankings_by_person, "rankings_by_person.json")
     save_json(records, "records.json")
     return rankings_by_results, rankings_by_person, records
+
 
 if __name__ == "__main__":
     main()
