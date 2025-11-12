@@ -363,7 +363,7 @@
           </div>
         </div>
       </div>
-
+      <div id="rankings-container" style="display:none;"></div>
       <div id="rankings-table-wrap" style="margin-top:16px;"></div>
     </section>
   </main>
@@ -2630,7 +2630,32 @@
         const rawName = obj.person_name || '';
         const nameText = escapeHtml(rawName);
         const personSlug = slugNameForPerson(rawName);
+
+        // Compose name link
         const nameLink = `<a href="/persons/${encodeURIComponent(personSlug)}" style="color:#1976D2;text-decoration:none">${nameText}</a>`;
+
+        // Determine which per-result field to show as a badge:
+        // - for averages: use regional_average_record
+        // - for singles: use regional_single_record
+        let badgeTag = '';
+        if (type === 'average') {
+          if (obj.regional_average_record) badgeTag = String(obj.regional_average_record).trim();
+        } else if (type === 'single') {
+          if (obj.regional_single_record) badgeTag = String(obj.regional_single_record).trim();
+        }
+
+        let tagHtml = '';
+        if (badgeTag) {
+          const norm = badgeTag.toUpperCase();
+          let cls = 'OTHER';
+          if (norm === 'NR') cls = 'NR';
+          else if (norm === 'CR') cls = 'CR';
+          else if (norm === 'WR') cls = 'WR';
+          tagHtml = `<span class="record-badge ${escapeHtml(cls)}">${escapeHtml(norm)}</span>`;
+        }
+
+        const nameWithTagHtml = nameLink + tagHtml;
+
         const competitionDisplay = obj.competition_id || '';
         const result = formatValueForDisplay(ev, obj.value, type);
 
@@ -2652,12 +2677,10 @@
         const solveTds = [];
         for (let i = 0; i < solvesCols; i++) {
           const raw = attempts[i];
-          // for the Solves column, if this is an average row for 333fm we want integer displays for solves
           const kind = (type === 'average' && ev === '333fm') ? 'solve' : (type === 'average' ? 'average' : 'solve');
           const label = attemptLabel(ev, raw, kind);
           const needsParen = wrapIndices.has(i);
           const content = label === '' ? '' : (needsParen ? `(${escapeHtml(label)})` : escapeHtml(label));
-          // use Roboto (default page font) — do not force monospace
           solveTds.push(`<td style="padding:8px; vertical-align:top; text-align:center; width:88px">${content}</td>`);
         }
 
@@ -2665,7 +2688,7 @@
         return {
           rowHtml: `<tr>
             <td style="padding:8px; vertical-align:top">${escapeHtml(displayType)}</td>
-            <td style="padding:8px; vertical-align:top">${nameLink}</td>
+            <td style="padding:8px; vertical-align:top">${nameWithTagHtml}</td>
             <td style="padding:8px; vertical-align:top; text-align:right">${escapeHtml(result)}</td>
             <td data-competition="${escapeHtml(competitionDisplay)}" style="padding:8px; vertical-align:top">${escapeHtml(competitionDisplay)}</td>
             ${solvesHtml}
@@ -2673,6 +2696,7 @@
           solvesCols: solvesCols
         };
       }
+
 
       // Build ordered event ids from EVENT_ORDER, then append any extra keys from data
       const orderedEventIds = [];

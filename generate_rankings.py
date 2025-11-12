@@ -23,6 +23,127 @@ os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 INVALID_VALUES = {-1, -2, 0}
 
+def collect_event_entries(profiles):
+    """
+    Build per-event entries.
+
+    Rules:
+     - If a result contains an attempts array, export each non-invalid attempt as a separate "single" entry.
+       Each such single includes:
+         - value (int)
+         - type: "single"
+         - attempt_index (0-based)
+         - attempts (the full attempts array normalized)
+         - regional_single_record copied from the source result when present (string or None)
+         - regional_average_record copied from the source result when present (string or None)
+         - best_index / worst_index copied from the result if present
+     - If attempts array is absent or not a list, export a single "single" entry using result.best when valid.
+     - Averages are exported as before; each average entry carries regional_average_record from the source result.
+     - Singles are exported regardless of whether an average exists for that result.
+    """
+    by_event = defaultdict(list)
+    for p in profiles:
+        # keep the profile object as p; results are inside p["results"]
+        name = p["name"]
+        wcaid = p["wcaid"]
+        for r in p["results"]:
+            if not isinstance(r, dict):
+                continue
+            ev = r.get("event_id")
+            if not ev:
+                continue
+
+            # parse numeric best/average (int when possible)
+            best_val = r.get("best")
+            avg_val = r.get("average")
+            try:
+                best_val = int(best_val) if best_val is not None else None
+            except Exception:
+                best_val = None
+            try:
+                avg_val = int(avg_val) if avg_val is not None else None
+            except Exception:
+                avg_val = None
+
+            # normalize attempts if present
+            raw_attempts = r.get("attempts")
+            attempts = normalize_attempts(raw_attempts) if raw_attempts is not None else None
+
+            # indices from source result (may be None)
+            best_index = r.get("best_index")
+            worst_index = r.get("worst_index")
+
+            # per-result record tags (may be None or strings like "NR", "AsR", "WR")
+            regional_single_tag = r.get("regional_single_record") if r.get("regional_single_record") is not None else None
+            regional_average_tag = r.get("regional_average_record") if r.get("regional_average_record") is not None else None
+
+            common = {
+                "person_name": name,
+                "wcaid": wcaid,
+                "competition_id": r.get("competition_id"),
+                "round_name": r.get("round_name") or None
+            }
+
+            # SINGLE handling: if attempts exist, export each non-invalid attempt as its own single entry
+            if isinstance(attempts, list) and len(attempts) > 0:
+                for idx, a in enumerate(attempts):
+                    try:
+                        aval = int(a)
+                    except Exception:
+                        continue
+                    if aval in INVALID_VALUES:
+                        # skip invalid attempts for single entries
+                        continue
+                    e = dict(common)
+                    e.update({
+                        "value": aval,
+                        "type": "single",
+                        "attempt_index": idx,
+                        "attempts": attempts,
+                        # attach per-result single tag (string) or None
+                        "regional_single_record": regional_single_tag,
+                        "regional_average_record": regional_average_tag,
+                        "best_index": best_index if best_index is not None else None,
+                        "worst_index": worst_index if worst_index is not None else None
+                    })
+                    by_event[ev].append(e)
+            else:
+                # fallback: if no attempts array present, use best_val as single (if valid)
+                if best_val is not None and best_val not in INVALID_VALUES:
+                    e = dict(common)
+                    e.update({
+                        "value": best_val,
+                        "type": "single",
+                        "attempts": attempts,  # None
+                        "attempt_index": None,
+                        "regional_single_record": regional_single_tag,
+                        "regional_average_record": regional_average_tag,
+                        "best_index": best_index if best_index is not None else None,
+                        "worst_index": worst_index if worst_index is not None else None
+                    })
+                    by_event[ev].append(e)
+
+            # AVERAGE handling (skip when attempts exist and are all invalid)
+            if avg_val is not None and avg_val not in INVALID_VALUES:
+                if attempts is not None and all((int(a or 0) in INVALID_VALUES) for a in attempts):
+                    # skip average derived from entirely-invalid attempts
+                    pass
+                else:
+                    e = dict(common)
+                    e.update({
+                        "value": avg_val,
+                        "type": "average",
+                        "attempts": attempts,
+                        # attach per-result average tag (string) or None
+                        "regional_single_record": regional_single_tag,
+                        "regional_average_record": regional_average_tag,
+                        "best_index": best_index if best_index is not None else None,
+                        "worst_index": worst_index if worst_index is not None else None
+                    })
+                    by_event[ev].append(e)
+    return by_event
+
+
 def unslug_name_from_filename(fn):
     base = os.path.splitext(fn)[0]
     if base.lower().endswith("-merged"):
@@ -82,111 +203,6 @@ def normalize_attempts(attempts):
                 out.append(0)
     # keep as-is length (do not force pad here) — rendering adapts to round length
     return out
-
-def collect_event_entries(profiles):
-    """
-    Build per-event entries.
-
-    Rules:
-     - If a result contains an attempts array, export each non-invalid attempt as a separate "single" entry.
-       Each such single includes:
-         - value (int)
-         - type: "single"
-         - attempt_index (0-based)
-         - attempts (the full attempts array normalized)
-         - best_index / worst_index copied from the result if present
-     - If attempts array is absent or not a list, export a single "single" entry using result.best when valid.
-     - Averages are exported as before, skipped only when attempts exist and are all invalid.
-     - Singles are exported regardless of whether an average exists for that result.
-    """
-    by_event = defaultdict(list)
-    for p in profiles:
-        name = p["name"]
-        wcaid = p["wcaid"]
-        for r in p["results"]:
-            if not isinstance(r, dict):
-                continue
-            ev = r.get("event_id")
-            if not ev:
-                continue
-
-            # parse numeric best/average (int when possible)
-            best_val = r.get("best")
-            avg_val = r.get("average")
-            try:
-                best_val = int(best_val) if best_val is not None else None
-            except Exception:
-                best_val = None
-            try:
-                avg_val = int(avg_val) if avg_val is not None else None
-            except Exception:
-                avg_val = None
-
-            # normalize attempts if present
-            raw_attempts = r.get("attempts")
-            attempts = normalize_attempts(raw_attempts) if raw_attempts is not None else None
-
-            # indices from source result (may be None)
-            best_index = r.get("best_index")
-            worst_index = r.get("worst_index")
-
-            common = {
-                "person_name": name,
-                "wcaid": wcaid,
-                "competition_id": r.get("competition_id"),
-                "round_name": r.get("round_name") or None
-            }
-
-            # SINGLE handling:
-            # If attempts array exists and is a list, export each attempt as its own single entry (except invalid tokens).
-            if isinstance(attempts, list) and len(attempts) > 0:
-                for idx, a in enumerate(attempts):
-                    try:
-                        aval = int(a)
-                    except Exception:
-                        continue
-                    if aval in INVALID_VALUES:
-                        # skip invalid attempts for single entries
-                        continue
-                    e = dict(common)
-                    e.update({
-                        "value": aval,
-                        "type": "single",
-                        "attempt_index": idx,
-                        "attempts": attempts,
-                        "best_index": best_index if best_index is not None else None,
-                        "worst_index": worst_index if worst_index is not None else None
-                    })
-                    by_event[ev].append(e)
-            else:
-                # fallback: if no attempts array present, use best_val as single (if valid)
-                if best_val is not None and best_val not in INVALID_VALUES:
-                    e = dict(common)
-                    e.update({
-                        "value": best_val,
-                        "type": "single",
-                        "attempts": attempts,  # None
-                        "best_index": best_index if best_index is not None else None,
-                        "worst_index": worst_index if worst_index is not None else None
-                    })
-                    by_event[ev].append(e)
-
-            # AVERAGE handling (unchanged except skip when attempts exist and are all invalid)
-            if avg_val is not None and avg_val not in INVALID_VALUES:
-                if attempts is not None and all((int(a or 0) in INVALID_VALUES) for a in attempts):
-                    # skip average derived from entirely-invalid attempts
-                    pass
-                else:
-                    e = dict(common)
-                    e.update({
-                        "value": avg_val,
-                        "type": "average",
-                        "attempts": attempts,
-                        "best_index": best_index if best_index is not None else None,
-                        "worst_index": worst_index if worst_index is not None else None
-                    })
-                    by_event[ev].append(e)
-    return by_event
 
 def sort_entries(entries, event_id):
     # For 333mbf higher is better
