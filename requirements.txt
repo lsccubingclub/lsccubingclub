@@ -6,4 +6,9 @@ google-auth
 python-dateutil
 google-auth-httplib2
 requests
+<<<<<<< HEAD
 beautifulsoup4
+=======
+beautifulsoup4
+
+>>>>>>> d5b6a8292aa9fb44e15afe5f3077f5d1bb49cf9b
