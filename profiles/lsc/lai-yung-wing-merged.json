@@ -22,9 +22,7 @@
       "best_index": 4,
       "worst_index": 0,
       "round_tab": "3x3x3 Cube - First Roundpublic",
-      "round_name": "3x3x3 Cube - First Round",
-      "round_date": "2024-12-12",
-      "name": "Lai Yung Wing"
+      "round_date": "2024-12-12"
     },
     {
       "pos": 6,
@@ -44,9 +42,7 @@
       "best_index": 2,
       "worst_index": 0,
       "round_tab": "3x3x3 Cube - Finalpublic",
-      "round_name": "3x3x3 Cube - Final",
-      "round_date": "2024-12-16",
-      "name": "Lai Yung Wing"
+      "round_date": "2024-12-16"
     },
     {
       "pos": 19,
@@ -66,9 +62,7 @@
       "best_index": 2,
       "worst_index": 1,
       "round_tab": "3x3x3 Cube - First Roundpublic",
-      "round_name": "3x3x3 Cube - First Round",
-      "round_date": "2025-03-26",
-      "name": "Lai Yung Wing"
+      "round_date": "2025-03-26"
     },
     {
       "pos": 6,
@@ -88,9 +82,7 @@
       "best_index": 2,
       "worst_index": 0,
       "round_tab": "3x3x3 Fewest Moves - Finalpublic",
-      "round_name": "3x3x3 Fewest Moves - Final",
-      "round_date": "2025-05-21",
-      "name": "Lai Yung Wing"
+      "round_date": "2025-05-21"
     }
   ]
 }

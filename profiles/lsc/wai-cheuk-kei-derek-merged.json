@@ -22,9 +22,7 @@
       "best_index": 3,
       "worst_index": 1,
       "round_tab": "3x3x3 Cube - First Roundpublic",
-      "round_name": "3x3x3 Cube - First Round",
-      "round_date": "2024-12-12",
-      "name": "Wai Cheuk Kei Derek"
+      "round_date": "2024-12-12"
     },
     {
       "pos": 14,
@@ -44,9 +42,7 @@
       "best_index": 2,
       "worst_index": 1,
       "round_tab": "3x3x3 Cube - First Roundpublic",
-      "round_name": "3x3x3 Cube - First Round",
-      "round_date": "2025-03-26",
-      "name": "Wai Cheuk Kei Derek"
+      "round_date": "2025-03-26"
     },
     {
       "pos": 8,
@@ -66,9 +62,7 @@
       "best_index": 2,
       "worst_index": 4,
       "round_tab": "2x2x2 Cube - First Roundpublic",
-      "round_name": "2x2x2 Cube - First Round",
-      "round_date": "2025-03-27",
-      "name": "Wai Cheuk Kei Derek"
+      "round_date": "2025-03-27"
     },
     {
       "pos": 8,
@@ -88,9 +82,7 @@
       "best_index": 1,
       "worst_index": 0,
       "round_tab": "2x2x2 Cube - Finalpublic",
-      "round_name": "2x2x2 Cube - Final",
-      "round_date": "2025-03-27",
-      "name": "Wai Cheuk Kei Derek"
+      "round_date": "2025-03-27"
     }
   ]
 }

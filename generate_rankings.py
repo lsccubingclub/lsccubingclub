@@ -39,25 +39,20 @@ def collect_event_entries(profiles):
     """
     Build per-event entries.
 
-    Rules:
-     - If a result contains an attempts array, export each non-invalid attempt as a separate "single" entry.
-       Each such single includes:
-         - value (int)
-         - type: "single"
-         - attempt_index (0-based)
-         - attempts (the full attempts array normalized)
-         - regional_single_record copied from the source result when present (string or None)
-         - regional_average_record copied from the source result when present (string or None)
-         - best_index / worst_index copied from the result if present
-     - If attempts array is absent or not a list, export a single "single" entry using result.best when valid.
-     - Averages are exported as before; each average entry carries regional_average_record from the source result.
-     - Singles are exported regardless of whether an average exists for that result.
+    Behavior:
+    - Export individual attempt singles (each valid attempt -> single entry).
+    - Attach regional_average_record to the average entry when present.
+    - Attach regional_single_record to exactly one single entry: the best single for that result
+      defined as the smallest non-negative numeric single (prefer attempts by value; if attempts absent
+      use result.best). If multiple identical best values exist, attach to the first emitted single
+      with that value.
     """
     by_event = defaultdict(list)
+
     for p in profiles:
-        # keep the profile object as p; results are inside p["results"]
         name = p["name"]
         wcaid = p["wcaid"]
+
         for r in p["results"]:
             if not isinstance(r, dict):
                 continue
@@ -65,7 +60,7 @@ def collect_event_entries(profiles):
             if not ev:
                 continue
 
-            # parse numeric best/average (int when possible)
+            # numeric best/average if present
             best_val = r.get("best")
             avg_val = r.get("average")
             try:
@@ -77,15 +72,14 @@ def collect_event_entries(profiles):
             except Exception:
                 avg_val = None
 
-            # normalize attempts if present
+            # normalized attempts (list or None)
             raw_attempts = r.get("attempts")
             attempts = normalize_attempts(raw_attempts) if raw_attempts is not None else None
 
-            # indices from source result (may be None)
             best_index = r.get("best_index")
             worst_index = r.get("worst_index")
 
-            # per-result record tags (may be None or strings like "NR", "AsR", "WR")
+            # record tags from source result (may be None or a string like "NR", "AsR", "WR")
             regional_single_tag = r.get("regional_single_record") if r.get("regional_single_record") is not None else None
             regional_average_tag = r.get("regional_average_record") if r.get("regional_average_record") is not None else None
 
@@ -96,7 +90,8 @@ def collect_event_entries(profiles):
                 "round_name": r.get("round_name") or None
             }
 
-            # SINGLE handling: if attempts exist, export each non-invalid attempt as its own single entry
+            # Emit single entries for attempts (track emitted singles so we can tag the best one later)
+            emitted_single_entries = []
             if isinstance(attempts, list) and len(attempts) > 0:
                 for idx, a in enumerate(attempts):
                     try:
@@ -104,7 +99,6 @@ def collect_event_entries(profiles):
                     except Exception:
                         continue
                     if aval in INVALID_VALUES:
-                        # skip invalid attempts for single entries
                         continue
                     e = dict(common)
                     e.update({
@@ -112,47 +106,82 @@ def collect_event_entries(profiles):
                         "type": "single",
                         "attempt_index": idx,
                         "attempts": attempts,
-                        # attach per-result single tag (string) or None
-                        "regional_single_record": regional_single_tag,
-                        "regional_average_record": regional_average_tag,
+                        # regional tags: default None; will attach to best single later if applicable
+                        "regional_single_record": None,
+                        "regional_average_record": None,
                         "best_index": best_index if best_index is not None else None,
                         "worst_index": worst_index if worst_index is not None else None
                     })
+                    emitted_single_entries.append(e)
                     by_event[ev].append(e)
             else:
-                # fallback: if no attempts array present, use best_val as single (if valid)
+                # fallback: no attempts list — use best as a single entry if valid
                 if best_val is not None and best_val not in INVALID_VALUES:
                     e = dict(common)
                     e.update({
                         "value": best_val,
                         "type": "single",
-                        "attempts": attempts,  # None
+                        "attempts": None,
                         "attempt_index": None,
-                        "regional_single_record": regional_single_tag,
-                        "regional_average_record": regional_average_tag,
+                        "regional_single_record": None,
+                        "regional_average_record": None,
                         "best_index": best_index if best_index is not None else None,
                         "worst_index": worst_index if worst_index is not None else None
                     })
+                    emitted_single_entries.append(e)
                     by_event[ev].append(e)
 
-            # AVERAGE handling (skip when attempts exist and are all invalid)
+            # Average entry (if valid) — attach regional_average_record to the average entry
             if avg_val is not None and avg_val not in INVALID_VALUES:
                 if attempts is not None and all((int(a or 0) in INVALID_VALUES) for a in attempts):
                     # skip average derived from entirely-invalid attempts
                     pass
                 else:
-                    e = dict(common)
-                    e.update({
+                    avg_entry = dict(common)
+                    avg_entry.update({
                         "value": avg_val,
                         "type": "average",
                         "attempts": attempts,
-                        # attach per-result average tag (string) or None
-                        "regional_single_record": regional_single_tag,
+                        "regional_single_record": None,
                         "regional_average_record": regional_average_tag,
                         "best_index": best_index if best_index is not None else None,
                         "worst_index": worst_index if worst_index is not None else None
                     })
-                    by_event[ev].append(e)
+                    by_event[ev].append(avg_entry)
+
+            # Attach regional_single_record to the best single: defined as smallest non-negative numeric value
+            if regional_single_tag and emitted_single_entries:
+                # find numeric best among emitted singles (smallest non-negative)
+                best_single = None
+                best_val_seen = None
+                for s in emitted_single_entries:
+                    v = s.get("value")
+                    if v is None:
+                        continue
+                    # skip negative invalid markers (they should have been filtered) but be defensive
+                    if v < 0:
+                        continue
+                    if best_single is None:
+                        best_single = s
+                        best_val_seen = v
+                    else:
+                        # choose smaller numeric value
+                        if v < best_val_seen:
+                            best_single = s
+                            best_val_seen = v
+                # If no non-negative single found above but best_val exists and is valid, try to match by best_val
+                if best_single is None and best_val is not None and best_val not in INVALID_VALUES:
+                    for s in emitted_single_entries:
+                        if s.get("value") == best_val:
+                            best_single = s
+                            break
+                # As a safe fallback, if still none, pick the first emitted single
+                if best_single is None and emitted_single_entries:
+                    best_single = emitted_single_entries[0]
+                # attach tag if we found one
+                if best_single is not None:
+                    best_single["regional_single_record"] = regional_single_tag
+
     return by_event
 
 

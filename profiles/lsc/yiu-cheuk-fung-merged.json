@@ -22,9 +22,7 @@
       "best_index": 4,
       "worst_index": 1,
       "round_tab": "3x3x3 Cube - First Roundpublic",
-      "round_name": "3x3x3 Cube - First Round",
-      "round_date": "2024-12-12",
-      "name": "Yiu Cheuk Fung"
+      "round_date": "2024-12-12"
     },
     {
       "pos": 8,
@@ -44,9 +42,7 @@
       "best_index": 0,
       "worst_index": 2,
       "round_tab": "3x3x3 Cube - Finalpublic",
-      "round_name": "3x3x3 Cube - Final",
-      "round_date": "2024-12-16",
-      "name": "Yiu Cheuk Fung"
+      "round_date": "2024-12-16"
     },
     {
       "pos": 6,
@@ -66,9 +62,7 @@
       "best_index": 4,
       "worst_index": 3,
       "round_tab": "3x3x3 Cube - First Roundpublic",
-      "round_name": "3x3x3 Cube - First Round",
-      "round_date": "2025-03-26",
-      "name": "Yiu Cheuk Fung"
+      "round_date": "2025-03-26"
     },
     {
       "pos": 7,
@@ -88,9 +82,7 @@
       "best_index": 2,
       "worst_index": 3,
       "round_tab": "3x3x3 Cube - Finalpublic",
-      "round_name": "3x3x3 Cube - Final",
-      "round_date": "2025-03-28",
-      "name": "Yiu Cheuk Fung"
+      "round_date": "2025-03-28"
     }
   ]
 }

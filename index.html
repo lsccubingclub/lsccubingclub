@@ -200,6 +200,35 @@
       background:#1976D2;
       color:#fff;
     }
+
+    .rec-tag { font-weight:700; margin-left:0.5rem; white-space:nowrap; font-size:0.95em; }
+    .rec-tag.nr { color: #28a745; }   /* NR green */
+    .rec-tag.asr { color: #d31515; }  /* AsR red */
+    .rec-tag.wr { color: #0869d7; }   /* WR blue */
+    .rec-tag.other { color: #424242; }
+
+
+
+    /* button-like radio group shared style */
+    .rank-toggle-btn {
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid #e6e6e6;
+      background: transparent;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.95rem;
+    }
+    .rank-toggle-btn.active {
+      background: #1976D2;
+      color: #fff;
+      border: none;
+      box-shadow: 0 4px 10px rgba(25,118,210,0.12);
+    }
+    .rank-toggle-btn input[type="radio"] { display: none; }
+
   </style>
 
   <!-- Firebase (Auth only) -->
@@ -357,8 +386,10 @@
             <div style="font-size:0.95rem; font-weight:600; line-height:1">Show</div>
             <div style="display:flex; gap:8px; align-items:center;">
               <div id="rankings-mode-row" style="display:flex; gap:8px; align-items:center;"></div>
-              <input id="rankings-top-n" type="number" min="1" value="100" style="width:92px; padding:8px; border-radius:8px; border:1px solid #e6e6e6;" />
-              <button id="rankings-refresh" class="btn" style="padding:8px 12px; border-radius:8px; background:#1976D2; color:#fff; border:none; cursor:pointer;">Apply</button>
+              <div id="rankings-show-row" style="display:flex; gap:6px; align-items:center;">
+                <button id="show-100" type="button" class="btn" style="padding:8px 12px; border-radius:8px; background:#1976D2; color:#fff; border:none; cursor:pointer;">100</button>
+                <button id="show-1000" type="button" class="btn" style="padding:8px 12px; border-radius:8px; background:transparent; color:black; border:1px solid #e6e6e6; cursor:pointer;">1000</button>
+              </div>
             </div>
           </div>
         </div>
@@ -2291,19 +2322,14 @@
 
 
     async function renderRankingsView(eventId = '', category = 'single') {
-      // Uses global EVENT_CODE_TO_NAME (must exist in page)
-      const container = document.getElementById('rankings-container'); // not used for table; kept for compatibility
-      // read DOM targets
+      const container = document.getElementById('rankings-container');
       const eventRowEl = document.getElementById('rankings-event-row');
       const typeRowEl = document.getElementById('rankings-type-row');
       const modeRowEl = document.getElementById('rankings-mode-row');
-      const topNInput = document.getElementById('rankings-top-n');
       const tableWrap = document.getElementById('rankings-table-wrap');
-      const refreshBtn = document.getElementById('rankings-refresh');
 
-      if (!eventRowEl || !typeRowEl || !modeRowEl || !topNInput || !tableWrap) return;
+      if (!eventRowEl || !typeRowEl || !modeRowEl || !tableWrap) return;
 
-      // initial UI state
       const explicitOrder = [
         "333","222","444","555","666","777",
         "333bf","333fm","333oh","clock","minx",
@@ -2311,17 +2337,18 @@
       ];
       const eventOrder = explicitOrder.concat(Object.keys(EVENT_CODE_TO_NAME || {}).filter(k => !explicitOrder.includes(k)));
 
-      let selectedEvent = eventId || (eventOrder[0] || '');
+      // Defaults required by your request
+      let selectedEvent = eventId || '333';
       let selectedType = (category === 'average') ? 'average' : 'single';
-      let selectedMode = 'results';
-      topNInput.value = topNInput.value || '100';
+      let selectedMode = 'persons';
+      // show toggle default
+      let selectedShow = 100; // either 100 or 1000
 
       // fetch data once
       let resultsJson = {}, personsJson = {};
       try { resultsJson = await (await fetch('/data/rankings_by_results.json')).json(); } catch(e){ resultsJson = {}; }
       try { personsJson = await (await fetch('/data/rankings_by_person.json')).json(); } catch(e){ personsJson = {}; }
 
-      // helper formatters (same logic as records view)
       function formatValueForDisplay(ev, raw, kind) {
         if (raw === null || raw === undefined || raw === '') return '';
         if (raw === -1) return 'DNF';
@@ -2360,7 +2387,6 @@
 
       // Build static UI inside the view slots if empty
       function buildStaticControls() {
-        // event icons
         eventRowEl.innerHTML = '';
         const seen = new Set();
         (eventOrder).forEach(ev => {
@@ -2387,23 +2413,19 @@
           btn.appendChild(img);
           btn.addEventListener('click', () => {
             selectedEvent = ev;
-            // update visuals
             eventRowEl.querySelectorAll('button').forEach(b => {
               b.style.background = (b.dataset.event === selectedEvent) ? '#e6f4ea' : 'transparent';
               b.style.borderColor = (b.dataset.event === selectedEvent) ? '#9be08f' : '#eee';
             });
             renderTableArea();
-            navigate(`/rankings/${encodeURIComponent(selectedEvent)}/${encodeURIComponent(selectedType)}?show=${encodeURIComponent((topNInput.value||'100') + '+' + selectedMode)}`);
+            navigate(`/rankings/${encodeURIComponent(selectedEvent)}/${encodeURIComponent(selectedType)}?show=${encodeURIComponent(selectedShow + '+' + selectedMode)}`);
           });
           eventRowEl.appendChild(btn);
         });
-      }
 
-      // Type radios
-      function buildTypeControls() {
+        // Type radios
         typeRowEl.innerHTML = '';
         ['single','average'].forEach(t => {
-          const id = `rank-type-${t}`;
           const label = document.createElement('label');
           label.style.display = 'inline-flex';
           label.style.alignItems = 'center';
@@ -2418,7 +2440,7 @@
             if (r.checked) {
               selectedType = t;
               renderTableArea();
-              navigate(`/rankings/${encodeURIComponent(selectedEvent)}/${encodeURIComponent(selectedType)}?show=${encodeURIComponent((topNInput.value||'100') + '+' + selectedMode)}`);
+              navigate(`/rankings/${encodeURIComponent(selectedEvent)}/${encodeURIComponent(selectedType)}?show=${encodeURIComponent(selectedShow + '+' + selectedMode)}`);
             }
           });
           const span = document.createElement('span');
@@ -2427,12 +2449,10 @@
           label.appendChild(span);
           typeRowEl.appendChild(label);
         });
-      }
 
-      // Mode radios
-      function buildModeControls() {
+        // Mode radios
         modeRowEl.innerHTML = '';
-        ['results','persons'].forEach(m => {
+        ['persons','results'].forEach(m => {
           const label = document.createElement('label');
           label.style.display = 'inline-flex';
           label.style.alignItems = 'center';
@@ -2455,13 +2475,35 @@
           label.appendChild(span);
           modeRowEl.appendChild(label);
         });
+
+        // Show toggle wiring: create or use existing container if present in DOM
+        const showRow = document.getElementById('rankings-show-row');
+        if (showRow) {
+          const btn100 = document.getElementById('show-100');
+          const btn1000 = document.getElementById('show-1000');
+          if (btn100 && btn1000) {
+            const setActive = (n) => {
+              selectedShow = n;
+              if (n === 100) {
+                btn100.style.background = '#1976D2'; btn100.style.color = '#fff'; btn100.style.border = 'none';
+                btn1000.style.background = 'transparent'; btn1000.style.color = 'black'; btn1000.style.border = '1px solid #e6e6e6';
+              } else {
+                btn1000.style.background = '#1976D2'; btn1000.style.color = '#fff'; btn1000.style.border = 'none';
+                btn100.style.background = 'transparent'; btn100.style.color = 'black'; btn100.style.border = '1px solid #e6e6e6';
+              }
+            };
+            btn100.addEventListener('click', () => { setActive(100); renderTableArea(); });
+            btn1000.addEventListener('click', () => { setActive(1000); renderTableArea(); });
+            // initialize visual state
+            setActive(selectedShow);
+          }
+        }
       }
 
       // Render table area (main)
       async function renderTableArea() {
         tableWrap.innerHTML = 'Loading…';
-
-        const topN = Math.max(1, parseInt(topNInput.value, 10) || 100);
+        const topN = Math.max(1, Number(selectedShow || 100));
         const src = (selectedMode === 'persons') ? personsJson : resultsJson;
         const list = (src && src[selectedEvent] && Array.isArray(src[selectedEvent][selectedType]) ? src[selectedEvent][selectedType] : []).slice(0, topN);
 
@@ -2479,7 +2521,6 @@
           const solvesCols = attempts.length > 0 ? attempts.length : 0;
           if (solvesCols > maxSolvesCols) maxSolvesCols = solvesCols;
 
-          // parentheses indices only for exactly 5 non-zero attempts
           const wrapIndices = new Set();
           if (Array.isArray(attempts) && attempts.length === 5) {
             const nonZeroAllFive = attempts.every(a => (a !== 0 && a !== null && a !== undefined));
@@ -2491,7 +2532,6 @@
             }
           }
 
-          // build solve cells
           const solveCells = [];
           for (let i = 0; i < solvesCols; i++) {
             const raw = attempts[i];
@@ -2512,7 +2552,6 @@
           });
         });
 
-        // build header + rows with horizontal scrolling wrapper
         const solvesHeaderColspan = maxSolvesCols > 0 ? `colspan="${maxSolvesCols}"` : '';
         const headerHtml = `<div style="overflow-x:auto; -webkit-overflow-scrolling:touch;"><table style="display:inline-table; white-space:nowrap; margin-top:8px;"><thead><tr>
           <th style="text-align:left; padding:8px; width:64px">#</th>
@@ -2523,7 +2562,7 @@
         </tr></thead><tbody>`;
 
         const bgA = 'white';
-        const bgB = '#f4f4f4'; // page background alternate
+        const bgB = '#f4f4f4';
 
         const rowsHtml = rowsInfo.map((info, i) => {
           const padCount = Math.max(0, maxSolvesCols - info.solvesCols);
@@ -2541,22 +2580,14 @@
         patchCompetitionCells(tableWrap).catch(()=>{});
       }
 
-      // wire apply button
-      refreshBtn.onclick = () => {
-        renderTableArea();
-        navigate(`/rankings/${encodeURIComponent(selectedEvent)}/${encodeURIComponent(selectedType)}?show=${encodeURIComponent((topNInput.value||'100') + '+' + selectedMode)}`);
-      };
-
       // initial build of static parts + render
       buildStaticControls();
-      buildTypeControls();
-      buildModeControls();
       // respect passed-in event/type if provided
       if (eventId) selectedEvent = eventId;
       if (category) selectedType = (category === 'average') ? 'average' : 'single';
       renderTableArea();
     }
-        
+          
 
     async function renderRecordsView() {
       const EVENT_ORDER = [
@@ -2630,13 +2661,9 @@
         const rawName = obj.person_name || '';
         const nameText = escapeHtml(rawName);
         const personSlug = slugNameForPerson(rawName);
-
-        // Compose name link
         const nameLink = `<a href="/persons/${encodeURIComponent(personSlug)}" style="color:#1976D2;text-decoration:none">${nameText}</a>`;
 
-        // Determine which per-result field to show as a badge:
-        // - for averages: use regional_average_record
-        // - for singles: use regional_single_record
+        // Choose the per-result tag to show: average rows -> regional_average_record, single rows -> regional_single_record
         let badgeTag = '';
         if (type === 'average') {
           if (obj.regional_average_record) badgeTag = String(obj.regional_average_record).trim();
@@ -2644,20 +2671,23 @@
           if (obj.regional_single_record) badgeTag = String(obj.regional_single_record).trim();
         }
 
+        // Map tag to CSS class and render HTML fragment (two-space offset achieved with margin-left in CSS)
         let tagHtml = '';
         if (badgeTag) {
           const norm = badgeTag.toUpperCase();
-          let cls = 'OTHER';
-          if (norm === 'NR') cls = 'NR';
-          else if (norm === 'CR') cls = 'CR';
-          else if (norm === 'WR') cls = 'WR';
-          tagHtml = `<span class="record-badge ${escapeHtml(cls)}">${escapeHtml(norm)}</span>`;
+          let cls = '';
+          if (norm === 'NR') cls = 'nr';
+          else if (norm === 'ASR' || norm === 'AS-R' || norm === 'AS') cls = 'asr';
+          else if (norm === 'WR') cls = 'wr';
+          else cls = 'other';
+          tagHtml = `<span class="rec-tag ${escapeHtml(cls)}" style="font-weight:700; margin-left:0.5rem;">${escapeHtml(norm)}</span>`;
         }
 
-        const nameWithTagHtml = nameLink + tagHtml;
+        const nameWithTagHtml = nameLink;
 
         const competitionDisplay = obj.competition_id || '';
         const result = formatValueForDisplay(ev, obj.value, type);
+        const resultHtml = tagHtml ? (escapeHtml(result) + tagHtml) : escapeHtml(result);
 
         const attempts = Array.isArray(obj.attempts) ? obj.attempts.slice() : [];
         const hasAttempts = attempts.length > 0;
@@ -2689,7 +2719,7 @@
           rowHtml: `<tr>
             <td style="padding:8px; vertical-align:top">${escapeHtml(displayType)}</td>
             <td style="padding:8px; vertical-align:top">${nameWithTagHtml}</td>
-            <td style="padding:8px; vertical-align:top; text-align:right">${escapeHtml(result)}</td>
+            <td style="padding:8px; vertical-align:top; text-align:right">${resultHtml}</td>
             <td data-competition="${escapeHtml(competitionDisplay)}" style="padding:8px; vertical-align:top">${escapeHtml(competitionDisplay)}</td>
             ${solvesHtml}
           </tr>`,
