@@ -310,6 +310,7 @@
         ">Go to LSC Cubing Club Live</a>
       </div>
 
+      <a href="/competitions" class="btn-live" style="display:inline-block; padding:12px 24px; background:#1976D2; color:white; border-radius:6px; font-weight:bold; margin-top:12px;">View competitions</a>
 
       <!-- Records -->
       <div class="section" style="margin-top:40px;">
@@ -406,6 +407,37 @@
       <div id="records-container"></div>
     </section>
   </main>
+
+
+
+  <main id="view-competitions-page" hidden>
+    <section style="padding:20px 10px; max-width:900px; margin:auto;">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h2 style="margin:0; font-size:1.4rem; font-weight:600;">Competitions</h2>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <input id="competitions-search-global" placeholder="Search competitions" style="padding:8px; border:1px solid #e6e6e6; border-radius:8px;" />
+        </div>
+      </div>
+
+      <div id="competitions-locked-list" style="margin-top:16px; display:grid; gap:12px;"></div>
+
+      <div id="competition-detail" style="margin-top:24px; display:none; background:#fff; padding:16px; border-radius:8px; box-shadow:0 6px 18px rgba(0,0,0,0.06);">
+        <div id="competition-meta" style="display:flex; gap:12px; align-items:flex-start; flex-wrap:wrap;">
+          <div id="competition-meta-left" style="flex:1 1 240px"></div>
+          <div id="competition-meta-right" style="flex:1 1 360px"></div>
+        </div>
+
+        <div style="margin-top:14px; display:flex; gap:8px; align-items:center;">
+          <button id="comp-tab-all" class="btn" style="padding:8px 12px; border-radius:8px;">All</button>
+          <button id="comp-tab-by-person" class="btn" style="padding:8px 12px; border-radius:8px;">By Person</button>
+          <button id="comp-tab-podiums" class="btn" style="padding:8px 12px; border-radius:8px;">Podiums</button>
+        </div>
+
+        <div id="competition-results-area" style="margin-top:12px;"></div>
+      </div>
+    </section>
+  </main>
+
 
   <main id="view-live" hidden>
     <div id="live-container" style="display:flex; gap:16px; align-items:flex-start;">
@@ -790,7 +822,7 @@
       
     async function fetchMeta() {
       const tab = 'meta';
-      const range = 'A2:H500';
+      const range = 'A2:L500';
       const url =
         `https://sheets.googleapis.com/v4/spreadsheets/${MASTER_SHEET_ID}` +
         `/values/${encodeURIComponent(tab + '!' + range)}?key=${API_KEY}`;
@@ -819,11 +851,15 @@
         const compCell = (r[0] || '').toString().trim();
         const sheetId = (r[1] || '').toString().trim();
         const lockedCell = (r[2] || '').toString().trim().toLowerCase();
-        const eventName = (r[3] || '').toString().trim();
-        const roundLabel = (r[4] || '').toString().trim();
-        const format = (r[5] || '').toString().trim().toLowerCase();
-        const advRaw = (r[6] || '').toString().trim();
-        const date = (r[7] || '').toString().trim();
+        const venue = (r[3] || '').toString().trim();
+        const date = (r[5] || '').toString().trim();
+        const mainEvent = (r[4] || '').toString().trim();
+        const highlights = (r[6] || '').toString().trim();
+        const eventName = (r[7] || '').toString().trim();
+        const roundLabel = (r[8] || '').toString().trim();
+        const format = (r[9] || '').toString().trim().toLowerCase();
+        const advRaw = (r[10] || '').toString().trim();
+
 
         // If row has empty comp and sheetId, inherit from last seen block
         let comp = compCell;
@@ -877,8 +913,28 @@
         lastLocked = isLocked;
       });
 
-      // Rebuild a lightweight masterValues matrix so older code paths still work
-      // headerRow = ['Competition', comp1, comp2, ...]
+
+      // --- after master-values parsing loop inside fetchMeta(), add:
+      compDateMap = {};      // comp -> ISO date string or null
+      compDetailsMap = {};   // comp -> { venue, date, time, main_event, highlights, offered_events: { eventName: [roundLabel,...] }, roundsMeta: { fullRound: {advance: number} } }
+
+      // Build compDateMap and compDetailsMap using the earlier collected structures
+      Object.keys(compEvents || {}).forEach(comp => {
+        const rounds = roundSheetsMap[comp] || {};
+        let foundDate = null;
+        for (const rr of Object.values(rounds)) {
+          if (rr && rr.date) {
+            const d = new Date(rr.date);
+            if (!isNaN(d)) {
+              const iso = d.toISOString().slice(0,10);
+              if (!foundDate || iso < foundDate) foundDate = iso;
+            }
+          }
+        }
+        compDateMap[comp] = foundDate || null;
+        compDetailsMap[comp] = compDetailsMap[comp] || { venue: '', date: compDateMap[comp] || '', time: '', main_event: '', highlights: '', offered_events: compEvents[comp] || {}, roundsMeta: roundAdvanceMap[comp] || {} };
+      });
+
       const headerRow = ['Competition', ...Object.keys(compEvents)];
       const perCompFullRounds = {};
       Object.keys(compEvents).forEach(comp => {
@@ -1049,6 +1105,9 @@
     // ===== Master sheet fetch (competitions + rounds) =====
     let compLockMap = {};
     let compSheetMap = {};
+    let compDateMap = {};
+    let compDetailsMap = {};
+
 
 
     function getEventsForComp(comp) {
@@ -1429,6 +1488,455 @@
           await new Promise(r => setTimeout(r, 80));
         }
       }
+    }
+
+    async function renderCompetitionsPage() {
+      await initLiveOnce();
+
+      // Show competitions view and hide others through your existing showView helper
+      showView('competitions-page');
+      document.getElementById('view-competitions-page').hidden = false;
+
+      const lockedListEl = document.getElementById('competitions-locked-list');
+      const detailEl = document.getElementById('competition-detail');
+      const metaLeftEl = document.getElementById('competition-meta-left');
+      const metaRightEl = document.getElementById('competition-meta-right');
+      const resultsAreaEl = document.getElementById('competition-results-area');
+      const searchInput = document.getElementById('competitions-search-global');
+
+      lockedListEl.innerHTML = '';
+      detailEl.style.display = 'none';
+      resultsAreaEl.innerHTML = '';
+
+      // build list of competition names from masterValues header row
+      const headerRow = Array.isArray(masterValues[COMP_HEADER_ROW]) ? masterValues[COMP_HEADER_ROW] : [];
+      const comps = headerRow.slice(1).map(c => (c || '').toString().trim()).filter(Boolean);
+
+      // keep only locked competitions
+      const locked = comps.filter(c => !!compLockMap[c]);
+
+      // sort locked by date ascending using compDateMap; unknown dates last alphabetically
+      locked.sort((a, b) => {
+        const da = compDateMap && compDateMap[a];
+        const db = compDateMap && compDateMap[b];
+        if (da && db) return da.localeCompare(db);
+        if (da && !db) return -1;
+        if (!da && db) return 1;
+        return a.localeCompare(b);
+      });
+
+      if (!locked.length) {
+        lockedListEl.innerHTML = '<div style="padding:12px;color:#666">No locked competitions</div>';
+        return;
+      }
+
+      // create a compact card for each locked competition
+      locked.forEach(compName => {
+        const card = document.createElement('div');
+        card.style.background = '#fff';
+        card.style.border = '1px solid #eee';
+        card.style.borderRadius = '10px';
+        card.style.padding = '12px';
+        card.style.display = 'flex';
+        card.style.justifyContent = 'space-between';
+        card.style.alignItems = 'center';
+        card.style.cursor = 'pointer';
+        card.style.boxShadow = '0 6px 18px rgba(0,0,0,0.04)';
+        card.tabIndex = 0;
+
+        const left = document.createElement('div');
+        left.style.display = 'flex';
+        left.style.flexDirection = 'column';
+        left.style.gap = '6px';
+
+        const title = document.createElement('div');
+        title.textContent = compName;
+        title.style.fontWeight = '600';
+        title.style.fontSize = '15px';
+
+        const meta = document.createElement('div');
+        meta.style.color = '#666';
+        const dateText = compDateMap && compDateMap[compName] ? compDateMap[compName] : 'Date TBA';
+        meta.textContent = dateText;
+
+        left.appendChild(title);
+        left.appendChild(meta);
+        card.appendChild(left);
+
+        const right = document.createElement('div');
+        right.style.display = 'flex';
+        right.style.gap = '8px';
+        right.style.alignItems = 'center';
+
+        const openBtn = document.createElement('button');
+        openBtn.className = 'btn';
+        openBtn.textContent = 'Open';
+        openBtn.addEventListener('click', (ev) => { ev.stopPropagation(); openCompetitionDetail(compName); });
+
+        right.appendChild(openBtn);
+        card.appendChild(right);
+
+        card.addEventListener('click', () => openCompetitionDetail(compName));
+        card.addEventListener('keypress', (ev) => {
+          if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); openCompetitionDetail(compName); }
+        });
+
+        lockedListEl.appendChild(card);
+      });
+
+      // search wiring
+      if (searchInput) {
+        searchInput.oninput = () => {
+          const q = (searchInput.value || '').trim().toLowerCase();
+          Array.from(lockedListEl.children).forEach(card => {
+            const title = card.querySelector('div') && card.querySelector('div').textContent || '';
+            card.style.display = title.toLowerCase().includes(q) ? 'flex' : 'none';
+          });
+        };
+      }
+
+      // --- OPEN COMPETITION DETAIL ---
+      // keep lastActiveComp to ignore stale async responses
+      let lastActiveComp = null;
+
+      async function openCompetitionDetail(compName) {
+        lastActiveComp = compName;
+
+        detailEl.style.display = '';
+        metaLeftEl.innerHTML = '';
+        metaRightEl.innerHTML = '';
+        resultsAreaEl.innerHTML = '<div>Loading…</div>';
+
+        // ensure meta and roundSheetsMap are present
+        await initLiveOnce();
+
+        const d = (compDetailsMap && compDetailsMap[compName]) || {};
+        const venue = d.venue || '';
+        const date = d.date || compDateMap && compDateMap[compName] || '';
+        const time = d.time || '';
+        const mainEvent = d.main_event || '';
+        const highlights = d.highlights || '';
+        const offered = d.offered_events || {}; // object: { eventName: [roundLabel,...] }
+
+        // Left meta block
+        metaLeftEl.innerHTML = `
+          <div style="font-weight:700; font-size:1.1rem;">${escapeHtml(compName)}</div>
+          <div style="color:#444; margin-top:6px;">${escapeHtml(venue)}</div>
+          <div style="color:#666; margin-top:4px;">${escapeHtml(date)}${time ? ' • ' + escapeHtml(time) : ''}</div>
+          ${mainEvent ? `<div style="margin-top:8px"><strong>Main event:</strong> ${escapeHtml(mainEvent)}</div>` : ''}
+          ${highlights ? `<div style="margin-top:8px"><strong>Highlights:</strong> ${escapeHtml(highlights)}</div>` : ''}
+        `;
+
+        // Right meta: offered events summary
+        metaRightEl.innerHTML = '';
+        const eventsList = document.createElement('div');
+        eventsList.style.display = 'flex';
+        eventsList.style.flexDirection = 'column';
+        eventsList.style.gap = '6px';
+
+        // derive ordering: WCA_EVENTS first then remaining alphabetically
+        const offeredEventNames = Object.keys(offered || {});
+        const ordered = WCA_EVENTS.filter(e => offeredEventNames.includes(e)).concat(offeredEventNames.filter(e => !WCA_EVENTS.includes(e)).sort());
+
+        if (ordered.length === 0) {
+          const noOff = document.createElement('div');
+          noOff.style.color = '#666';
+          noOff.textContent = 'Offered events not listed';
+          eventsList.appendChild(noOff);
+        } else {
+          ordered.forEach(evName => {
+            const rounds = (offered[evName] || []).slice();
+            const evRow = document.createElement('div');
+            evRow.style.display = 'flex';
+            evRow.style.alignItems = 'center';
+            evRow.style.justifyContent = 'space-between';
+            evRow.style.gap = '8px';
+            evRow.style.padding = '6px';
+            evRow.style.borderRadius = '6px';
+            evRow.style.background = '#fafafa';
+            evRow.innerHTML = `<div style="font-weight:600">${escapeHtml(evName)}</div><div style="color:#666">${rounds.length} rounds</div>`;
+            eventsList.appendChild(evRow);
+          });
+        }
+        metaRightEl.appendChild(eventsList);
+
+        // wire tab buttons and default tab
+        document.getElementById('comp-tab-all').onclick = () => activateCompTab('all', compName);
+        document.getElementById('comp-tab-by-person').onclick = () => activateCompTab('by-person', compName);
+        document.getElementById('comp-tab-podiums').onclick = () => activateCompTab('podiums', compName);
+
+        // activate default tab
+        activateCompTab('all', compName);
+      }
+
+      // --- TAB RENDERER ---
+      // single function to switch between All / By Person / Podiums
+      async function activateCompTab(tab, compName) {
+        // capture local token to ignore stale async work
+        const token = `${compName}::${tab}`;
+        resultsAreaEl.innerHTML = '<div>Loading…</div>';
+
+        await initLiveOnce();
+
+        // Ensure competition exists in metadata; fallback to reading masterValues
+        const compIdx = (masterValues[COMP_HEADER_ROW] || []).indexOf(compName);
+        // build offeredEvents map from roundSheetsMap if compDetailsMap.offered_events absent
+        let offeredEvents = {};
+        if (compDetailsMap && compDetailsMap[compName] && compDetailsMap[compName].offered_events) {
+          offeredEvents = compDetailsMap[compName].offered_events;
+        } else {
+          // fallback build from roundSheetsMap entries
+          const roundsForComp = Object.keys(roundSheetsMap[compName] || {}).filter(Boolean);
+          roundsForComp.forEach(full => {
+            const parts = splitEventRound(full);
+            const ev = parts.eventName || full;
+            const rn = parts.roundName || '';
+            offeredEvents[ev] = offeredEvents[ev] || [];
+            if (rn && !offeredEvents[ev].includes(rn)) offeredEvents[ev].push(rn);
+          });
+        }
+
+        if (tab === 'podiums') {
+          // Render podiums: find final rounds and render top 3 per event ordered by WCA_EVENTS
+          const eventsOrder = WCA_EVENTS.filter(e => Object.prototype.hasOwnProperty.call(offeredEvents, e)).concat(Object.keys(offeredEvents).filter(e => !WCA_EVENTS.includes(e)));
+          const container = document.createElement('div');
+          container.style.display = 'grid';
+          container.style.gap = '18px';
+
+          // collect final fullRound names
+          const finals = [];
+          Object.keys(offeredEvents).forEach(ev => {
+            const rounds = offeredEvents[ev] || [];
+            const finalRound = rounds.find(r => /final/i.test(r)) || null;
+            if (finalRound) finals.push({ ev, full: `${ev} - ${finalRound}` });
+          });
+
+          // fetch finals with concurrency
+          const fetched = await pMap(finals, async item => {
+            const d = await getCachedRound(compName, item.full);
+            return { item, data: d };
+          }, 6);
+
+          for (const { item, data } of fetched) {
+            if (!data || !data.rows || !data.headers) continue;
+            const ev = item.ev;
+            const heading = document.createElement('h3');
+            heading.textContent = ev;
+            heading.style.margin = '0';
+            heading.style.fontWeight = '500';
+            container.appendChild(heading);
+
+            // build small table for podium (top 3)
+            const tbl = document.createElement('table');
+            tbl.style.width = '100%';
+            const thead = document.createElement('thead');
+            const trh = document.createElement('tr');
+            data.headers.slice(0, 6).forEach(h => { const th = document.createElement('th'); th.textContent = h; trh.appendChild(th); });
+            thead.appendChild(trh);
+            tbl.appendChild(thead);
+
+            const tbody = document.createElement('tbody');
+            (data.rows || []).slice(0, 3).forEach(row => {
+              const tr = document.createElement('tr');
+              data.headers.slice(0, 6).forEach(h => {
+                const td = document.createElement('td');
+                td.textContent = row[h] || '';
+                tr.appendChild(td);
+              });
+              tbody.appendChild(tr);
+            });
+            tbl.appendChild(tbody);
+            container.appendChild(tbl);
+          }
+
+          resultsAreaEl.innerHTML = '';
+          resultsAreaEl.appendChild(container);
+          return;
+        }
+
+        if (tab === 'by-person') {
+          // Build alphabetic competitor list for this competition
+          resultsAreaEl.innerHTML = '';
+          const container = document.createElement('div');
+          container.style.display = 'grid';
+          container.style.gap = '12px';
+
+          // gather names from all offered rounds
+          const nameSet = new Set();
+          const rounds = (compIdx >= 0) ? masterValues.slice(FIRST_ROUND_ROW).map(r => r[compIdx]).filter(Boolean) : Object.keys(roundSheetsMap[compName] || {});
+          await Promise.all((rounds || []).map(async roundName => {
+            try {
+              const d = await getRoundData(compName, roundName);
+              if (!d || !Array.isArray(d.rows)) return;
+              d.rows.forEach(row => {
+                const n = (row['Name'] || row['name'] || '').toString().trim();
+                if (n) nameSet.add(n);
+              });
+            } catch (e) {
+              // ignore per-round errors
+            }
+          }));
+
+          const names = Array.from(nameSet).sort((a, b) => a.localeCompare(b));
+          if (!names.length) {
+            resultsAreaEl.innerHTML = '<div style="padding:12px;color:#666">No competitor results available</div>';
+            return;
+          }
+
+          names.forEach(name => {
+            const card = document.createElement('div');
+            card.style.background = '#fafafa';
+            card.style.padding = '8px';
+            card.style.borderRadius = '8px';
+            const a = document.createElement('a');
+            a.href = `/live/${slug(compName)}/competitors/${slug(name)}`;
+            a.textContent = name;
+            a.addEventListener('click', (ev) => { ev.preventDefault(); navigate(a.getAttribute('href')); });
+            card.appendChild(a);
+            container.appendChild(card);
+          });
+
+          resultsAreaEl.appendChild(container);
+          return;
+        }
+
+        // tab === 'all' (default)
+        // Render event icons strip. Clicking an event icon renders all rounds for that event (final->first), best->worst
+        resultsAreaEl.innerHTML = '';
+        const iconsRow = document.createElement('div');
+        iconsRow.style.display = 'flex';
+        iconsRow.style.gap = '8px';
+        iconsRow.style.flexWrap = 'wrap';
+        iconsRow.style.marginBottom = '12px';
+
+        const offeredEventNames = Object.keys(offeredEvents || {});
+        if (offeredEventNames.length === 0) {
+          resultsAreaEl.innerHTML = '<div style="padding:12px;color:#666">No events listed for this competition</div>';
+          return;
+        }
+
+        const orderedEv = WCA_EVENTS.filter(e => offeredEventNames.includes(e)).concat(offeredEventNames.filter(e => !WCA_EVENTS.includes(e)));
+
+        // placeholder for event results area below icons
+        const eventResultsContainer = document.createElement('div');
+
+        orderedEv.forEach(evName => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.style.border = '1px solid #eee';
+          btn.style.background = 'transparent';
+          btn.style.borderRadius = '12px';
+          btn.style.width = '56px';
+          btn.style.height = '56px';
+          btn.style.padding = '6px';
+          btn.style.cursor = 'pointer';
+          btn.title = evName;
+
+          const img = document.createElement('img');
+          const evCode = eventNameToId(evName) || slug(evName);
+          img.src = `/images/event_icons/${evCode}.png`;
+          img.alt = evName;
+          img.style.width = '36px';
+          img.style.height = '36px';
+          img.style.objectFit = 'contain';
+          img.style.pointerEvents = 'none';
+
+          btn.appendChild(img);
+
+          btn.addEventListener('click', async (evClick) => {
+            evClick.stopPropagation();
+            // render rounds for this event
+            eventResultsContainer.innerHTML = '<div>Loading event results…</div>';
+            // read rounds for this event
+            const eventRounds = (offeredEvents[evName] || []).slice();
+            if (eventRounds.length === 0) {
+              eventResultsContainer.innerHTML = '<div style="padding:12px;color:#666">No rounds listed for this event</div>';
+              return;
+            }
+
+            // order rounds: final first (final treated as highest), then descending numeric or original order
+            eventRounds.sort((a, b) => {
+              const score = rn => {
+                const rnLower = (rn || '').toLowerCase();
+                if (rnLower.includes('final')) return 999;
+                const m = rnLower.match(/([0-9]+)/);
+                return m ? parseInt(m[1], 10) : 0;
+              };
+              return score(b) - score(a);
+            });
+
+            const container = document.createElement('div');
+            container.style.display = 'flex';
+            container.style.flexDirection = 'column';
+            container.style.gap = '12px';
+
+            for (const rn of eventRounds) {
+              const full = `${evName} - ${rn}`;
+              const d = await getCachedRound(compName, full);
+              if (!d || !Array.isArray(d.rows) || !Array.isArray(d.headers)) continue;
+
+              const heading = document.createElement('h3');
+              heading.textContent = `${evName} - ${rn}`;
+              heading.style.margin = '12px 0 6px';
+              container.appendChild(heading);
+
+              // build table: show up to first 6 headers for compactness
+              const tbl = document.createElement('table');
+              tbl.style.width = '100%';
+              const thead = document.createElement('thead');
+              const trh = document.createElement('tr');
+              d.headers.slice(0, 6).forEach(h => { const th = document.createElement('th'); th.textContent = h; trh.appendChild(th); });
+              thead.appendChild(trh);
+              tbl.appendChild(thead);
+
+              const tbody = document.createElement('tbody');
+
+              // sort rows best->worst using simple heuristic: prefer numeric in Average/Best columns if present
+              const rows = (d.rows || []).slice();
+              const numericHeaderCandidates = ['Average', 'Mean', 'Best', 'Result'];
+              let primaryHeader = d.headers.find(h => numericHeaderCandidates.includes(h)) || d.headers[d.headers.length - 1];
+              // fallback to first header if nothing numeric
+              if (!primaryHeader) primaryHeader = d.headers[0];
+
+              rows.sort((A, B) => {
+                const aVal = Number(A[primaryHeader] ?? NaN);
+                const bVal = Number(B[primaryHeader] ?? NaN);
+                const evCodeLocal = eventNameToId(evName) || evName;
+                if (evCodeLocal === '333mbf') {
+                  // higher better
+                  if (Number.isFinite(bVal) && Number.isFinite(aVal)) return bVal - aVal;
+                  return 0;
+                } else {
+                  if (Number.isFinite(aVal) && Number.isFinite(bVal)) return aVal - bVal;
+                  return 0;
+                }
+              });
+
+              rows.forEach(rowObj => {
+                const tr = document.createElement('tr');
+                d.headers.slice(0, 6).forEach(h => {
+                  const td = document.createElement('td');
+                  td.textContent = (rowObj[h] ?? '').toString();
+                  tr.appendChild(td);
+                });
+                tbody.appendChild(tr);
+              });
+
+              tbl.appendChild(tbody);
+              container.appendChild(tbl);
+            }
+
+            eventResultsContainer.innerHTML = '';
+            eventResultsContainer.appendChild(container);
+            patchCompetitionCells(eventResultsContainer).catch(() => {});
+          });
+
+          iconsRow.appendChild(btn);
+        });
+
+        resultsAreaEl.appendChild(iconsRow);
+        resultsAreaEl.appendChild(eventResultsContainer);
+      } // activateCompTab
     }
 
 
@@ -2856,6 +3364,16 @@
         await renderCompetitionsList();
         return;
       }
+
+      // handle /competitions
+      if (window.location.pathname.replace(/\/+$/, '') === '/competitions') {
+        // hide other views then render competitions page
+        showView('competitions-page');
+        document.getElementById('view-competitions-page').hidden = false;
+        await renderCompetitionsPage();
+        return;
+      }
+
 
       // Route has a competition selected → restore normal two-column layout and show live-main
       restoreLeftColumn();
