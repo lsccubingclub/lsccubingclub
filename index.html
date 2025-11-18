@@ -310,7 +310,20 @@
         ">Go to LSC Cubing Club Live</a>
       </div>
 
-      <a href="/competitions" class="btn-live" style="display:inline-block; padding:12px 24px; background:#1976D2; color:white; border-radius:6px; font-weight:bold; margin-top:12px;">View competitions</a>
+
+      <div class="section" style="margin-top:40px;">
+        <h2 style="color:#1976D2;">Competitions</h2>
+        <p>Browse past competitions and full results.</p>
+        <a href="/competitions" class="btn-live" style="
+          display:inline-block;
+          padding:12px 24px;
+          background:#1976D2;
+          color:white;
+          border-radius:6px;
+          font-weight:bold;
+          margin-top:12px;
+        ">View competitions</a>
+      </div>
 
       <!-- Records -->
       <div class="section" style="margin-top:40px;">
@@ -357,6 +370,49 @@
       created by lai
     </footer>
   </main>
+
+  <!-- Add a new main view for competitions -->
+  <main id="view-competitions" hidden>
+    <section style="padding:20px 10px; max-width:1100px; margin:auto;">
+      <div id="competitions-header" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+        <h2 style="margin:0;">Competitions</h2>
+        <div id="competitions-tabs" style="display:none; gap:10px;">
+          <button id="comp-tab-all" class="btn" style="background:#1976D2;color:#fff;border:none;">All</button>
+          <button id="comp-tab-person" class="btn">By person</button>
+          <button id="comp-tab-podiums" class="btn">Podiums</button>
+        </div>
+      </div>
+
+      <!-- List of locked competitions (chronological) -->
+      <div id="competitions-locked-list" style="display:grid; grid-template-columns:1fr; gap:10px;"></div>
+
+      <!-- Competition detail: summary + tabs content -->
+      <div id="competition-detail" style="display:none;">
+        <div id="competition-summary" style="
+          background:#fff; border:1px solid #eee; border-radius:10px; padding:14px; box-shadow:0 6px 18px rgba(18,38,63,0.04);
+          margin-bottom:16px;">
+          <div id="comp-title" style="font-weight:600; font-size:18px; margin-bottom:6px;"></div>
+          <div id="comp-meta" style="color:#555; font-size:14px;"></div>
+
+          <div id="comp-offered-events" style="margin-top:10px;">
+            <div style="font-weight:600; margin-bottom:6px;">Offered events and rounds</div>
+            <div id="comp-rounds-wrap" style="display:flex; flex-wrap:wrap; gap:8px;"></div>
+          </div>
+
+          <div id="comp-highlights" style="margin-top:10px;"></div>
+        </div>
+
+        <div id="comp-tabs-content" style="background:#fff; border:1px solid #eee; border-radius:10px; padding:14px;">
+          <div id="comp-all" style="display:block;"></div>
+          <div id="comp-person" style="display:none;"></div>
+          <div id="comp-podiums" style="display:none;"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+
+
 
   <main id="view-rankings" hidden>
     <section style="padding:20px 10px; max-width:1100px; margin:auto;">
@@ -408,37 +464,6 @@
     </section>
   </main>
 
-
-
-  <main id="view-competitions-page" hidden>
-    <section style="padding:20px 10px; max-width:900px; margin:auto;">
-      <div style="display:flex; justify-content:space-between; align-items:center;">
-        <h2 style="margin:0; font-size:1.4rem; font-weight:600;">Competitions</h2>
-        <div style="display:flex; gap:8px; align-items:center;">
-          <input id="competitions-search-global" placeholder="Search competitions" style="padding:8px; border:1px solid #e6e6e6; border-radius:8px;" />
-        </div>
-      </div>
-
-      <div id="competitions-locked-list" style="margin-top:16px; display:grid; gap:12px;"></div>
-
-      <div id="competition-detail" style="margin-top:24px; display:none; background:#fff; padding:16px; border-radius:8px; box-shadow:0 6px 18px rgba(0,0,0,0.06);">
-        <div id="competition-meta" style="display:flex; gap:12px; align-items:flex-start; flex-wrap:wrap;">
-          <div id="competition-meta-left" style="flex:1 1 240px"></div>
-          <div id="competition-meta-right" style="flex:1 1 360px"></div>
-        </div>
-
-        <div style="margin-top:14px; display:flex; gap:8px; align-items:center;">
-          <button id="comp-tab-all" class="btn" style="padding:8px 12px; border-radius:8px;">All</button>
-          <button id="comp-tab-by-person" class="btn" style="padding:8px 12px; border-radius:8px;">By Person</button>
-          <button id="comp-tab-podiums" class="btn" style="padding:8px 12px; border-radius:8px;">Podiums</button>
-        </div>
-
-        <div id="competition-results-area" style="margin-top:12px;"></div>
-      </div>
-    </section>
-  </main>
-
-
   <main id="view-live" hidden>
     <div id="live-container" style="display:flex; gap:16px; align-items:flex-start;">
       <div style="display:flex; flex-direction:column; gap:8px; min-width:200px;">
@@ -451,6 +476,16 @@
     </div>
 
     <div id="view-nonmain-live">
+      <div id="live-competition-summary" style="display:none; margin-bottom:16px;">
+        <div style="
+          background:#fff; border:1px solid #eee; border-radius:10px; padding:14px; box-shadow:0 6px 18px rgba(18,38,63,0.04);
+        ">
+          <div id="live-comp-title" style="font-weight:600; font-size:18px; margin-bottom:6px;"></div>
+          <div id="live-comp-meta" style="color:#555; font-size:14px;"></div>
+          <div id="live-round-cards" style="display:flex; flex-wrap:wrap; gap:10px; margin-top:10px;"></div>
+        </div>
+      </div>
+
       <div id="subtitle"></div>
       <table id="leaderboard">
         <thead></thead>
@@ -780,14 +815,18 @@
       document.title = currentComp ? `${currentComp} — Live` : 'LSC Cubing Club Live';
     }
 
+
     function getRoute() {
       const rawParts = window.location.pathname.split('/').filter(Boolean);
       const parts = rawParts.map(p => p);
 
       const isLive = parts[0] === 'live';
-      const comp = parts[1] || '';
+      const isCompetitions = parts[0] === 'competitions';
+      const compSlug = parts[1] || '';
+      const compDetail = isCompetitions && !!compSlug;
+
       const second = parts[2] || '';
-      const third = parts[3] || '';
+      const third  = parts[3] || '';
 
       const isCompetitors = isLive && second === 'competitors';
       const isPodiums     = isLive && second === 'podiums';
@@ -798,13 +837,14 @@
       const routeEvent = parts[1] || '';
       const routeCat   = parts[2] || '';
 
-      const compactEvent = isLive && comp && second && /^[0-9a-z]+$/i.test(second) && third ? second : '';
-      const compactRound = isLive && comp && second && third ? third : '';
+      const compactEvent = isLive && compSlug && second && /^[0-9a-z]+$/i.test(second) && third ? second : '';
+      const compactRound = isLive && compSlug && second && third ? third : '';
 
       return {
-        isHome: !isLive && !isRankings && !isRecords,
+        isHome: !isLive && !isRankings && !isRecords && !isCompetitions,
         isLive,
-        comp,                     // slug form
+        isCompetitions,
+        comp: compSlug,
         roundSegment: parts[2] || '',
         compactEvent,
         compactRound,
@@ -816,13 +856,468 @@
         isRankings,
         isRecords,
         routeEvent,
-        routeCat
+        routeCat,
+        isCompetitionDetail: compDetail
       };
+    }
+
+    // Show competitions view
+    async function renderCompetitionsHome() {
+      showView('competitions');
+      document.getElementById('view-competitions').hidden = false;
+
+      // Hide detail area, show list
+      document.getElementById('competition-detail').style.display = 'none';
+      document.getElementById('competitions-tabs').style.display = 'none';
+
+      await fetchMeta();
+
+      // Build chronological locked competition list
+      const header = Array.isArray(masterValues[COMP_HEADER_ROW]) ? masterValues[COMP_HEADER_ROW] : [];
+      const comps = header.slice(1).map(c => (c || '').toString().trim()).filter(Boolean);
+
+      const listEl = document.getElementById('competitions-locked-list');
+      listEl.innerHTML = '';
+
+      const items = comps.map(name => {
+        const isLocked = !!compLockMap[name];
+        const date = getCompetitionDate(name);
+        return { name, isLocked, date };
+      })
+      .filter(x => x.isLocked)
+      .sort((a, b) => {
+        // chronological ascending by date (YYYY-MM-DD or similar)
+        const da = Date.parse(a.date || '1970-01-01');
+        const db = Date.parse(b.date || '1970-01-01');
+        return da - db;
+      });
+
+      if (items.length === 0) {
+        listEl.innerHTML = '<div style="padding:12px;color:#666">No past competitions found</div>';
+        return;
+      }
+
+      items.forEach(({ name, date }) => {
+        const card = document.createElement('div');
+        card.style.cssText = 'background:#fff;border:1px solid #eee;border-radius:10px;padding:14px;box-shadow:0 6px 18px rgba(18,38,63,0.04);cursor:pointer;';
+        const t = document.createElement('div');
+        t.style.cssText = 'font-weight:600; font-size:15px;';
+        t.textContent = name;
+        const d = document.createElement('div');
+        d.style.cssText = 'color:#555; font-size:13px; margin-top:4px;';
+        d.textContent = date ? `Date: ${date}` : '';
+        card.appendChild(t);
+        card.appendChild(d);
+        card.addEventListener('click', () => navigate(`/competitions/${slug(name)}`));
+        listEl.appendChild(card);
+      });
+    }
+
+    // Read one competition’s canonical date from meta (earliest round date)
+    function getCompetitionDate(compName) {
+      const sheets = roundSheetsMap[compName] || {};
+      const dates = Object.values(sheets).map(o => o && o.date).filter(Boolean);
+      if (!dates.length) return '';
+      // pick earliest date
+      return dates.sort((a, b) => Date.parse(a || '2100-01-01') - Date.parse(b || '2100-01-01'))[0];
+    }
+
+    // Competition detail view consuming prefetch JSONs
+    async function renderCompetitionDetail(compSlug) {
+      showView('competitions');
+      document.getElementById('view-competitions').hidden = false;
+
+      const compName = unslug(compSlug);
+      const tabsBar = document.getElementById('competitions-tabs');
+      const detailEl = document.getElementById('competition-detail');
+      const allEl = document.getElementById('comp-all');
+      const personEl = document.getElementById('comp-person');
+      const podiumsEl = document.getElementById('comp-podiums');
+
+      tabsBar.style.display = 'flex';
+      detailEl.style.display = '';
+
+      // Summary
+      document.getElementById('comp-title').textContent = compName;
+
+      // Load details JSON built by the Python script
+      const base = `/data/competitions/${encodeURIComponent(slug(compName))}`;
+      let details = {};
+      try { details = await (await fetch(`${base}/details.json`, { cache: 'no-store' })).json(); } catch (e) {}
+
+      const metaEl = document.getElementById('comp-meta');
+      const venue = details.venue || '';
+      const date = details.date || getCompetitionDate(compName) || '';
+      const time = details.time || '';
+      metaEl.textContent = [venue, date, time].filter(Boolean).join(' • ');
+
+      // Offered events & rounds, advance counts
+      const offeredWrap = document.getElementById('comp-rounds-wrap');
+      offeredWrap.innerHTML = '';
+      try {
+        const offered = await (await fetch(`${base}/offered.json`, { cache: 'no-store' })).json();
+        // Render round chips (WCA order)
+        const byEvent = offered.byEvent || {};
+        const orderedEvents = WCA_EVENTS.filter(e => byEvent[e]).concat(Object.keys(byEvent).filter(e => !WCA_EVENTS.includes(e)).sort());
+        orderedEvents.forEach(ev => {
+          const rounds = (byEvent[ev] || []).slice();
+          rounds.forEach(rn => {
+            const chip = document.createElement('div');
+            chip.style.cssText = `
+              display:flex; align-items:center; gap:8px; padding:10px 12px; border:1px solid #e6e6e6;
+              border-radius:14px; cursor:pointer; background:#fafafa;
+            `;
+            const icon = document.createElement('img');
+            const code = EVENT_NAME_TO_CODE[(ev || '').toLowerCase()] || 'unknown';
+            icon.src = `/images/event_icons/${code}.png`;
+            icon.alt = ev;
+            icon.style.cssText = 'width:24px;height:24px;object-fit:contain;';
+            const label = document.createElement('div');
+            label.textContent = `${ev} - ${rn}`;
+            chip.appendChild(icon);
+            chip.appendChild(label);
+            chip.addEventListener('click', () => navigate(`/live/${slug(compName)}/${EVENT_NAME_TO_CODE[(ev || '').toLowerCase()] || slug(`${ev} - ${rn}`)}/${roundNameToId(rn) || slug(`${ev} - ${rn}`)}`));
+            offeredWrap.appendChild(chip);
+          });
+        });
+      } catch (e) {}
+
+      // Highlights (podiums of main event)
+      const hl = document.getElementById('comp-highlights');
+      hl.innerHTML = '';
+      if (details.main_event && details.podiums && details.podiums[details.main_event]) {
+        const mainEvent = details.main_event;
+        const hTitle = document.createElement('div');
+        hTitle.style.cssText = 'font-weight:600; margin-top:8px;';
+        hTitle.textContent = `Highlights: ${mainEvent} podium`;
+        hl.appendChild(hTitle);
+
+        const tbl = document.createElement('table');
+        tbl.style.cssText = 'margin-top:6px; border-collapse:collapse; width:100%;';
+        const thead = document.createElement('thead');
+        thead.innerHTML = '<tr><th style="text-align:left; padding:6px; background:#1976D2;color:#fff;">Place</th><th style="text-align:left; padding:6px; background:#1976D2;color:#fff;">Name</th><th style="text-align:right; padding:6px; background:#1976D2;color:#fff;">Result</th></tr>';
+        tbl.appendChild(thead);
+        const tbody = document.createElement('tbody');
+        (details.podiums[main_event] || []).forEach((row) => {
+          const tr = document.createElement('tr');
+          const td1 = document.createElement('td'); td1.style.cssText = 'padding:6px;'; td1.textContent = row.place;
+          const td2 = document.createElement('td'); td2.style.cssText = 'padding:6px;'; td2.textContent = row.name;
+          const td3 = document.createElement('td'); td3.style.cssText = 'padding:6px; text-align:right;'; td3.textContent = row.result;
+          tr.appendChild(td1); tr.appendChild(td2); tr.appendChild(td3);
+          tbody.appendChild(tr);
+        });
+        tbl.appendChild(tbody);
+        hl.appendChild(tbl);
+      }
+
+      // Tabs content: fetch generated JSONs
+      let allJson = {}, personsJson = {}, podiumsJson = {};
+      try { allJson = await (await fetch(`${base}/all.json`, { cache: 'no-store' })).json(); } catch (e) {}
+      try { personsJson = await (await fetch(`${base}/persons.json`, { cache: 'no-store' })).json(); } catch (e) {}
+      try { podiumsJson = await (await fetch(`${base}/podiums.json`, { cache: 'no-store' })).json(); } catch (e) {}
+
+      // Render "All" by event (WCA order), final to first, best to worst (records page UI resemblance)
+      function renderAll() {
+        allEl.innerHTML = '';
+        const offeredEvents = Object.keys(allJson.events || {});
+        const ordered = WCA_EVENTS.filter(e => offeredEvents.includes(e))
+          .concat(offeredEvents.filter(e => !WCA_EVENTS.includes(e)).sort());
+
+        if (!ordered.length) {
+          allEl.innerHTML = '<div style="padding:8px; color:#666">No results</div>';
+          return;
+        }
+
+        ordered.forEach(eventName => {
+          const rounds = allJson.events[eventName] || [];
+          // header
+          const evRow = document.createElement('div');
+          evRow.style.cssText = 'display:flex; align-items:center; gap:8px; margin-top:12px;';
+          const icon = document.createElement('img');
+          const code = EVENT_NAME_TO_CODE[(eventName || '').toLowerCase()] || 'unknown';
+          icon.src = `/images/event_icons/${code}.png`; icon.alt = eventName;
+          icon.style.cssText = 'width:28px;height:28px;object-fit:contain;';
+          const h3 = document.createElement('h3');
+          h3.textContent = eventName;
+          h3.style.cssText = 'margin:0; font-weight:500;';
+          evRow.appendChild(icon); evRow.appendChild(h3);
+          allEl.appendChild(evRow);
+
+          rounds.forEach(roundObj => {
+            const tblWrap = document.createElement('div');
+            tblWrap.style.cssText = 'overflow-x:auto; -webkit-overflow-scrolling:touch;';
+            const tbl = document.createElement('table');
+            tbl.style.cssText = 'display:inline-table; white-space:nowrap; margin-top:6px;';
+            const thead = document.createElement('thead');
+            thead.innerHTML = '<tr><th style="text-align:left; padding:8px; background:#1976D2;color:#fff;">#</th><th style="text-align:left; padding:8px; background:#1976D2;color:#fff;">Name</th><th style="text-align:right; padding:8px; background:#1976D2;color:#fff;">Result</th></tr>';
+            tbl.appendChild(thead);
+            const tbody = document.createElement('tbody');
+            (roundObj.rows || []).forEach((row, idx) => {
+              const tr = document.createElement('tr');
+              const td1 = document.createElement('td'); td1.style.cssText = 'padding:8px; font-weight:600;'; td1.textContent = idx + 1;
+              const td2 = document.createElement('td'); td2.style.cssText = 'padding:8px;'; td2.textContent = row.name;
+              const td3 = document.createElement('td'); td3.style.cssText = 'padding:8px; text-align:right;'; td3.textContent = row.final;
+              tr.appendChild(td1); tr.appendChild(td2); tr.appendChild(td3);
+              tbody.appendChild(tr);
+            });
+            tbl.appendChild(tbody);
+            tblWrap.appendChild(tbl);
+            // round label
+            const rnLabel = document.createElement('div');
+            rnLabel.style.cssText = 'margin-top:6px; color:#555;';
+            rnLabel.textContent = roundObj.round;
+            allEl.appendChild(rnLabel);
+            allEl.appendChild(tblWrap);
+          });
+        });
+      }
+
+      // Render "By person" alphabetical
+      function renderByPerson() {
+        personEl.innerHTML = '';
+        const persons = personsJson.persons || [];
+        if (!persons.length) {
+          personEl.innerHTML = '<div style="padding:8px; color:#666">No results</div>';
+          return;
+        }
+        persons.forEach(p => {
+          const h3 = document.createElement('h3');
+          h3.textContent = p.name;
+          h3.style.cssText = 'margin-top:18px; font-weight:500;';
+          personEl.appendChild(h3);
+
+          const tbl = document.createElement('table');
+          const thead = document.createElement('thead');
+          thead.innerHTML = '<tr><th style="text-align:left; padding:8px; background:#1976D2;color:#fff;">Event</th><th style="text-align:left; padding:8px; background:#1976D2;color:#fff;">Round</th><th style="text-align:right; padding:8px; background:#1976D2;color:#fff;">Result</th></tr>';
+          const tbody = document.createElement('tbody');
+          (p.results || []).forEach(r => {
+            const tr = document.createElement('tr');
+            const td1 = document.createElement('td'); td1.style.cssText = 'padding:8px;'; td1.textContent = r.event;
+            const td2 = document.createElement('td'); td2.style.cssText = 'padding:8px;'; td2.textContent = r.round;
+            const td3 = document.createElement('td'); td3.style.cssText = 'padding:8px; text-align:right;'; td3.textContent = r.final;
+            tr.appendChild(td1); tr.appendChild(td2); tr.appendChild(td3);
+            tbody.appendChild(tr);
+          });
+          tbl.appendChild(thead); tbl.appendChild(tbody);
+          personEl.appendChild(tbl);
+        });
+      }
+
+      // Render "Podiums" ordered by WCA event
+      function renderPodiums() {
+        podiumsEl.innerHTML = '';
+        const byEvent = podiumsJson.events || {};
+        const offeredEvents = Object.keys(byEvent);
+        const ordered = WCA_EVENTS.filter(e => offeredEvents.includes(e))
+          .concat(offeredEvents.filter(e => !WCA_EVENTS.includes(e)).sort());
+
+        if (!ordered.length) {
+          podiumsEl.innerHTML = '<div style="padding:8px; color:#666">No podiums</div>';
+          return;
+        }
+
+        ordered.forEach(ev => {
+          const evRow = document.createElement('div');
+          evRow.style.cssText = 'display:flex; align-items:center; gap:8px; margin-top:12px;';
+          const icon = document.createElement('img');
+          const code = EVENT_NAME_TO_CODE[(ev || '').toLowerCase()] || 'unknown';
+          icon.src = `/images/event_icons/${code}.png`;
+          icon.alt = ev;
+          icon.style.cssText = 'width:28px;height:28px;object-fit:contain;';
+          const h3 = document.createElement('h3');
+          h3.textContent = ev;
+          h3.style.cssText = 'margin:0; font-weight:500;';
+          evRow.appendChild(icon); evRow.appendChild(h3);
+          podiumsEl.appendChild(evRow);
+
+          const tbl = document.createElement('table');
+          const thead = document.createElement('thead');
+          thead.innerHTML = '<tr><th style="text-align:left; padding:8px; background:#1976D2;color:#fff;">Place</th><th style="text-align:left; padding:8px; background:#1976D2;color:#fff;">Name</th><th style="text-align:right; padding:8px; background:#1976D2;color:#fff;">Result</th></tr>';
+          const tbody = document.createElement('tbody');
+          (byEvent[ev] || []).forEach(row => {
+            const tr = document.createElement('tr');
+            const td1 = document.createElement('td'); td1.style.cssText = 'padding:8px;'; td1.textContent = row.place;
+            const td2 = document.createElement('td'); td2.style.cssText = 'padding:8px;'; td2.textContent = row.name;
+            const td3 = document.createElement('td'); td3.style.cssText = 'padding:8px; text-align:right;'; td3.textContent = row.final;
+            tr.appendChild(td1); tr.appendChild(td2); tr.appendChild(td3);
+            tbody.appendChild(tr);
+          });
+          tbl.appendChild(thead); tbl.appendChild(tbody);
+          podiumsEl.appendChild(tbl);
+        });
+      }
+
+      // Tab wiring
+      const btnAll = document.getElementById('comp-tab-all');
+      const btnPerson = document.getElementById('comp-tab-person');
+      const btnPodiums = document.getElementById('comp-tab-podiums');
+
+      function selectTab(which) {
+        btnAll.style.background = which === 'all' ? '#1976D2' : '#fff';
+        btnAll.style.color = which === 'all' ? '#fff' : 'black';
+        btnAll.style.border = which === 'all' ? 'none' : '1px solid black';
+
+        btnPerson.style.background = which === 'person' ? '#1976D2' : '#fff';
+        btnPerson.style.color = which === 'person' ? '#fff' : 'black';
+        btnPerson.style.border = which === 'person' ? 'none' : '1px solid black';
+
+        btnPodiums.style.background = which === 'podiums' ? '#1976D2' : '#fff';
+        btnPodiums.style.color = which === 'podiums' ? '#fff' : 'black';
+        btnPodiums.style.border = which === 'podiums' ? 'none' : '1px solid black';
+
+        allEl.style.display = which === 'all' ? '' : 'none';
+        personEl.style.display = which === 'person' ? '' : 'none';
+        podiumsEl.style.display = which === 'podiums' ? '' : 'none';
+      }
+
+      btnAll.onclick = () => { renderAll(); selectTab('all'); };
+      btnPerson.onclick = () => { renderByPerson(); selectTab('person'); };
+      btnPodiums.onclick = () => { renderPodiums(); selectTab('podiums'); };
+
+      // Default tab
+      renderAll(); selectTab('all');
+    }
+
+    // Live: show summary and round cards
+    async function renderLiveSummary(compName) {
+      const summary = document.getElementById('live-competition-summary');
+      const titleEl = document.getElementById('live-comp-title');
+      const metaEl = document.getElementById('live-comp-meta');
+      const cards = document.getElementById('live-round-cards');
+
+      await fetchMeta();
+      if (!compName) { summary.style.display = 'none'; return; }
+
+      titleEl.textContent = compName;
+      const venueDate = getCompetitionDate(compName) || '';
+      // Try details.json if present
+      let details = {};
+      try { details = await (await fetch(`/data/competitions/${encodeURIComponent(slug(compName))}/details.json`, { cache: 'no-store' })).json(); } catch (e) {}
+      const venue = details.venue || '';
+      const date = details.date || venueDate || '';
+      metaEl.textContent = [venue, date].filter(Boolean).join(' • ');
+
+      cards.innerHTML = '';
+      // Build round cards from roundSheetsMap order
+      const rounds = Object.keys(roundSheetsMap[compName] || {}).filter(Boolean)
+        // show unlocked competitions only here; filter by compLockMap
+        .filter(() => !compLockMap[compName]);
+
+      // group by event; render big rounded rectangles
+      const byEvent = {};
+      rounds.forEach(full => {
+        const parts = full.split(/\s*-\s*/);
+        const ev = parts[0]; const rn = parts.slice(1).join(' - ');
+        if (!byEvent[ev]) byEvent[ev] = [];
+        if (!byEvent[ev].includes(rn)) byEvent[ev].push(rn);
+      });
+
+      const orderedEvents = WCA_EVENTS.filter(e => byEvent[e]).concat(Object.keys(byEvent).filter(e => !WCA_EVENTS.includes(e)).sort());
+      orderedEvents.forEach(ev => {
+        (byEvent[ev] || []).forEach(rn => {
+          const card = document.createElement('div');
+          card.style.cssText = `
+            display:flex; align-items:center; gap:10px; padding:16px 18px; border:1px solid #e6e6e6;
+            border-radius:18px; cursor:pointer; background:#fafafa; font-weight:600;
+          `;
+          const icon = document.createElement('img');
+          const code = EVENT_NAME_TO_CODE[(ev || '').toLowerCase()] || 'unknown';
+          icon.src = `/images/event_icons/${code}.png`;
+          icon.alt = ev;
+          icon.style.cssText = 'width:28px;height:28px;object-fit:contain;';
+          const label = document.createElement('div');
+          label.textContent = `${ev} - ${rn}`;
+          card.appendChild(icon); card.appendChild(label);
+          card.addEventListener('click', () => navigate(buildLiveRoundPath(compName, ev, rn)));
+          cards.appendChild(card);
+        });
+      });
+
+      summary.style.display = orderedEvents.length ? '' : 'none';
+    }
+
+    // Router integration
+    async function render() {
+      const route = getRoute();
+
+      if (route.isRankings && route.routeEvent && route.routeCat) {
+        showView('rankings');
+        document.getElementById('view-rankings').hidden = false;
+        await renderRankingsView(route.routeEvent, route.routeCat);
+        return;
+      }
+      if (route.isRecords) {
+        showView('records');
+        document.getElementById('view-records').hidden = false;
+        await renderRecordsView();
+        return;
+      }
+      if (route.isCompetitions) {
+        showView('competitions');
+        if (route.isCompetitionDetail) {
+          await renderCompetitionDetail(route.comp);
+        } else {
+          await renderCompetitionsHome();
+        }
+        return;
+      }
+      if (!route.isLive) {
+        showView('home');
+        return;
+      }
+
+      // Existing live handling
+      showView('live');
+
+      if (!route.comp) {
+        // live competitions list view
+        document.getElementById('live-competition-summary').style.display = 'none';
+        await renderCompetitionsList();
+        return;
+      }
+
+      // Live competition selected
+      const compName = unslug(route.comp);
+      currentComp = compName;
+      updateTitles();
+      await renderSidebar(compName);
+      await renderLiveSummary(compName);
+
+      if (route.isPodiums) {
+        await renderPodiumsView(compName);
+        return;
+      }
+      if (route.isCompetitorDetail) {
+        showView('competitor');
+        await renderCompetitorResultsView();
+        return;
+      }
+      if (route.isCompetitors) {
+        await renderCompetitorsView(route.comp || currentComp);
+        return;
+      }
+
+      // Leaderboard route
+      if (route.compactEvent && route.compactRound) {
+        const eventCode = decodeURIComponent(route.compactEvent);
+        const roundId = decodeURIComponent(route.compactRound);
+        const eventName = EVENT_CODE_TO_NAME[eventCode] || '';
+        const roundLabel = (roundId === 'f') ? 'Final' : (roundId === '1' ? 'First Round' : (roundId === '2' ? 'Second Round' : (roundId === '3' ? 'Third Round' : roundId)));
+        currentRound = eventName ? `${eventName} - ${roundLabel}` : '';
+        currentCanonicalCandidates = getCanonicalTabCandidates(currentComp, currentRound);
+        await loadLeaderboard();
+        return;
+      } else {
+        currentRound = route.roundSegment ? decodeRoundSegment(route.roundSegment) : '';
+        currentCanonicalCandidates = getCanonicalTabCandidates(currentComp, currentRound);
+        await loadLeaderboard();
+        return;
+      }
     }
       
     async function fetchMeta() {
       const tab = 'meta';
-      const range = 'A2:L500';
+      const range = 'A2:H500';
       const url =
         `https://sheets.googleapis.com/v4/spreadsheets/${MASTER_SHEET_ID}` +
         `/values/${encodeURIComponent(tab + '!' + range)}?key=${API_KEY}`;
@@ -851,15 +1346,11 @@
         const compCell = (r[0] || '').toString().trim();
         const sheetId = (r[1] || '').toString().trim();
         const lockedCell = (r[2] || '').toString().trim().toLowerCase();
-        const venue = (r[3] || '').toString().trim();
-        const date = (r[5] || '').toString().trim();
-        const mainEvent = (r[4] || '').toString().trim();
-        const highlights = (r[6] || '').toString().trim();
-        const eventName = (r[7] || '').toString().trim();
-        const roundLabel = (r[8] || '').toString().trim();
-        const format = (r[9] || '').toString().trim().toLowerCase();
-        const advRaw = (r[10] || '').toString().trim();
-
+        const eventName = (r[3] || '').toString().trim();
+        const roundLabel = (r[4] || '').toString().trim();
+        const format = (r[5] || '').toString().trim().toLowerCase();
+        const advRaw = (r[6] || '').toString().trim();
+        const date = (r[7] || '').toString().trim();
 
         // If row has empty comp and sheetId, inherit from last seen block
         let comp = compCell;
@@ -913,28 +1404,8 @@
         lastLocked = isLocked;
       });
 
-
-      // --- after master-values parsing loop inside fetchMeta(), add:
-      compDateMap = {};      // comp -> ISO date string or null
-      compDetailsMap = {};   // comp -> { venue, date, time, main_event, highlights, offered_events: { eventName: [roundLabel,...] }, roundsMeta: { fullRound: {advance: number} } }
-
-      // Build compDateMap and compDetailsMap using the earlier collected structures
-      Object.keys(compEvents || {}).forEach(comp => {
-        const rounds = roundSheetsMap[comp] || {};
-        let foundDate = null;
-        for (const rr of Object.values(rounds)) {
-          if (rr && rr.date) {
-            const d = new Date(rr.date);
-            if (!isNaN(d)) {
-              const iso = d.toISOString().slice(0,10);
-              if (!foundDate || iso < foundDate) foundDate = iso;
-            }
-          }
-        }
-        compDateMap[comp] = foundDate || null;
-        compDetailsMap[comp] = compDetailsMap[comp] || { venue: '', date: compDateMap[comp] || '', time: '', main_event: '', highlights: '', offered_events: compEvents[comp] || {}, roundsMeta: roundAdvanceMap[comp] || {} };
-      });
-
+      // Rebuild a lightweight masterValues matrix so older code paths still work
+      // headerRow = ['Competition', comp1, comp2, ...]
       const headerRow = ['Competition', ...Object.keys(compEvents)];
       const perCompFullRounds = {};
       Object.keys(compEvents).forEach(comp => {
@@ -1105,9 +1576,6 @@
     // ===== Master sheet fetch (competitions + rounds) =====
     let compLockMap = {};
     let compSheetMap = {};
-    let compDateMap = {};
-    let compDetailsMap = {};
-
 
 
     function getEventsForComp(comp) {
@@ -1488,455 +1956,6 @@
           await new Promise(r => setTimeout(r, 80));
         }
       }
-    }
-
-    async function renderCompetitionsPage() {
-      await initLiveOnce();
-
-      // Show competitions view and hide others through your existing showView helper
-      showView('competitions-page');
-      document.getElementById('view-competitions-page').hidden = false;
-
-      const lockedListEl = document.getElementById('competitions-locked-list');
-      const detailEl = document.getElementById('competition-detail');
-      const metaLeftEl = document.getElementById('competition-meta-left');
-      const metaRightEl = document.getElementById('competition-meta-right');
-      const resultsAreaEl = document.getElementById('competition-results-area');
-      const searchInput = document.getElementById('competitions-search-global');
-
-      lockedListEl.innerHTML = '';
-      detailEl.style.display = 'none';
-      resultsAreaEl.innerHTML = '';
-
-      // build list of competition names from masterValues header row
-      const headerRow = Array.isArray(masterValues[COMP_HEADER_ROW]) ? masterValues[COMP_HEADER_ROW] : [];
-      const comps = headerRow.slice(1).map(c => (c || '').toString().trim()).filter(Boolean);
-
-      // keep only locked competitions
-      const locked = comps.filter(c => !!compLockMap[c]);
-
-      // sort locked by date ascending using compDateMap; unknown dates last alphabetically
-      locked.sort((a, b) => {
-        const da = compDateMap && compDateMap[a];
-        const db = compDateMap && compDateMap[b];
-        if (da && db) return da.localeCompare(db);
-        if (da && !db) return -1;
-        if (!da && db) return 1;
-        return a.localeCompare(b);
-      });
-
-      if (!locked.length) {
-        lockedListEl.innerHTML = '<div style="padding:12px;color:#666">No locked competitions</div>';
-        return;
-      }
-
-      // create a compact card for each locked competition
-      locked.forEach(compName => {
-        const card = document.createElement('div');
-        card.style.background = '#fff';
-        card.style.border = '1px solid #eee';
-        card.style.borderRadius = '10px';
-        card.style.padding = '12px';
-        card.style.display = 'flex';
-        card.style.justifyContent = 'space-between';
-        card.style.alignItems = 'center';
-        card.style.cursor = 'pointer';
-        card.style.boxShadow = '0 6px 18px rgba(0,0,0,0.04)';
-        card.tabIndex = 0;
-
-        const left = document.createElement('div');
-        left.style.display = 'flex';
-        left.style.flexDirection = 'column';
-        left.style.gap = '6px';
-
-        const title = document.createElement('div');
-        title.textContent = compName;
-        title.style.fontWeight = '600';
-        title.style.fontSize = '15px';
-
-        const meta = document.createElement('div');
-        meta.style.color = '#666';
-        const dateText = compDateMap && compDateMap[compName] ? compDateMap[compName] : 'Date TBA';
-        meta.textContent = dateText;
-
-        left.appendChild(title);
-        left.appendChild(meta);
-        card.appendChild(left);
-
-        const right = document.createElement('div');
-        right.style.display = 'flex';
-        right.style.gap = '8px';
-        right.style.alignItems = 'center';
-
-        const openBtn = document.createElement('button');
-        openBtn.className = 'btn';
-        openBtn.textContent = 'Open';
-        openBtn.addEventListener('click', (ev) => { ev.stopPropagation(); openCompetitionDetail(compName); });
-
-        right.appendChild(openBtn);
-        card.appendChild(right);
-
-        card.addEventListener('click', () => openCompetitionDetail(compName));
-        card.addEventListener('keypress', (ev) => {
-          if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); openCompetitionDetail(compName); }
-        });
-
-        lockedListEl.appendChild(card);
-      });
-
-      // search wiring
-      if (searchInput) {
-        searchInput.oninput = () => {
-          const q = (searchInput.value || '').trim().toLowerCase();
-          Array.from(lockedListEl.children).forEach(card => {
-            const title = card.querySelector('div') && card.querySelector('div').textContent || '';
-            card.style.display = title.toLowerCase().includes(q) ? 'flex' : 'none';
-          });
-        };
-      }
-
-      // --- OPEN COMPETITION DETAIL ---
-      // keep lastActiveComp to ignore stale async responses
-      let lastActiveComp = null;
-
-      async function openCompetitionDetail(compName) {
-        lastActiveComp = compName;
-
-        detailEl.style.display = '';
-        metaLeftEl.innerHTML = '';
-        metaRightEl.innerHTML = '';
-        resultsAreaEl.innerHTML = '<div>Loading…</div>';
-
-        // ensure meta and roundSheetsMap are present
-        await initLiveOnce();
-
-        const d = (compDetailsMap && compDetailsMap[compName]) || {};
-        const venue = d.venue || '';
-        const date = d.date || compDateMap && compDateMap[compName] || '';
-        const time = d.time || '';
-        const mainEvent = d.main_event || '';
-        const highlights = d.highlights || '';
-        const offered = d.offered_events || {}; // object: { eventName: [roundLabel,...] }
-
-        // Left meta block
-        metaLeftEl.innerHTML = `
-          <div style="font-weight:700; font-size:1.1rem;">${escapeHtml(compName)}</div>
-          <div style="color:#444; margin-top:6px;">${escapeHtml(venue)}</div>
-          <div style="color:#666; margin-top:4px;">${escapeHtml(date)}${time ? ' • ' + escapeHtml(time) : ''}</div>
-          ${mainEvent ? `<div style="margin-top:8px"><strong>Main event:</strong> ${escapeHtml(mainEvent)}</div>` : ''}
-          ${highlights ? `<div style="margin-top:8px"><strong>Highlights:</strong> ${escapeHtml(highlights)}</div>` : ''}
-        `;
-
-        // Right meta: offered events summary
-        metaRightEl.innerHTML = '';
-        const eventsList = document.createElement('div');
-        eventsList.style.display = 'flex';
-        eventsList.style.flexDirection = 'column';
-        eventsList.style.gap = '6px';
-
-        // derive ordering: WCA_EVENTS first then remaining alphabetically
-        const offeredEventNames = Object.keys(offered || {});
-        const ordered = WCA_EVENTS.filter(e => offeredEventNames.includes(e)).concat(offeredEventNames.filter(e => !WCA_EVENTS.includes(e)).sort());
-
-        if (ordered.length === 0) {
-          const noOff = document.createElement('div');
-          noOff.style.color = '#666';
-          noOff.textContent = 'Offered events not listed';
-          eventsList.appendChild(noOff);
-        } else {
-          ordered.forEach(evName => {
-            const rounds = (offered[evName] || []).slice();
-            const evRow = document.createElement('div');
-            evRow.style.display = 'flex';
-            evRow.style.alignItems = 'center';
-            evRow.style.justifyContent = 'space-between';
-            evRow.style.gap = '8px';
-            evRow.style.padding = '6px';
-            evRow.style.borderRadius = '6px';
-            evRow.style.background = '#fafafa';
-            evRow.innerHTML = `<div style="font-weight:600">${escapeHtml(evName)}</div><div style="color:#666">${rounds.length} rounds</div>`;
-            eventsList.appendChild(evRow);
-          });
-        }
-        metaRightEl.appendChild(eventsList);
-
-        // wire tab buttons and default tab
-        document.getElementById('comp-tab-all').onclick = () => activateCompTab('all', compName);
-        document.getElementById('comp-tab-by-person').onclick = () => activateCompTab('by-person', compName);
-        document.getElementById('comp-tab-podiums').onclick = () => activateCompTab('podiums', compName);
-
-        // activate default tab
-        activateCompTab('all', compName);
-      }
-
-      // --- TAB RENDERER ---
-      // single function to switch between All / By Person / Podiums
-      async function activateCompTab(tab, compName) {
-        // capture local token to ignore stale async work
-        const token = `${compName}::${tab}`;
-        resultsAreaEl.innerHTML = '<div>Loading…</div>';
-
-        await initLiveOnce();
-
-        // Ensure competition exists in metadata; fallback to reading masterValues
-        const compIdx = (masterValues[COMP_HEADER_ROW] || []).indexOf(compName);
-        // build offeredEvents map from roundSheetsMap if compDetailsMap.offered_events absent
-        let offeredEvents = {};
-        if (compDetailsMap && compDetailsMap[compName] && compDetailsMap[compName].offered_events) {
-          offeredEvents = compDetailsMap[compName].offered_events;
-        } else {
-          // fallback build from roundSheetsMap entries
-          const roundsForComp = Object.keys(roundSheetsMap[compName] || {}).filter(Boolean);
-          roundsForComp.forEach(full => {
-            const parts = splitEventRound(full);
-            const ev = parts.eventName || full;
-            const rn = parts.roundName || '';
-            offeredEvents[ev] = offeredEvents[ev] || [];
-            if (rn && !offeredEvents[ev].includes(rn)) offeredEvents[ev].push(rn);
-          });
-        }
-
-        if (tab === 'podiums') {
-          // Render podiums: find final rounds and render top 3 per event ordered by WCA_EVENTS
-          const eventsOrder = WCA_EVENTS.filter(e => Object.prototype.hasOwnProperty.call(offeredEvents, e)).concat(Object.keys(offeredEvents).filter(e => !WCA_EVENTS.includes(e)));
-          const container = document.createElement('div');
-          container.style.display = 'grid';
-          container.style.gap = '18px';
-
-          // collect final fullRound names
-          const finals = [];
-          Object.keys(offeredEvents).forEach(ev => {
-            const rounds = offeredEvents[ev] || [];
-            const finalRound = rounds.find(r => /final/i.test(r)) || null;
-            if (finalRound) finals.push({ ev, full: `${ev} - ${finalRound}` });
-          });
-
-          // fetch finals with concurrency
-          const fetched = await pMap(finals, async item => {
-            const d = await getCachedRound(compName, item.full);
-            return { item, data: d };
-          }, 6);
-
-          for (const { item, data } of fetched) {
-            if (!data || !data.rows || !data.headers) continue;
-            const ev = item.ev;
-            const heading = document.createElement('h3');
-            heading.textContent = ev;
-            heading.style.margin = '0';
-            heading.style.fontWeight = '500';
-            container.appendChild(heading);
-
-            // build small table for podium (top 3)
-            const tbl = document.createElement('table');
-            tbl.style.width = '100%';
-            const thead = document.createElement('thead');
-            const trh = document.createElement('tr');
-            data.headers.slice(0, 6).forEach(h => { const th = document.createElement('th'); th.textContent = h; trh.appendChild(th); });
-            thead.appendChild(trh);
-            tbl.appendChild(thead);
-
-            const tbody = document.createElement('tbody');
-            (data.rows || []).slice(0, 3).forEach(row => {
-              const tr = document.createElement('tr');
-              data.headers.slice(0, 6).forEach(h => {
-                const td = document.createElement('td');
-                td.textContent = row[h] || '';
-                tr.appendChild(td);
-              });
-              tbody.appendChild(tr);
-            });
-            tbl.appendChild(tbody);
-            container.appendChild(tbl);
-          }
-
-          resultsAreaEl.innerHTML = '';
-          resultsAreaEl.appendChild(container);
-          return;
-        }
-
-        if (tab === 'by-person') {
-          // Build alphabetic competitor list for this competition
-          resultsAreaEl.innerHTML = '';
-          const container = document.createElement('div');
-          container.style.display = 'grid';
-          container.style.gap = '12px';
-
-          // gather names from all offered rounds
-          const nameSet = new Set();
-          const rounds = (compIdx >= 0) ? masterValues.slice(FIRST_ROUND_ROW).map(r => r[compIdx]).filter(Boolean) : Object.keys(roundSheetsMap[compName] || {});
-          await Promise.all((rounds || []).map(async roundName => {
-            try {
-              const d = await getRoundData(compName, roundName);
-              if (!d || !Array.isArray(d.rows)) return;
-              d.rows.forEach(row => {
-                const n = (row['Name'] || row['name'] || '').toString().trim();
-                if (n) nameSet.add(n);
-              });
-            } catch (e) {
-              // ignore per-round errors
-            }
-          }));
-
-          const names = Array.from(nameSet).sort((a, b) => a.localeCompare(b));
-          if (!names.length) {
-            resultsAreaEl.innerHTML = '<div style="padding:12px;color:#666">No competitor results available</div>';
-            return;
-          }
-
-          names.forEach(name => {
-            const card = document.createElement('div');
-            card.style.background = '#fafafa';
-            card.style.padding = '8px';
-            card.style.borderRadius = '8px';
-            const a = document.createElement('a');
-            a.href = `/live/${slug(compName)}/competitors/${slug(name)}`;
-            a.textContent = name;
-            a.addEventListener('click', (ev) => { ev.preventDefault(); navigate(a.getAttribute('href')); });
-            card.appendChild(a);
-            container.appendChild(card);
-          });
-
-          resultsAreaEl.appendChild(container);
-          return;
-        }
-
-        // tab === 'all' (default)
-        // Render event icons strip. Clicking an event icon renders all rounds for that event (final->first), best->worst
-        resultsAreaEl.innerHTML = '';
-        const iconsRow = document.createElement('div');
-        iconsRow.style.display = 'flex';
-        iconsRow.style.gap = '8px';
-        iconsRow.style.flexWrap = 'wrap';
-        iconsRow.style.marginBottom = '12px';
-
-        const offeredEventNames = Object.keys(offeredEvents || {});
-        if (offeredEventNames.length === 0) {
-          resultsAreaEl.innerHTML = '<div style="padding:12px;color:#666">No events listed for this competition</div>';
-          return;
-        }
-
-        const orderedEv = WCA_EVENTS.filter(e => offeredEventNames.includes(e)).concat(offeredEventNames.filter(e => !WCA_EVENTS.includes(e)));
-
-        // placeholder for event results area below icons
-        const eventResultsContainer = document.createElement('div');
-
-        orderedEv.forEach(evName => {
-          const btn = document.createElement('button');
-          btn.type = 'button';
-          btn.style.border = '1px solid #eee';
-          btn.style.background = 'transparent';
-          btn.style.borderRadius = '12px';
-          btn.style.width = '56px';
-          btn.style.height = '56px';
-          btn.style.padding = '6px';
-          btn.style.cursor = 'pointer';
-          btn.title = evName;
-
-          const img = document.createElement('img');
-          const evCode = eventNameToId(evName) || slug(evName);
-          img.src = `/images/event_icons/${evCode}.png`;
-          img.alt = evName;
-          img.style.width = '36px';
-          img.style.height = '36px';
-          img.style.objectFit = 'contain';
-          img.style.pointerEvents = 'none';
-
-          btn.appendChild(img);
-
-          btn.addEventListener('click', async (evClick) => {
-            evClick.stopPropagation();
-            // render rounds for this event
-            eventResultsContainer.innerHTML = '<div>Loading event results…</div>';
-            // read rounds for this event
-            const eventRounds = (offeredEvents[evName] || []).slice();
-            if (eventRounds.length === 0) {
-              eventResultsContainer.innerHTML = '<div style="padding:12px;color:#666">No rounds listed for this event</div>';
-              return;
-            }
-
-            // order rounds: final first (final treated as highest), then descending numeric or original order
-            eventRounds.sort((a, b) => {
-              const score = rn => {
-                const rnLower = (rn || '').toLowerCase();
-                if (rnLower.includes('final')) return 999;
-                const m = rnLower.match(/([0-9]+)/);
-                return m ? parseInt(m[1], 10) : 0;
-              };
-              return score(b) - score(a);
-            });
-
-            const container = document.createElement('div');
-            container.style.display = 'flex';
-            container.style.flexDirection = 'column';
-            container.style.gap = '12px';
-
-            for (const rn of eventRounds) {
-              const full = `${evName} - ${rn}`;
-              const d = await getCachedRound(compName, full);
-              if (!d || !Array.isArray(d.rows) || !Array.isArray(d.headers)) continue;
-
-              const heading = document.createElement('h3');
-              heading.textContent = `${evName} - ${rn}`;
-              heading.style.margin = '12px 0 6px';
-              container.appendChild(heading);
-
-              // build table: show up to first 6 headers for compactness
-              const tbl = document.createElement('table');
-              tbl.style.width = '100%';
-              const thead = document.createElement('thead');
-              const trh = document.createElement('tr');
-              d.headers.slice(0, 6).forEach(h => { const th = document.createElement('th'); th.textContent = h; trh.appendChild(th); });
-              thead.appendChild(trh);
-              tbl.appendChild(thead);
-
-              const tbody = document.createElement('tbody');
-
-              // sort rows best->worst using simple heuristic: prefer numeric in Average/Best columns if present
-              const rows = (d.rows || []).slice();
-              const numericHeaderCandidates = ['Average', 'Mean', 'Best', 'Result'];
-              let primaryHeader = d.headers.find(h => numericHeaderCandidates.includes(h)) || d.headers[d.headers.length - 1];
-              // fallback to first header if nothing numeric
-              if (!primaryHeader) primaryHeader = d.headers[0];
-
-              rows.sort((A, B) => {
-                const aVal = Number(A[primaryHeader] ?? NaN);
-                const bVal = Number(B[primaryHeader] ?? NaN);
-                const evCodeLocal = eventNameToId(evName) || evName;
-                if (evCodeLocal === '333mbf') {
-                  // higher better
-                  if (Number.isFinite(bVal) && Number.isFinite(aVal)) return bVal - aVal;
-                  return 0;
-                } else {
-                  if (Number.isFinite(aVal) && Number.isFinite(bVal)) return aVal - bVal;
-                  return 0;
-                }
-              });
-
-              rows.forEach(rowObj => {
-                const tr = document.createElement('tr');
-                d.headers.slice(0, 6).forEach(h => {
-                  const td = document.createElement('td');
-                  td.textContent = (rowObj[h] ?? '').toString();
-                  tr.appendChild(td);
-                });
-                tbody.appendChild(tr);
-              });
-
-              tbl.appendChild(tbody);
-              container.appendChild(tbl);
-            }
-
-            eventResultsContainer.innerHTML = '';
-            eventResultsContainer.appendChild(container);
-            patchCompetitionCells(eventResultsContainer).catch(() => {});
-          });
-
-          iconsRow.appendChild(btn);
-        });
-
-        resultsAreaEl.appendChild(iconsRow);
-        resultsAreaEl.appendChild(eventResultsContainer);
-      } // activateCompTab
     }
 
 
@@ -3299,136 +3318,6 @@
 
 
     const podiumsCache = {};
-
-    // ===== Render (route entry) =====
-    async function render() {
-      const route = getRoute();
-
-      // Helper: ensure left column layout state when showing centered competitions list
-      function expandLeftColumnForList() {
-        const wrap = document.getElementById('competitions-list');
-        const leftColumn = wrap && wrap.parentElement;
-        if (leftColumn) {
-          leftColumn.style.flex = '1 1 100%';
-          leftColumn.style.minWidth = '0';
-          leftColumn.style.maxWidth = '100%';
-          leftColumn.style.display = 'flex';
-          leftColumn.style.justifyContent = 'center';
-        }
-        const liveMain = document.getElementById('live-main');
-        if (liveMain) liveMain.style.display = 'none';
-      }
-
-      // Helper: restore left column when navigating into a competition
-      function restoreLeftColumn() {
-        const wrap = document.getElementById('competitions-list');
-        const leftColumn = wrap && wrap.parentElement;
-        if (leftColumn) {
-          leftColumn.style.flex = '';
-          leftColumn.style.minWidth = '';
-          leftColumn.style.maxWidth = '';
-          leftColumn.style.display = '';
-          leftColumn.style.justifyContent = '';
-        }
-        const liveMain = document.getElementById('live-main');
-        if (liveMain) liveMain.style.display = '';
-      }
-
-      // 1) Ranking / Records are top-level non-/live routes
-      if (route.isRankings && route.routeEvent && route.routeCat) {
-        showView('rankings');
-        document.getElementById('view-rankings').hidden = false;
-        await renderRankingsView(route.routeEvent, route.routeCat);
-        return;
-      }
-      if (route.isRecords) {
-        showView('records');
-        document.getElementById('view-records').hidden = false;
-        await renderRecordsView();
-        return;
-      }
-
-      // 2) Non-live home
-      if (!route.isLive) {
-        showView('home');
-        return;
-      }
-
-      // 3) Live-based routes
-      showView('live');
-
-      // If no competition selected → show centered competitions list (hide live-main)
-      if (!route.comp) {
-        expandLeftColumnForList();
-        document.getElementById('competitions-list').style.display = 'block';
-        await renderCompetitionsList();
-        return;
-      }
-
-      // handle /competitions
-      if (window.location.pathname.replace(/\/+$/, '') === '/competitions') {
-        // hide other views then render competitions page
-        showView('competitions-page');
-        document.getElementById('view-competitions-page').hidden = false;
-        await renderCompetitionsPage();
-        return;
-      }
-
-
-      // Route has a competition selected → restore normal two-column layout and show live-main
-      restoreLeftColumn();
-      document.getElementById('competitions-list').style.display = 'none';
-      document.getElementById('live-main').style.display = '';
-
-      // Ensure master values + metadata available before rendering comp-specific views
-      await initLiveOnce();
-
-      // Normalize comp name and update global state / titles
-      const compName = unslug(route.comp);
-      currentComp = compName;
-      updateTitles();
-
-      // Render sidebar (wires buttons) with current comp context
-      await renderSidebar(compName);
-
-      // Podiums / Competitor detail / Competitors views (priority)
-      if (route.isPodiums) {
-        await renderPodiumsView(compName);
-        return;
-      }
-      if (route.isCompetitorDetail) {
-        showView('competitor');
-        await renderCompetitorResultsView();
-        return;
-      }
-      if (route.isCompetitors) {
-        await renderCompetitorsView(route.comp || currentComp);
-        return;
-      }
-
-      // Otherwise treat as leaderboard route: set currentRound if present and load leaderboard
-      // if route uses compact event/round (e.g., /live/compSlug/333/1)
-      // map compact ids back to human fullRoundName for lookups
-      if (route.compactEvent && route.compactRound) {
-        const eventCode = decodeURIComponent(route.compactEvent);
-        const roundId = decodeURIComponent(route.compactRound);
-        const eventName = EVENT_CODE_TO_NAME[eventCode] || '';
-        const roundLabel = (roundId === 'f') ? 'Final' : (roundId === '1' ? 'First Round' : (roundId === '2' ? 'Second Round' : (roundId === '3' ? 'Third Round' : roundId)));
-        // set currentRound to canonical human round for UI
-        const humanFullRound = eventName ? `${eventName} - ${roundLabel}` : '';
-        currentRound = humanFullRound;
-        // For the actual read, we let getRoundData pick the public tab. But store both UI string and canonical candidate.
-        currentCanonicalCandidates = getCanonicalTabCandidates(currentComp, currentRound);
-        await loadLeaderboard();
-        return;
-      } else {
-        currentRound = route.roundSegment ? decodeRoundSegment(route.roundSegment) : '';
-        currentCanonicalCandidates = getCanonicalTabCandidates(currentComp, currentRound);
-        await loadLeaderboard();
-        return;
-      }
-    }
-
 
     // Round meta: comp+round → format/sheet names
     let roundSheetsMap   = Object.create(null); // { [comp]: { [round]: { public:'', private:'' } } }

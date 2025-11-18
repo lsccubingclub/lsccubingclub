@@ -28,6 +28,8 @@ SHEETS_MASTER_ID = "1fjWyEbc7a5A3RjkFm0BEnE_lyHXCa3kYiKRd2IP9j5Q"
 WCA_API_BASE = "https://www.worldcubeassociation.org/api/v0"
 USER_AGENT = {"User-Agent": "LSCRecordsBot/1.0 (+https://example.com)"}
 
+API_KEY = "AIzaSyA_4BKwiXfv_T9XhbdenwHuGm0k5uc89S8"
+
 # Caching and output
 WCA_CACHE_DIR = "profiles/wca"
 LSC_CACHE_DIR = "profiles/lsc"
