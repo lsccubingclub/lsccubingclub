@@ -350,6 +350,56 @@
       "worst_index": 1,
       "regional_single_record": null,
       "regional_average_record": null
+    },
+    {
+      "id": 7711442,
+      "pos": 117,
+      "round_id": 909542,
+      "best": 1691,
+      "average": 1853,
+      "name": "Fung Sum Chun (馮心臻)",
+      "country_iso2": "HK",
+      "competition_id": "Hong Kong Championship 2025",
+      "event_id": "333",
+      "round_type_id": "1",
+      "format_id": "a",
+      "wca_id": "2023CHUN03",
+      "attempts": [
+        1701,
+        1845,
+        1691,
+        2012,
+        2176
+      ],
+      "best_index": 2,
+      "worst_index": 4,
+      "regional_single_record": null,
+      "regional_average_record": null
+    },
+    {
+      "id": 7711683,
+      "pos": 94,
+      "round_id": 909546,
+      "best": 756,
+      "average": 849,
+      "name": "Fung Sum Chun (馮心臻)",
+      "country_iso2": "HK",
+      "competition_id": "Hong Kong Championship 2025",
+      "event_id": "222",
+      "round_type_id": "1",
+      "format_id": "a",
+      "wca_id": "2023CHUN03",
+      "attempts": [
+        960,
+        1190,
+        756,
+        809,
+        778
+      ],
+      "best_index": 2,
+      "worst_index": 1,
+      "regional_single_record": null,
+      "regional_average_record": null
     }
   ]
 }

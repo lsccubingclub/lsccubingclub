@@ -151,7 +151,7 @@
       #live-sidebar { width: 84vw; }
     }
 
-    body { font-family: 'Roboto', sans-serif; background: #f4f4f4; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Roboto', sans-serif; background: white; padding: 0; box-sizing: border-box; }
     main { padding: 20px; }  
     h1 { margin: 0; font-size: 28px; }
     #subtitle { font-size: 1.5rem; color: #000; text-align: left; margin: 10px auto 20px; max-width: 98%; } 
@@ -229,12 +229,117 @@
     }
     .rank-toggle-btn input[type="radio"] { display: none; }
 
+    /* === Competitions page color scheme and compact sidebar tabs === */
+    /* Use neutral / dark accent (not blue) specifically for competitions view */
+    .comp-theme .comp-accent { color: #2b2b2b; }      /* text accent */
+    .comp-theme .comp-accent-bg { background: #f6f6f6; } /* small bg accents */
+    .comp-theme .comp-header { background: #ffffff; color: #2b2b2b; border-color: #e6e6e6; }
+
+    /* Replace table header color on competitions page only */
+    #view-competitions table th { background-color: #333; color: #fff; }
+    #view-competitions .btn { background: #fff; color: #222; border: 1px solid #ddd; }
+    #view-competitions th { background-color: #333 !important; color: #fff !important; }
+    #competition-summary h3, #comp-title { color: #222; }
+
+    /* Sidebar-like compact tab list (top-left inside competition detail) */
+    .comp-tab-list {
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      align-items:flex-start;
+      margin-right:12px;
+    }
+    .comp-tab-list button {
+      display:flex;
+      align-items:center;
+      gap:12px;
+      padding:10px 12px;
+      border-radius:6px;
+      border:1px solid transparent;
+      background:transparent;
+      color:#222;
+      cursor:pointer;
+      font-weight:600;
+      width:100%;
+      justify-content:flex-start;
+      text-align:left;
+      box-sizing:border-box;
+    }
+    .comp-tab-list button:hover {
+      background:#f6f6f6;
+      border-color:#eee;
+    }
+    .comp-tab-list button.active {
+      background: #222;
+      color: white;
+      border-color: #222;
+    }
+
+
+    /* compact event icons used in Results header / All UI */
+    .event-icon {
+      width:36px;
+      height:36px;
+      object-fit:contain;
+      display:inline-block;
+      margin-right:8px;
+    }
+
+    /* alternate row colors for By person and Podiums tables */
+    #comp-person table tbody tr:nth-child(odd),
+    #comp-podiums table tbody tr:nth-child(odd) {
+      background: #ffffff;
+    }
+    #comp-person table tbody tr:nth-child(even),
+    #comp-podiums table tbody tr:nth-child(even) {
+      background: #f7f7f7;
+    }
+
+    .comp-all-events {
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-bottom:12px;
+    }
+    .comp-all-events .ev {
+      cursor:pointer;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:6px;
+      width:72px;
+      padding:6px;
+      border-radius:8px;
+      border:1px solid transparent;
+      background:transparent;
+    }
+    .comp-all-events .ev:hover { background:#fafafa; border-color:#eee; }
+    .comp-all-events .ev .label { font-size:12px; text-align:center; color:#333; }
+
+    td.solves-cell {
+      white-space: nowrap;
+      padding: 6px 8px;
+    }
+    td.solves-cell .solve {
+      display: inline-block;
+      min-width: 5.2ch;
+      max-width: 6.2ch;
+      padding: 2px 6px;
+      margin-right: 6px;
+      text-align: center;
+      border-radius: 4px;
+      background: transparent;
+      font-variant-numeric: tabular-nums;
+      box-sizing: border-box;
+    }
+    th.solves-header { text-align: left; padding: 8px; }
   </style>
 
   <!-- Firebase (Auth only) -->
   <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-auth-compat.js"></script>
 </head>
+
 <body>
 
   <header id="main-header">
@@ -360,7 +465,7 @@
       <div class="section" style="margin-top:40px;">
         <h2 style="color:#1976D2;">About Us</h2>
         <p>
-            The LSC Cubing Club is a passionate community of speedcubers based in Hong Kong. We host regular competitions, workshops, and meetups to promote the art and science of cubing. Whether you're a beginner or a seasoned solver, you'll find a place here to grow, compete, and connect.
+            The LSC Cubing Club is a passionate community of speedcubers in La Salle College. We host regular competitions, workshops, and meetups to promote the art and science of cubing. Whether you're a beginner or a seasoned solver, you'll find a place here to grow, compete, and connect.
         </p>
       </div>
     </section>
@@ -376,11 +481,6 @@
     <section style="padding:20px 10px; max-width:1100px; margin:auto;">
       <div id="competitions-header" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
         <h2 style="margin:0;">Competitions</h2>
-        <div id="competitions-tabs" style="display:none; gap:10px;">
-          <button id="comp-tab-all" class="btn" style="background:#1976D2;color:#fff;border:none;">All</button>
-          <button id="comp-tab-person" class="btn">By person</button>
-          <button id="comp-tab-podiums" class="btn">Podiums</button>
-        </div>
       </div>
 
       <!-- List of locked competitions (chronological) -->
@@ -388,24 +488,36 @@
 
       <!-- Competition detail: summary + tabs content -->
       <div id="competition-detail" style="display:none;">
-        <div id="competition-summary" style="
-          background:#fff; border:1px solid #eee; border-radius:10px; padding:14px; box-shadow:0 6px 18px rgba(18,38,63,0.04);
-          margin-bottom:16px;">
-          <div id="comp-title" style="font-weight:600; font-size:18px; margin-bottom:6px;"></div>
-          <div id="comp-meta" style="color:#555; font-size:14px;"></div>
-
-          <div id="comp-offered-events" style="margin-top:10px;">
-            <div style="font-weight:600; margin-bottom:6px;">Offered events and rounds</div>
-            <div id="comp-rounds-wrap" style="display:flex; flex-wrap:wrap; gap:8px;"></div>
+        <div style="display:flex; gap:16px; align-items:flex-start;">
+          <div class="comp-tab-list" aria-hidden="false" id="comp-tab-list">
+            <button id="comp-tab-results" class="active" type="button" title="Results">Results</button>
+            <button id="comp-tab-all" type="button" title="All">All</button>
+            <button id="comp-tab-person" type="button" title="By person">By person</button>
+            <button id="comp-tab-podiums" type="button" title="Podiums">Podiums</button>
           </div>
 
-          <div id="comp-highlights" style="margin-top:10px;"></div>
-        </div>
+          <div style="flex:1">
+            <div id="competition-summary" style="
+              background:#fff; border:1px solid #eee; border-radius:10px; padding:14px; box-shadow:0 6px 18px rgba(18,38,63,0.04);
+              margin-bottom:16px;">
+              <div id="comp-title" style="font-weight:600; font-size:18px; margin-bottom:6px;"></div>
+              <div id="comp-meta" style="color:#555; font-size:14px;"></div>
 
-        <div id="comp-tabs-content" style="background:#fff; border:1px solid #eee; border-radius:10px; padding:14px;">
-          <div id="comp-all" style="display:block;"></div>
-          <div id="comp-person" style="display:none;"></div>
-          <div id="comp-podiums" style="display:none;"></div>
+              <div id="comp-offered-events" style="margin-top:10px;">
+                <div style="font-weight:600; margin-bottom:6px;">Events</div>
+                <div id="comp-rounds-wrap" style="display:flex; flex-wrap:wrap; gap:8px;"></div>
+              </div>
+
+              <div id="comp-highlights" style="margin-top:10px;"></div>
+            </div>
+
+            <div id="comp-tabs-content" style="background:#fff; border:1px solid #eee; border-radius:10px; padding:14px;">
+              <div id="comp-results" style="display:block;"></div>
+              <div id="comp-all" style="display:none;"></div>
+              <div id="comp-person" style="display:none;"></div>
+              <div id="comp-podiums" style="display:none;"></div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -558,6 +670,116 @@
         .catch(()=> ({}));
       return __wcaCompTitleCachePromise;
     }
+
+    function hideCompetitionsListWhenDetailOpen(hide) {
+      const list = document.getElementById('competitions-locked-list');
+      if (!list) return;
+      list.style.display = hide ? 'none' : '';
+    }
+
+    function csToDisplay(cs) {
+      if (cs === null || cs === undefined || cs === 0) return '';
+      if (cs === -1) return 'DNF';
+      if (cs === -2) return 'DNS';
+      if (!Number.isFinite(Number(cs))) return String(cs);
+      const n = Number(cs);
+      const sec = n / 100.0;
+      if (sec >= 60) {
+        const mins = Math.floor(sec / 60);
+        const secs = sec - mins * 60;
+        const secsWhole = Math.floor(secs);
+        const secsFrac = Math.round((secs - secsWhole) * 100);
+        return `${mins}:${String(secsWhole).padStart(2,'0')}.${String(secsFrac).padStart(2,'0')}`;
+      } else {
+        return sec.toFixed(2);
+      }
+    }
+
+    function countExistingAttempts(attempts) {
+      if (!Array.isArray(attempts)) return 0;
+      return attempts.reduce((acc, a) => {
+        if (a === null || a === undefined) return acc;
+        if (a === 0 || a === '') return acc; // treat 0/empty as missing
+        return acc + 1;
+      }, 0);
+    }
+
+    function isFewestMovesEvent(eventIdOrName) {
+      if (!eventIdOrName) return false;
+      const s = String(eventIdOrName).toLowerCase();
+      return s.includes('fewest') || s.includes('333fm');
+    }
+
+    function renderSolvesCell(tdParent, attempts, bestIndex, worstIndex, eventIdOrName) {
+      // Defensive copy / normalize to length up to 5
+      const A = Array.isArray(attempts) ? attempts.slice(0,5) : [];
+      const targetLen = Math.max(1, Math.min(5, Math.max(A.length, 5)));
+      while (A.length < targetLen) A.push(null);
+
+      tdParent.classList.add('solves-cell');
+      tdParent.innerHTML = '';
+
+      // count existing non-empty attempts (0 treated as missing)
+      const existingCount = Array.isArray(attempts)
+        ? attempts.reduce((acc, a) => (a === null || a === undefined || a === 0 || a === '') ? acc : acc + 1, 0)
+        : 0;
+      const enableBrackets = (existingCount === 5);
+
+      const s = String((eventIdOrName || '')).toLowerCase();
+      const isFmc = s.includes('fewest') || s.includes('333fm');
+
+      A.forEach((raw, i) => {
+        const span = document.createElement('span');
+        span.className = 'solve';
+        // ensure spacing even if CSS is overridden
+        span.style.marginRight = '6px';
+
+        let text = '';
+        if (raw === -1) {
+          text = 'DNF'; span.classList.add('dnf');
+        } else if (raw === -2) {
+          text = 'DNS'; span.classList.add('dns');
+        } else if (raw === 0 || raw === null || raw === undefined || raw === '') {
+          text = '';
+        } else {
+          if (isFmc) {
+            // If JSON already contains integer moves (e.g. 29) keep it.
+            // If JSON contains a small fractional value like 0.29 (seconds), convert to integer moves
+            // by multiplying by 100 and rounding.
+            const n = Number(raw);
+            if (Number.isFinite(n)) {
+              if (!Number.isInteger(n) && Math.abs(n) < 10) {
+                // looks like seconds (0.29) -> convert to moves (29)
+                text = String(Math.round(n * 100));
+              } else {
+                // already integer-like (e.g. 22 or 29), show as integer
+                text = String(Math.round(n));
+              }
+            } else {
+              text = String(raw);
+            }
+          } else {
+            // normal time-formatting path: centiseconds -> human string
+            text = csToDisplay(raw);
+          }
+        }
+
+        // bracket best/worst only when enabled and when there is actual text to show
+        if (enableBrackets && (typeof bestIndex === 'number' && bestIndex === i)) {
+          span.textContent = text ? `(${text})` : '';
+          span.setAttribute('data-bracketed', 'best');
+        } else if (enableBrackets && (typeof worstIndex === 'number' && worstIndex === i)) {
+          span.textContent = text ? `(${text})` : '';
+          span.setAttribute('data-bracketed', 'worst');
+        } else {
+          span.textContent = text;
+        }
+
+        tdParent.appendChild(span);
+      });
+    }
+
+
 
     async function patchCompetitionCells(container = document) {
       const cache = await loadWcaCompTitleCache();
@@ -865,19 +1087,16 @@
     async function renderCompetitionsHome() {
       showView('competitions');
       document.getElementById('view-competitions').hidden = false;
-
-      // Hide detail area, show list
       document.getElementById('competition-detail').style.display = 'none';
-      document.getElementById('competitions-tabs').style.display = 'none';
-
+      
       await fetchMeta();
 
-      // Build chronological locked competition list
       const header = Array.isArray(masterValues[COMP_HEADER_ROW]) ? masterValues[COMP_HEADER_ROW] : [];
       const comps = header.slice(1).map(c => (c || '').toString().trim()).filter(Boolean);
 
       const listEl = document.getElementById('competitions-locked-list');
       listEl.innerHTML = '';
+      hideCompetitionsListWhenDetailOpen(false);
 
       const items = comps.map(name => {
         const isLocked = !!compLockMap[name];
@@ -926,15 +1145,14 @@
     async function renderCompetitionDetail(compSlug) {
       showView('competitions');
       document.getElementById('view-competitions').hidden = false;
+      hideCompetitionsListWhenDetailOpen(true);
 
       const compName = unslug(compSlug);
-      const tabsBar = document.getElementById('competitions-tabs');
       const detailEl = document.getElementById('competition-detail');
       const allEl = document.getElementById('comp-all');
       const personEl = document.getElementById('comp-person');
       const podiumsEl = document.getElementById('comp-podiums');
 
-      tabsBar.style.display = 'flex';
       detailEl.style.display = '';
 
       // Summary
@@ -956,29 +1174,16 @@
       offeredWrap.innerHTML = '';
       try {
         const offered = await (await fetch(`${base}/offered.json`, { cache: 'no-store' })).json();
-        // Render round chips (WCA order)
         const byEvent = offered.byEvent || {};
         const orderedEvents = WCA_EVENTS.filter(e => byEvent[e]).concat(Object.keys(byEvent).filter(e => !WCA_EVENTS.includes(e)).sort());
         orderedEvents.forEach(ev => {
-          const rounds = (byEvent[ev] || []).slice();
-          rounds.forEach(rn => {
-            const chip = document.createElement('div');
-            chip.style.cssText = `
-              display:flex; align-items:center; gap:8px; padding:10px 12px; border:1px solid #e6e6e6;
-              border-radius:14px; cursor:pointer; background:#fafafa;
-            `;
-            const icon = document.createElement('img');
-            const code = EVENT_NAME_TO_CODE[(ev || '').toLowerCase()] || 'unknown';
-            icon.src = `/images/event_icons/${code}.png`;
-            icon.alt = ev;
-            icon.style.cssText = 'width:24px;height:24px;object-fit:contain;';
-            const label = document.createElement('div');
-            label.textContent = `${ev} - ${rn}`;
-            chip.appendChild(icon);
-            chip.appendChild(label);
-            chip.addEventListener('click', () => navigate(`/live/${slug(compName)}/${EVENT_NAME_TO_CODE[(ev || '').toLowerCase()] || slug(`${ev} - ${rn}`)}/${roundNameToId(rn) || slug(`${ev} - ${rn}`)}`));
-            offeredWrap.appendChild(chip);
-          });
+          const icon = document.createElement('img');
+          const code = EVENT_NAME_TO_CODE[(ev || '').toLowerCase()] || 'unknown';
+          icon.src = `/images/event_icons/${code}.png`;
+          icon.alt = ev;
+          icon.style.cssText = 'width:24px;height:24px;object-fit:contain;';
+          const label = document.createElement('div');
+          offeredWrap.appendChild(icon);
         });
       } catch (e) {}
 
@@ -995,7 +1200,13 @@
         const tbl = document.createElement('table');
         tbl.style.cssText = 'margin-top:6px; border-collapse:collapse; width:100%;';
         const thead = document.createElement('thead');
-        thead.innerHTML = '<tr><th style="text-align:left; padding:6px; background:#1976D2;color:#fff;">Place</th><th style="text-align:left; padding:6px; background:#1976D2;color:#fff;">Name</th><th style="text-align:right; padding:6px; background:#1976D2;color:#fff;">Result</th></tr>';
+        thead.innerHTML = '<tr>' +
+          '<th style="text-align:left; padding:8px;">#</th>' +
+          '<th style="text-align:left; padding:8px;">Name</th>' +
+          '<th style="text-align:right; padding:8px;">Best</th>' +
+          '<th style="text-align:right; padding:8px;">Average</th>' + 
+          '<th class="solves-header" style="padding:8px;">Solves</th>' +
+          '</tr>';
         tbl.appendChild(thead);
         const tbody = document.createElement('tbody');
         (details.podiums[main_event] || []).forEach((row) => {
@@ -1019,7 +1230,8 @@
       // Render "All" by event (WCA order), final to first, best to worst (records page UI resemblance)
       function renderAll() {
         allEl.innerHTML = '';
-        const offeredEvents = Object.keys(allJson.events || {});
+        const eventsObj = allJson.events || {};
+        const offeredEvents = Object.keys(eventsObj || {});
         const ordered = WCA_EVENTS.filter(e => offeredEvents.includes(e))
           .concat(offeredEvents.filter(e => !WCA_EVENTS.includes(e)).sort());
 
@@ -1028,154 +1240,462 @@
           return;
         }
 
+        // event icons row (clickable to scroll)
+        const iconsRow = document.createElement('div');
+        iconsRow.className = 'comp-all-events';
+        ordered.forEach(ev => {
+          const evBtn = document.createElement('div');
+          evBtn.className = 'ev';
+          const code = EVENT_NAME_TO_CODE[(ev || '').toLowerCase()] || 'unknown';
+          evBtn.innerHTML = `<img src="/images/event_icons/${code}.png" alt="${escapeHtml(ev)}" style="width:36px;height:36px;object-fit:contain;">`;          
+          evBtn.addEventListener('click', () => {
+            const target = allEl.querySelector(`[data-event="${CSS.escape(ev)}"]`);
+            if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          });
+          iconsRow.appendChild(evBtn);
+        });
+        allEl.appendChild(iconsRow);
+
         ordered.forEach(eventName => {
           const rounds = allJson.events[eventName] || [];
-          // header
-          const evRow = document.createElement('div');
-          evRow.style.cssText = 'display:flex; align-items:center; gap:8px; margin-top:12px;';
-          const icon = document.createElement('img');
-          const code = EVENT_NAME_TO_CODE[(eventName || '').toLowerCase()] || 'unknown';
-          icon.src = `/images/event_icons/${code}.png`; icon.alt = eventName;
-          icon.style.cssText = 'width:28px;height:28px;object-fit:contain;';
-          const h3 = document.createElement('h3');
-          h3.textContent = eventName;
-          h3.style.cssText = 'margin:0; font-weight:500;';
-          evRow.appendChild(icon); evRow.appendChild(h3);
-          allEl.appendChild(evRow);
+          // event header (anchorable)
+          const evHeader = document.createElement('h3');
+          evHeader.textContent = eventName;
+          evHeader.style.cssText = 'margin-top:16px; font-weight:500;';
+          evHeader.setAttribute('data-event', eventName);
+          allEl.appendChild(evHeader);
 
           rounds.forEach(roundObj => {
+            const rnLabel = roundObj.round || '';
+            const fmt = (roundFormatMap[compName] && roundFormatMap[compName][`${eventName} - ${rnLabel}`]) || (roundObj.format || 'ao5');
+            const isAo5 = (fmt || '').toLowerCase().startsWith('ao');
+
             const tblWrap = document.createElement('div');
-            tblWrap.style.cssText = 'overflow-x:auto; -webkit-overflow-scrolling:touch;';
+            tblWrap.style.cssText = 'overflow-x:auto; -webkit-overflow-scrolling:touch; margin-top:6px;';
+
             const tbl = document.createElement('table');
-            tbl.style.cssText = 'display:inline-table; white-space:nowrap; margin-top:6px;';
+            tbl.style.cssText = 'display:inline-table; white-space:nowrap; margin-top:6px; width:100%;';
             const thead = document.createElement('thead');
-            thead.innerHTML = '<tr><th style="text-align:left; padding:8px; background:#1976D2;color:#fff;">#</th><th style="text-align:left; padding:8px; background:#1976D2;color:#fff;">Name</th><th style="text-align:right; padding:8px; background:#1976D2;color:#fff;">Result</th></tr>';
+            thead.innerHTML = '<tr>' +
+              '<th style="text-align:left; padding:8px;">#</th>' +
+              '<th style="text-align:left; padding:8px;">Name</th>' +
+              '<th style="text-align:right; padding:8px;">Best</th>' +
+              '<th style="text-align:right; padding:8px;">Average</th>' + 
+              '<th class="solves-header" style="padding:8px;">Solves</th>' +
+              '</tr>';
             tbl.appendChild(thead);
             const tbody = document.createElement('tbody');
+
             (roundObj.rows || []).forEach((row, idx) => {
               const tr = document.createElement('tr');
               const td1 = document.createElement('td'); td1.style.cssText = 'padding:8px; font-weight:600;'; td1.textContent = idx + 1;
-              const td2 = document.createElement('td'); td2.style.cssText = 'padding:8px;'; td2.textContent = row.name;
-              const td3 = document.createElement('td'); td3.style.cssText = 'padding:8px; text-align:right;'; td3.textContent = row.final;
-              tr.appendChild(td1); tr.appendChild(td2); tr.appendChild(td3);
+              const td2 = document.createElement('td'); td2.style.cssText = 'padding:8px;'; td2.textContent = row.name || '';
+              tr.appendChild(td1); tr.appendChild(td2);
+
+              // inside the rounds.forEach(roundObj => { ... }) block, where you currently compute tdBest
+              const isFmc = isFewestMovesEvent(eventName || '');
+
+              const tdBest = document.createElement('td');
+              tdBest.style.cssText = 'padding:8px; text-align:right;';
+
+              if (isFmc) {
+                // helper to coerce a raw value into integer moves string, or empty string
+                function toFmcIntString(raw) {
+                  if (raw === null || raw === undefined || raw === '' || raw === 0) return '';
+                  if (raw === -1) return 'DNF';
+                  if (raw === -2) return 'DNS';
+                  const n = Number(raw);
+                  if (!Number.isFinite(n)) return String(raw);
+                  // If non-integer small magnitude (looks like seconds e.g. 0.29), treat as seconds -> moves = round(n * 100)
+                  if (!Number.isInteger(n) && Math.abs(n) < 10) return String(Math.round(n * 100));
+                  // otherwise round to nearest integer
+                  return String(Math.round(n));
+                }
+
+                if (row.best !== undefined && row.best !== null && row.best !== '') {
+                  tdBest.textContent = toFmcIntString(row.best);
+                } else if (Array.isArray(row.attempts) && row.attempts.length) {
+                  // build numeric attempts, ignore null/0 empty; choose the minimum (fewest moves)
+                  const numeric = (row.attempts || []).map(a => {
+                    if (a === null || a === undefined || a === 0 || a === '') return null;
+                    if (a === -1) return -1;
+                    if (a === -2) return -2;
+                    return Number(a);
+                  }).filter(v => v !== null && v !== undefined && !Number.isNaN(v));
+                  if (!numeric.length) {
+                    tdBest.textContent = '';
+                  } else {
+                    // For FMC, smaller is better -> pick Math.min (treat -1/-2 specially: DNF/DNS not considered smaller)
+                    const nonSpecial = numeric.filter(v => v !== -1 && v !== -2);
+                    if (nonSpecial.length === 0) {
+                      // all special codes
+                      tdBest.textContent = numeric.includes(-1) ? 'DNF' : (numeric.includes(-2) ? 'DNS' : '');
+                    } else {
+                      const min = Math.min.apply(null, nonSpecial);
+                      tdBest.textContent = toFmcIntString(min);
+                    }
+                  }
+                } else {
+                  tdBest.textContent = '';
+                }
+              } else {
+                // existing time path: prefer row.best -> computed from attempts -> empty
+                tdBest.textContent = (row.best !== undefined && row.best !== null) ? csToDisplay(row.best)
+                  : (Array.isArray(row.attempts) && row.attempts.length ? (() => {
+                      const numeric = (row.attempts || []).filter(v => v !== null && v !== undefined && v !== 0 && v !== -1 && v !== -2);
+                      if (!numeric.length) return '';
+                      const min = Math.min.apply(null, numeric);
+                      return csToDisplay(min);
+                    })() : '');
+              }
+
+              tr.appendChild(tdBest);
+
+              const fmt = (roundFormatMap[compName] && roundFormatMap[compName][`${eventName} - ${rnLabel}`]) || (roundObj.format || 'ao5');
+              const avgVal = (row.average !== undefined && row.average !== null) ? row.average
+                : (row.mean !== undefined && row.mean !== null) ? row.mean: null;
+              const tdAvg = document.createElement('td');
+              tdAvg.style.cssText = 'padding:8px; text-align:right;';
+              tdAvg.textContent = avgVal !== null ? csToDisplay(avgVal) : '';
+              tr.appendChild(tdAvg);
+
+              const tdSolves = document.createElement('td');
+              tdSolves.style.cssText = 'padding:8px 6px; text-align:left;';
+              renderSolvesCell(tdSolves, Array.isArray(row.attempts) ? row.attempts : [], row.best_index, row.worst_index, eventName);
+              tr.appendChild(tdSolves);
               tbody.appendChild(tr);
             });
+
             tbl.appendChild(tbody);
             tblWrap.appendChild(tbl);
-            // round label
-            const rnLabel = document.createElement('div');
-            rnLabel.style.cssText = 'margin-top:6px; color:#555;';
-            rnLabel.textContent = roundObj.round;
-            allEl.appendChild(rnLabel);
+
+            const rnLabelEl = document.createElement('div');
+            rnLabelEl.style.cssText = 'margin-top:6px;';
+            rnLabelEl.textContent = rnLabel;
+            allEl.appendChild(rnLabelEl);
             allEl.appendChild(tblWrap);
           });
         });
       }
-
-      // Render "By person" alphabetical
-      function renderByPerson() {
-        personEl.innerHTML = '';
-        const persons = personsJson.persons || [];
-        if (!persons.length) {
-          personEl.innerHTML = '<div style="padding:8px; color:#666">No results</div>';
-          return;
-        }
-        persons.forEach(p => {
-          const h3 = document.createElement('h3');
-          h3.textContent = p.name;
-          h3.style.cssText = 'margin-top:18px; font-weight:500;';
-          personEl.appendChild(h3);
-
-          const tbl = document.createElement('table');
-          const thead = document.createElement('thead');
-          thead.innerHTML = '<tr><th style="text-align:left; padding:8px; background:#1976D2;color:#fff;">Event</th><th style="text-align:left; padding:8px; background:#1976D2;color:#fff;">Round</th><th style="text-align:right; padding:8px; background:#1976D2;color:#fff;">Result</th></tr>';
-          const tbody = document.createElement('tbody');
-          (p.results || []).forEach(r => {
-            const tr = document.createElement('tr');
-            const td1 = document.createElement('td'); td1.style.cssText = 'padding:8px;'; td1.textContent = r.event;
-            const td2 = document.createElement('td'); td2.style.cssText = 'padding:8px;'; td2.textContent = r.round;
-            const td3 = document.createElement('td'); td3.style.cssText = 'padding:8px; text-align:right;'; td3.textContent = r.final;
-            tr.appendChild(td1); tr.appendChild(td2); tr.appendChild(td3);
-            tbody.appendChild(tr);
-          });
-          tbl.appendChild(thead); tbl.appendChild(tbody);
-          personEl.appendChild(tbl);
-        });
-      }
-
-      // Render "Podiums" ordered by WCA event
+    
       function renderPodiums() {
-        podiumsEl.innerHTML = '';
+        const target = document.getElementById('comp-podiums');
+        target.innerHTML = '';
         const byEvent = podiumsJson.events || {};
         const offeredEvents = Object.keys(byEvent);
         const ordered = WCA_EVENTS.filter(e => offeredEvents.includes(e))
           .concat(offeredEvents.filter(e => !WCA_EVENTS.includes(e)).sort());
 
         if (!ordered.length) {
-          podiumsEl.innerHTML = '<div style="padding:8px; color:#666">No podiums</div>';
+          target.innerHTML = '<div style="padding:8px;color:#666">No podiums</div>';
           return;
         }
 
+        // For each event, render a single table (one table per event), no round name shown
         ordered.forEach(ev => {
-          const evRow = document.createElement('div');
-          evRow.style.cssText = 'display:flex; align-items:center; gap:8px; margin-top:12px;';
-          const icon = document.createElement('img');
-          const code = EVENT_NAME_TO_CODE[(ev || '').toLowerCase()] || 'unknown';
-          icon.src = `/images/event_icons/${code}.png`;
-          icon.alt = ev;
-          icon.style.cssText = 'width:28px;height:28px;object-fit:contain;';
-          const h3 = document.createElement('h3');
-          h3.textContent = ev;
-          h3.style.cssText = 'margin:0; font-weight:500;';
-          evRow.appendChild(icon); evRow.appendChild(h3);
-          podiumsEl.appendChild(evRow);
+          const rows = byEvent[ev] || [];
+          if (!rows.length) return;
+
+          // Event header (text)
+          const evHeader = document.createElement('h3');
+          evHeader.textContent = ev;
+          evHeader.style.marginTop = '16px';
+          evHeader.style.fontWeight = '500';
+          target.appendChild(evHeader);
 
           const tbl = document.createElement('table');
+          tbl.style.width = '100%';
           const thead = document.createElement('thead');
-          thead.innerHTML = '<tr><th style="text-align:left; padding:8px; background:#1976D2;color:#fff;">Place</th><th style="text-align:left; padding:8px; background:#1976D2;color:#fff;">Name</th><th style="text-align:right; padding:8px; background:#1976D2;color:#fff;">Result</th></tr>';
+          thead.innerHTML = '<tr>' +
+            '<th style="text-align:left;padding:8px;background:#333;color:#fff">#</th>' +
+            '<th style="text-align:left;padding:8px;background:#333;color:#fff">Name</th>' +
+            '<th style="text-align:right;padding:8px;background:#333;color:#fff">Best</th>' +
+            '<th style="text-align:right;padding:8px;background:#333;color:#fff">Average</th>' +
+            '<th class="solves-header" style="padding:8px;background:#333;color:#fff">Solves</th>' +
+            '</tr>';
+          tbl.appendChild(thead);
           const tbody = document.createElement('tbody');
-          (byEvent[ev] || []).forEach(row => {
+
+          const isFmc = isFewestMovesEvent(ev || '');
+
+          rows.forEach(row => {
             const tr = document.createElement('tr');
-            const td1 = document.createElement('td'); td1.style.cssText = 'padding:8px;'; td1.textContent = row.place;
-            const td2 = document.createElement('td'); td2.style.cssText = 'padding:8px;'; td2.textContent = row.name;
-            const td3 = document.createElement('td'); td3.style.cssText = 'padding:8px; text-align:right;'; td3.textContent = row.final;
-            tr.appendChild(td1); tr.appendChild(td2); tr.appendChild(td3);
+
+            const tdPlace = document.createElement('td');
+            tdPlace.style.padding = '8px';
+            tdPlace.style.fontWeight = '600';
+            tdPlace.textContent = row.place ?? '';
+            tr.appendChild(tdPlace);
+
+            const tdName = document.createElement('td');
+            tdName.style.padding = '8px';
+            tdName.textContent = row.name || '';
+            tr.appendChild(tdName);
+
+            const tdBest = document.createElement('td');
+            tdBest.style.padding = '8px';
+            tdBest.style.textAlign = 'right';
+
+            // Best: derive consistent with renderAll rules
+            if (isFmc) {
+              const attempts = Array.isArray(row.attempts) ? row.attempts : [];
+              const nonSpecial = attempts.map(a => (a === -1 || a === -2 || a === 0 || a === '') ? null : Number(a)).filter(v => v !== null && Number.isFinite(v));
+              tdBest.textContent = nonSpecial.length ? String(Math.round(Math.min(...nonSpecial))) : (row.best !== undefined && row.best !== null ? String(Math.round(Number(row.best))) : '');
+            } else {
+              if (row.best !== undefined && row.best !== null) tdBest.textContent = csToDisplay(row.best);
+              else {
+                const attempts = Array.isArray(row.attempts) ? row.attempts : [];
+                const numeric = attempts.filter(v => v !== null && v !== undefined && v !== 0 && v !== -1 && v !== -2);
+                if (numeric.length) tdBest.textContent = csToDisplay(Math.min.apply(null, numeric));
+                else tdBest.textContent = '';
+              }
+            }
+            tr.appendChild(tdBest);
+
+            const tdAvg = document.createElement('td');
+            tdAvg.style.padding = '8px';
+            tdAvg.style.textAlign = 'right';
+            const avgVal = (row.average !== undefined && row.average !== null) ? row.average : ((row.final !== undefined && row.final !== null) ? row.final : ((row.mean !== undefined && row.mean !== null) ? row.mean : null));
+            tdAvg.textContent = avgVal !== null ? csToDisplay(avgVal) : '';
+            tr.appendChild(tdAvg);
+
+            const tdSolves = document.createElement('td');
+            tdSolves.style.padding = '8px';
+            tdSolves.style.textAlign = 'left';
+            renderSolvesCell(tdSolves, Array.isArray(row.attempts) ? row.attempts : [], row.best_index, row.worst_index, ev);
+            tr.appendChild(tdSolves);
+
             tbody.appendChild(tr);
           });
-          tbl.appendChild(thead); tbl.appendChild(tbody);
-          podiumsEl.appendChild(tbl);
+
+          tbl.appendChild(tbody);
+          target.appendChild(tbl);
         });
       }
 
-      // Tab wiring
+      
+      function renderByPerson() {
+        const target = document.getElementById('comp-person');
+        target.innerHTML = '';
+        const persons = (personsJson && personsJson.persons) ? personsJson.persons : [];
+        if (!persons.length) {
+          target.innerHTML = '<div style="padding:8px;color:#666">No results</div>';
+          return;
+        }
+
+        // For each person, render a compact table where the Event column shows the event name (text)
+        persons.forEach(p => {
+          const nameH = document.createElement('h3');
+          nameH.textContent = p.name || '';
+          nameH.style.marginTop = '18px';
+          nameH.style.fontWeight = '500';
+          target.appendChild(nameH);
+
+          const tbl = document.createElement('table');
+          tbl.style.width = '100%';
+          const thead = document.createElement('thead');
+          thead.innerHTML = '<tr>' +
+            '<th style="text-align:left;padding:8px;background:#333;color:#fff">Event</th>' +
+            '<th style="text-align:left;padding:8px;background:#333;color:#fff">Round</th>' +
+            '<th style="text-align:center;padding:8px;background:#333;color:#fff;width:64px">#</th>' +
+            '<th style="text-align:right;padding:8px;background:#333;color:#fff">Best</th>' +
+            '<th style="text-align:right;padding:8px;background:#333;color:#fff">Average</th>' +
+            '<th class="solves-header" style="padding:8px;background:#333;color:#fff">Solves</th>' +
+            '</tr>';
+          tbl.appendChild(thead);
+          const tbody = document.createElement('tbody');
+
+          (p.results || []).forEach(r => {
+            const tr = document.createElement('tr');
+
+            // Event name as text (not icon)
+            const tdEvent = document.createElement('td');
+            tdEvent.style.padding = '8px';
+            tdEvent.textContent = r.event || '';
+            tr.appendChild(tdEvent);
+
+            const tdRound = document.createElement('td');
+            tdRound.style.padding = '8px';
+            tdRound.textContent = r.round || '';
+            tr.appendChild(tdRound);
+
+            const tdPos = document.createElement('td');
+            tdPos.style.padding = '8px';
+            tdPos.style.textAlign = 'center';
+            tdPos.style.fontWeight = '600';
+            tdPos.textContent = (r.pos && Number.isFinite(Number(r.pos))) ? String(r.pos) : '';
+            tr.appendChild(tdPos);
+
+            const tdBest = document.createElement('td');
+            tdBest.style.padding = '8px';
+            tdBest.style.textAlign = 'right';
+            // compute best like renderAll: for FMC use integer moves; else use csToDisplay
+            if (isFewestMovesEvent(r.event || '')) {
+              if (r.best !== undefined && r.best !== null) tdBest.textContent = String(Math.round(Number(r.best)));
+              else if (Array.isArray(r.attempts) && r.attempts.length) {
+                const numeric = (r.attempts || []).map(a => (a === null || a === undefined || a === 0 || a === '') ? null : Number(a)).filter(v => v !== null && Number.isFinite(v));
+                if (numeric.length) tdBest.textContent = String(Math.round(Math.min(...numeric)));
+                else tdBest.textContent = '';
+              } else tdBest.textContent = '';
+            } else {
+              if (r.best !== undefined && r.best !== null) tdBest.textContent = csToDisplay(r.best);
+              else {
+                if (Array.isArray(r.attempts) && r.attempts.length) {
+                  const numeric = (r.attempts || []).filter(v => v !== null && v !== undefined && v !== 0 && v !== -1 && v !== -2);
+                  if (numeric.length) tdBest.textContent = csToDisplay(Math.min.apply(null, numeric));
+                  else tdBest.textContent = '';
+                } else tdBest.textContent = '';
+              }
+            }
+            tr.appendChild(tdBest);
+
+            const tdAvg = document.createElement('td');
+            tdAvg.style.padding = '8px';
+            tdAvg.style.textAlign = 'right';
+            const avgVal = (r.average !== undefined && r.average !== null) ? r.average : ((r.final !== undefined && r.final !== null) ? r.final : ((r.mean !== undefined && r.mean !== null) ? r.mean : null));
+            tdAvg.textContent = avgVal !== null ? csToDisplay(avgVal) : '';
+            tr.appendChild(tdAvg);
+
+            const tdSolves = document.createElement('td');
+            tdSolves.style.padding = '8px';
+            tdSolves.style.textAlign = 'left';
+            renderSolvesCell(tdSolves, Array.isArray(r.attempts) ? r.attempts : [], r.best_index, r.worst_index, r.event);
+            tr.appendChild(tdSolves);
+
+            tbody.appendChild(tr);
+          });
+
+          tbl.appendChild(tbody);
+          target.appendChild(tbl);
+        });
+      }
+      
+      function renderResults() {
+        // Build a compact winners table using winners.json (prefetch_competitions.py)
+        const target = document.getElementById('comp-results');
+        target.innerHTML = '';
+
+        // Try to load winners.json (prefetched). If missing, fall back to podiumsJson first place.
+        let winners = {};
+        try {
+          winners = winnersJson || {};
+        } catch (e) {
+          winners = {};
+        }
+
+        // Build table
+        const tbl = document.createElement('table');
+        tbl.style.width = '100%';
+        const thead = document.createElement('thead');
+        thead.innerHTML = '<tr><th style="text-align:left;padding:8px;">Event</th><th style="text-align:left;padding:8px;">Winner</th><th style="text-align:right;padding:8px;">Best</th><th style="text-align:right;padding:8px;">Average</th><th class="solves-header" style="padding:8px;">Solves</th></tr>';
+        tbl.appendChild(thead);
+        const tbody = document.createElement('tbody');
+
+        // If winners object empty, build from podiumsJson first-place entries
+        if (!winners || Object.keys(winners).length === 0) {
+          const byEvent = podiumsJson.events || {};
+          Object.keys(byEvent).forEach(ev => {
+            const arr = byEvent[ev] || [];
+            if (!arr.length) return;
+            const top = arr[0];
+            winners[ev] = { name: top.name || '', result: top.final || '', solves: top.attempts || [], best: top.best || null, average: top.final || null };
+          });
+        }
+
+        Object.keys(winners).forEach(ev => {
+          const w = winners[ev] || {};
+          const tr = document.createElement('tr');
+          const tdEv = document.createElement('td');
+          tdEv.style.padding = '8px';
+          tdEv.style.fontWeight = '600';
+          // Event icon only (no name) per instruction; title contains event name for accessibility
+          const code = EVENT_NAME_TO_CODE[(ev || '').toLowerCase()] || 'unknown';
+          tdEv.innerHTML = `<img class="event-icon" src="/images/event_icons/${code}.png" alt="${ev}" title="${ev}">`;
+          tr.appendChild(tdEv);
+
+          const tdName = document.createElement('td');
+          tdName.style.padding = '8px';
+          tdName.textContent = w.name || '';
+          tr.appendChild(tdName);
+
+          const tdBest = document.createElement('td');
+          tdBest.style.padding = '8px';
+          tdBest.style.textAlign = 'right';
+          tdBest.textContent = (w.best !== undefined && w.best !== null) ? csToDisplay(w.best) : (w.result ? csToDisplay(w.result) : '');
+          tr.appendChild(tdBest);
+
+          const tdAvg = document.createElement('td');
+          tdAvg.style.padding = '8px';
+          tdAvg.style.textAlign = 'right';
+          const avgVal = (w.average !== undefined && w.average !== null) ? w.average : ((w.final !== undefined && w.final !== null) ? w.final : ((w.mean !== undefined && w.mean !== null) ? w.mean : null));
+          tdAvg.textContent = avgVal !== null ? csToDisplay(avgVal) : '';
+          tr.appendChild(tdAvg);
+
+          const tdSolves = document.createElement('td');
+          tdSolves.style.padding = '8px';
+          tdSolves.style.textAlign = 'left';
+          renderSolvesCell(tdSolves, Array.isArray(w.solves) ? w.solves : [], null, null, ev);
+          tr.appendChild(tdSolves);
+
+          tbody.appendChild(tr);
+        });
+
+        tbl.appendChild(tbody);
+        target.appendChild(tbl);
+      }
+
+
+      // Tab wiring and new Results tab
+      const btnResults = document.getElementById('comp-tab-results') || document.getElementById('comp-tab-results');
       const btnAll = document.getElementById('comp-tab-all');
       const btnPerson = document.getElementById('comp-tab-person');
       const btnPodiums = document.getElementById('comp-tab-podiums');
 
-      function selectTab(which) {
-        btnAll.style.background = which === 'all' ? '#1976D2' : '#fff';
-        btnAll.style.color = which === 'all' ? '#fff' : 'black';
-        btnAll.style.border = which === 'all' ? 'none' : '1px solid black';
-
-        btnPerson.style.background = which === 'person' ? '#1976D2' : '#fff';
-        btnPerson.style.color = which === 'person' ? '#fff' : 'black';
-        btnPerson.style.border = which === 'person' ? 'none' : '1px solid black';
-
-        btnPodiums.style.background = which === 'podiums' ? '#1976D2' : '#fff';
-        btnPodiums.style.color = which === 'podiums' ? '#fff' : 'black';
-        btnPodiums.style.border = which === 'podiums' ? 'none' : '1px solid black';
-
-        allEl.style.display = which === 'all' ? '' : 'none';
-        personEl.style.display = which === 'person' ? '' : 'none';
-        podiumsEl.style.display = which === 'podiums' ? '' : 'none';
+      function clearActiveTabs() {
+        [btnResults, btnAll, btnPerson, btnPodiums].forEach(b => { if (b) b.classList.remove('active'); });
+        // hide all content panes
+        document.getElementById('comp-results').style.display = 'none';
+        document.getElementById('comp-all').style.display = 'none';
+        document.getElementById('comp-person').style.display = 'none';
+        document.getElementById('comp-podiums').style.display = 'none';
       }
 
-      btnAll.onclick = () => { renderAll(); selectTab('all'); };
-      btnPerson.onclick = () => { renderByPerson(); selectTab('person'); };
-      btnPodiums.onclick = () => { renderPodiums(); selectTab('podiums'); };
 
-      // Default tab
-      renderAll(); selectTab('all');
+
+      btnResults && btnResults.addEventListener('click', async (ev) => {
+        clearActiveTabs();
+        btnResults.classList.add('active');
+        await renderResults();
+        document.getElementById('comp-results').style.display = '';
+      });
+
+      btnAll && btnAll.addEventListener('click', (ev) => {
+        clearActiveTabs();
+        btnAll.classList.add('active');
+        document.getElementById('comp-all').style.display = '';
+        // renderAll is defined above; reuse it
+        renderAll();
+      });
+
+      btnPerson && btnPerson.addEventListener('click', (ev) => {
+        clearActiveTabs();
+        btnPerson.classList.add('active');
+        document.getElementById('comp-person').style.display = '';
+        renderByPerson();
+      });
+
+      btnPodiums && btnPodiums.addEventListener('click', (ev) => {
+        clearActiveTabs();
+        btnPodiums.classList.add('active');
+        document.getElementById('comp-podiums').style.display = '';
+        renderPodiums();
+      });
+
+      // Default: Results
+      clearActiveTabs();
+      btnResults && btnResults.classList.add('active');
+      await renderResults();
+
     }
 
     // Live: show summary and round cards

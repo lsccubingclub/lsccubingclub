@@ -596,15 +596,15 @@
       {
         "person_name": "Lai Pak Kiu",
         "wcaid": "2024KIUL01",
-        "competition_id": "Hong Kong Blind Legends 2024",
+        "competition_id": "Hong Kong Championship 2025",
         "round_name": null,
-        "value": 6312,
+        "value": 5564,
         "type": "single",
         "attempt_index": 0,
         "attempts": [
-          6312,
+          5564,
           -1,
-          8472,
+          7200,
           0,
           0
         ],
@@ -636,22 +636,42 @@
       {
         "person_name": "Liu Shing Chak",
         "wcaid": "2024CHAK03",
-        "competition_id": "Hong Kong Cube Day 2025",
+        "competition_id": "Hong Kong Championship 2025",
         "round_name": null,
-        "value": 16336,
+        "value": 10315,
         "type": "single",
-        "attempt_index": 1,
+        "attempt_index": 0,
         "attempts": [
+          10315,
           -1,
-          16336,
           -1,
           0,
           0
         ],
         "regional_single_record": null,
         "regional_average_record": null,
-        "best_index": 1,
+        "best_index": 0,
         "worst_index": 2
+      },
+      {
+        "person_name": "Ip Pak Tou Zachary",
+        "wcaid": "2023TOUZ01",
+        "competition_id": "Hong Kong Championship 2025",
+        "round_name": null,
+        "value": 19780,
+        "type": "single",
+        "attempt_index": 0,
+        "attempts": [
+          19780,
+          -1,
+          26777,
+          0,
+          0
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 0,
+        "worst_index": 1
       }
     ],
     "average": [
@@ -692,6 +712,25 @@
         "regional_average_record": null,
         "best_index": 1,
         "worst_index": 0
+      },
+      {
+        "person_name": "Matthew Advani",
+        "wcaid": "2023ADVA01",
+        "competition_id": "Hong Kong Championship 2025",
+        "round_name": null,
+        "value": 16916,
+        "type": "average",
+        "attempts": [
+          12225,
+          18891,
+          19632,
+          0,
+          0
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 0,
+        "worst_index": 2
       }
     ]
   },
@@ -738,6 +777,66 @@
         "worst_index": 4
       },
       {
+        "person_name": "Tang Ue Tze",
+        "wcaid": "2024TZET01",
+        "competition_id": "Hong Kong Championship 2025",
+        "round_name": null,
+        "value": 1104,
+        "type": "single",
+        "attempt_index": 4,
+        "attempts": [
+          1454,
+          1557,
+          2396,
+          1380,
+          1104
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 4,
+        "worst_index": 2
+      },
+      {
+        "person_name": "Lai Pak Kiu",
+        "wcaid": "2024KIUL01",
+        "competition_id": "Hong Kong Championship 2025",
+        "round_name": null,
+        "value": 1312,
+        "type": "single",
+        "attempt_index": 4,
+        "attempts": [
+          2305,
+          2243,
+          2787,
+          1987,
+          1312
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 4,
+        "worst_index": 2
+      },
+      {
+        "person_name": "Liu Shing Chak",
+        "wcaid": "2024CHAK03",
+        "competition_id": "Hong Kong Championship 2025",
+        "round_name": null,
+        "value": 1748,
+        "type": "single",
+        "attempt_index": 2,
+        "attempts": [
+          2327,
+          2243,
+          1748,
+          2262,
+          2090
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 2,
+        "worst_index": 0
+      },
+      {
         "person_name": "Matthew Advani",
         "wcaid": "2023ADVA01",
         "competition_id": "Hong Kong Championship 2024",
@@ -756,46 +855,6 @@
         "regional_average_record": null,
         "best_index": 4,
         "worst_index": 3
-      },
-      {
-        "person_name": "Lai Pak Kiu",
-        "wcaid": "2024KIUL01",
-        "competition_id": "Hong Kong Side Event Day 2025",
-        "round_name": null,
-        "value": 2171,
-        "type": "single",
-        "attempt_index": 0,
-        "attempts": [
-          2171,
-          2295,
-          2827,
-          2373,
-          2564
-        ],
-        "regional_single_record": null,
-        "regional_average_record": null,
-        "best_index": 0,
-        "worst_index": 2
-      },
-      {
-        "person_name": "Liu Shing Chak",
-        "wcaid": "2024CHAK03",
-        "competition_id": "Hong Kong Cube Day 2024",
-        "round_name": null,
-        "value": 2663,
-        "type": "single",
-        "attempt_index": 0,
-        "attempts": [
-          2663,
-          3472,
-          2962,
-          3044,
-          3298
-        ],
-        "regional_single_record": null,
-        "regional_average_record": null,
-        "best_index": 0,
-        "worst_index": 1
       }
     ],
     "average": [
@@ -838,23 +897,61 @@
         "worst_index": 1
       },
       {
-        "person_name": "Lai Pak Kiu",
-        "wcaid": "2024KIUL01",
-        "competition_id": "Hong Kong Side Event Day 2025",
+        "person_name": "Tang Ue Tze",
+        "wcaid": "2024TZET01",
+        "competition_id": "Hong Kong Championship 2025",
         "round_name": null,
-        "value": 2411,
+        "value": 1464,
         "type": "average",
         "attempts": [
-          2171,
-          2295,
-          2827,
-          2373,
-          2564
+          1454,
+          1557,
+          2396,
+          1380,
+          1104
         ],
         "regional_single_record": null,
         "regional_average_record": null,
-        "best_index": 0,
+        "best_index": 4,
         "worst_index": 2
+      },
+      {
+        "person_name": "Lai Pak Kiu",
+        "wcaid": "2024KIUL01",
+        "competition_id": "Hong Kong Championship 2025",
+        "round_name": null,
+        "value": 2178,
+        "type": "average",
+        "attempts": [
+          2305,
+          2243,
+          2787,
+          1987,
+          1312
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 4,
+        "worst_index": 2
+      },
+      {
+        "person_name": "Liu Shing Chak",
+        "wcaid": "2024CHAK03",
+        "competition_id": "Hong Kong Championship 2025",
+        "round_name": null,
+        "value": 2198,
+        "type": "average",
+        "attempts": [
+          2327,
+          2243,
+          1748,
+          2262,
+          2090
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 2,
+        "worst_index": 0
       },
       {
         "person_name": "Matthew Advani",
@@ -874,25 +971,6 @@
         "regional_average_record": null,
         "best_index": 1,
         "worst_index": 2
-      },
-      {
-        "person_name": "Liu Shing Chak",
-        "wcaid": "2024CHAK03",
-        "competition_id": "Hong Kong Cube Day 2024",
-        "round_name": null,
-        "value": 3101,
-        "type": "average",
-        "attempts": [
-          2663,
-          3472,
-          2962,
-          3044,
-          3298
-        ],
-        "regional_single_record": null,
-        "regional_average_record": null,
-        "best_index": 0,
-        "worst_index": 1
       }
     ]
   },
@@ -1114,6 +1192,26 @@
         "worst_index": 0
       },
       {
+        "person_name": "Lau Ho Chi",
+        "wcaid": "2023CHIL07",
+        "competition_id": "Hong Kong Championship 2025",
+        "round_name": null,
+        "value": 503,
+        "type": "single",
+        "attempt_index": 3,
+        "attempts": [
+          657,
+          2455,
+          1575,
+          503,
+          726
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 3,
+        "worst_index": 1
+      },
+      {
         "person_name": "Liu Shing Chak",
         "wcaid": "2024CHAK03",
         "competition_id": "Hong Kong Side Event Day 2025",
@@ -1152,26 +1250,6 @@
         "regional_average_record": null,
         "best_index": 4,
         "worst_index": 2
-      },
-      {
-        "person_name": "Lau Ho Chi",
-        "wcaid": "2023CHIL07",
-        "competition_id": "Hong Kong Side Event Day 2025",
-        "round_name": null,
-        "value": 1029,
-        "type": "single",
-        "attempt_index": 3,
-        "attempts": [
-          -1,
-          1645,
-          1460,
-          1029,
-          1111
-        ],
-        "regional_single_record": null,
-        "regional_average_record": null,
-        "best_index": 3,
-        "worst_index": 0
       },
       {
         "person_name": "Tsiang Wei Yan",
@@ -1294,40 +1372,40 @@
       {
         "person_name": "Lau Ho Chi",
         "wcaid": "2023CHIL07",
-        "competition_id": "Hong Kong Side Event Day 2025",
+        "competition_id": "Hong Kong Championship 2025",
         "round_name": null,
-        "value": 1405,
+        "value": 986,
         "type": "average",
         "attempts": [
-          -1,
-          1645,
-          1460,
-          1029,
-          1111
+          657,
+          2455,
+          1575,
+          503,
+          726
         ],
         "regional_single_record": null,
         "regional_average_record": null,
         "best_index": 3,
-        "worst_index": 0
+        "worst_index": 1
       },
       {
         "person_name": "Lai Pak Kiu",
         "wcaid": "2024KIUL01",
-        "competition_id": "Jiangmen Open 2025",
+        "competition_id": "Hong Kong Championship 2025",
         "round_name": null,
-        "value": 1670,
+        "value": 1166,
         "type": "average",
         "attempts": [
-          1044,
-          2633,
-          -1,
-          1332,
-          818
+          1181,
+          1953,
+          1129,
+          1189,
+          1076
         ],
         "regional_single_record": null,
         "regional_average_record": null,
         "best_index": 4,
-        "worst_index": 2
+        "worst_index": 1
       }
     ]
   },
@@ -1392,6 +1470,26 @@
         "regional_average_record": null,
         "best_index": 4,
         "worst_index": 2
+      },
+      {
+        "person_name": "Tang Ue Tze",
+        "wcaid": "2024TZET01",
+        "competition_id": "Hong Kong Championship 2025",
+        "round_name": null,
+        "value": 516,
+        "type": "single",
+        "attempt_index": 3,
+        "attempts": [
+          643,
+          1355,
+          628,
+          516,
+          1024
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 3,
+        "worst_index": 1
       },
       {
         "person_name": "Ip Pak Tou Zachary",
@@ -1512,26 +1610,6 @@
         "regional_average_record": null,
         "best_index": 1,
         "worst_index": 2
-      },
-      {
-        "person_name": "Tang Ue Tze",
-        "wcaid": "2024TZET01",
-        "competition_id": "HKRCU 20th Anniversary 2025",
-        "round_name": null,
-        "value": 616,
-        "type": "single",
-        "attempt_index": 2,
-        "attempts": [
-          796,
-          880,
-          616,
-          807,
-          1146
-        ],
-        "regional_single_record": null,
-        "regional_average_record": null,
-        "best_index": 2,
-        "worst_index": 4
       }
     ],
     "average": [
@@ -1612,6 +1690,25 @@
         "worst_index": 1
       },
       {
+        "person_name": "Tang Ue Tze",
+        "wcaid": "2024TZET01",
+        "competition_id": "Hong Kong Championship 2025",
+        "round_name": null,
+        "value": 765,
+        "type": "average",
+        "attempts": [
+          643,
+          1355,
+          628,
+          516,
+          1024
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 3,
+        "worst_index": 1
+      },
+      {
         "person_name": "Ip Pak Tou Zachary",
         "wcaid": "2023TOUZ01",
         "competition_id": "Welcome Back Hong Kong 2024",
@@ -1631,23 +1728,23 @@
         "worst_index": 1
       },
       {
-        "person_name": "Tang Ue Tze",
-        "wcaid": "2024TZET01",
-        "competition_id": "HKRCU 20th Anniversary 2025",
+        "person_name": "Lau Ho Chi",
+        "wcaid": "2023CHIL07",
+        "competition_id": "Hong Kong Championship 2025",
         "round_name": null,
-        "value": 828,
+        "value": 856,
         "type": "average",
         "attempts": [
-          796,
-          880,
-          616,
-          807,
-          1146
+          948,
+          1116,
+          712,
+          780,
+          841
         ],
         "regional_single_record": null,
         "regional_average_record": null,
         "best_index": 2,
-        "worst_index": 4
+        "worst_index": 1
       },
       {
         "person_name": "Tsiang Wei Yan",
@@ -1686,25 +1783,6 @@
         "regional_average_record": null,
         "best_index": 2,
         "worst_index": 4
-      },
-      {
-        "person_name": "Lau Ho Chi",
-        "wcaid": "2023CHIL07",
-        "competition_id": "Hong Kong Side Event Day 2025",
-        "round_name": null,
-        "value": 951,
-        "type": "average",
-        "attempts": [
-          608,
-          1221,
-          839,
-          1527,
-          792
-        ],
-        "regional_single_record": null,
-        "regional_average_record": null,
-        "best_index": 0,
-        "worst_index": 3
       },
       {
         "person_name": "Kwok Pak Hei",
@@ -1993,6 +2071,26 @@
         "worst_index": 2
       },
       {
+        "person_name": "Lai Pak Kiu",
+        "wcaid": "2024KIUL01",
+        "competition_id": "Hong Kong Championship 2025",
+        "round_name": null,
+        "value": 6419,
+        "type": "single",
+        "attempt_index": 2,
+        "attempts": [
+          7860,
+          6990,
+          6419,
+          7692,
+          8083
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 2,
+        "worst_index": 4
+      },
+      {
         "person_name": "Liu Yik Yung",
         "wcaid": "2023YUNG02",
         "competition_id": "Bristol Winter Open 2024",
@@ -2011,6 +2109,26 @@
         "regional_average_record": null,
         "best_index": 3,
         "worst_index": 0
+      },
+      {
+        "person_name": "Matthew Advani",
+        "wcaid": "2023ADVA01",
+        "competition_id": "Hong Kong Championship 2025",
+        "round_name": null,
+        "value": 9636,
+        "type": "single",
+        "attempt_index": 0,
+        "attempts": [
+          9636,
+          10901,
+          0,
+          0,
+          0
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 0,
+        "worst_index": 1
       }
     ],
     "average": [
@@ -2032,6 +2150,25 @@
         "regional_average_record": null,
         "best_index": 4,
         "worst_index": 2
+      },
+      {
+        "person_name": "Lai Pak Kiu",
+        "wcaid": "2024KIUL01",
+        "competition_id": "Hong Kong Championship 2025",
+        "round_name": null,
+        "value": 7514,
+        "type": "average",
+        "attempts": [
+          7860,
+          6990,
+          6419,
+          7692,
+          8083
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 2,
+        "worst_index": 4
       },
       {
         "person_name": "Liu Yik Yung",
@@ -2207,6 +2344,26 @@
         "worst_index": 4
       },
       {
+        "person_name": "Ip Pak Tou Zachary",
+        "wcaid": "2023TOUZ01",
+        "competition_id": "Hong Kong Championship 2025",
+        "round_name": null,
+        "value": 9038,
+        "type": "single",
+        "attempt_index": 1,
+        "attempts": [
+          10556,
+          9038,
+          0,
+          0,
+          0
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 1,
+        "worst_index": 0
+      },
+      {
         "person_name": "Liu Shing Chak",
         "wcaid": "2024CHAK03",
         "competition_id": "Hong Kong Championship 2024",
@@ -2312,22 +2469,22 @@
       {
         "person_name": "Lai Pak Kiu",
         "wcaid": "2024KIUL01",
-        "competition_id": "HKRCU 20th Anniversary 2025",
+        "competition_id": "Hong Kong Championship 2025",
         "round_name": null,
-        "value": 621,
+        "value": 614,
         "type": "single",
-        "attempt_index": 2,
+        "attempt_index": 0,
         "attempts": [
-          886,
-          -1,
-          621,
-          817,
-          710
+          614,
+          719,
+          782,
+          1074,
+          948
         ],
         "regional_single_record": null,
         "regional_average_record": null,
-        "best_index": 2,
-        "worst_index": 1
+        "best_index": 0,
+        "worst_index": 3
       },
       {
         "person_name": "Matthew Advani",
@@ -2452,17 +2609,17 @@
       {
         "person_name": "Liu Shing Chak",
         "wcaid": "2024CHAK03",
-        "competition_id": "LSC Championship 2025",
+        "competition_id": "Hong Kong Championship 2025",
         "round_name": null,
-        "value": 957,
+        "value": 951,
         "type": "single",
         "attempt_index": 2,
         "attempts": [
-          1362,
-          1679,
-          957,
-          1175,
-          1269
+          1154,
+          1277,
+          951,
+          1128,
+          1058
         ],
         "regional_single_record": null,
         "regional_average_record": null,
@@ -2508,6 +2665,26 @@
         "regional_average_record": null,
         "best_index": 1,
         "worst_index": 4
+      },
+      {
+        "person_name": "Ho Cheuk Yiu",
+        "wcaid": "2019YIUH01",
+        "competition_id": "Hong Kong Championship 2025",
+        "round_name": null,
+        "value": 1061,
+        "type": "single",
+        "attempt_index": 2,
+        "attempts": [
+          1340,
+          1661,
+          1061,
+          1211,
+          1452
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 2,
+        "worst_index": 1
       },
       {
         "person_name": "Lau Ho Chi",
@@ -2588,26 +2765,6 @@
         "regional_average_record": null,
         "best_index": 4,
         "worst_index": 1
-      },
-      {
-        "person_name": "Ho Cheuk Yiu",
-        "wcaid": "2019YIUH01",
-        "competition_id": "Hong Kong Championship 2023",
-        "round_name": null,
-        "value": 1219,
-        "type": "single",
-        "attempt_index": 3,
-        "attempts": [
-          1459,
-          1726,
-          1813,
-          1219,
-          1354
-        ],
-        "regional_single_record": null,
-        "regional_average_record": null,
-        "best_index": 3,
-        "worst_index": 2
       },
       {
         "person_name": "Ngai Yufung Darren",
@@ -3131,42 +3288,42 @@
         "worst_index": 2
       },
       {
-        "person_name": "Matthew Advani",
-        "wcaid": "2023ADVA01",
-        "competition_id": "LSC Championship 2025",
+        "person_name": "Tang Ue Tze",
+        "wcaid": "2024TZET01",
+        "competition_id": "Hong Kong Championship 2025",
         "round_name": null,
-        "value": 909,
+        "value": 813,
         "type": "average",
         "attempts": [
-          725,
-          1087,
-          1047,
-          865,
-          816
+          848,
+          980,
+          795,
+          795,
+          790
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 4,
+        "worst_index": 1
+      },
+      {
+        "person_name": "Matthew Advani",
+        "wcaid": "2023ADVA01",
+        "competition_id": "Hong Kong Championship 2025",
+        "round_name": null,
+        "value": 869,
+        "type": "average",
+        "attempts": [
+          771,
+          914,
+          864,
+          829,
+          1045
         ],
         "regional_single_record": null,
         "regional_average_record": null,
         "best_index": 0,
-        "worst_index": 1
-      },
-      {
-        "person_name": "Tang Ue Tze",
-        "wcaid": "2024TZET01",
-        "competition_id": "Hong Kong Cube Day 2025",
-        "round_name": null,
-        "value": 919,
-        "type": "average",
-        "attempts": [
-          915,
-          828,
-          1060,
-          1003,
-          840
-        ],
-        "regional_single_record": null,
-        "regional_average_record": null,
-        "best_index": 1,
-        "worst_index": 2
+        "worst_index": 4
       },
       {
         "person_name": "Tsiang Wei Yan",
@@ -3264,6 +3421,25 @@
         "worst_index": 3
       },
       {
+        "person_name": "Liu Shing Chak",
+        "wcaid": "2024CHAK03",
+        "competition_id": "Hong Kong Championship 2025",
+        "round_name": null,
+        "value": 1113,
+        "type": "average",
+        "attempts": [
+          1154,
+          1277,
+          951,
+          1128,
+          1058
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 2,
+        "worst_index": 1
+      },
+      {
         "person_name": "Yu Wai Sum",
         "wcaid": "2019SUMY01",
         "competition_id": "Shenzhen Cubing 10th Anniversary 2019",
@@ -3280,25 +3456,6 @@
         "regional_single_record": null,
         "regional_average_record": null,
         "best_index": 1,
-        "worst_index": 4
-      },
-      {
-        "person_name": "Liu Shing Chak",
-        "wcaid": "2024CHAK03",
-        "competition_id": "HKRCU 20th Anniversary 2025",
-        "round_name": null,
-        "value": 1186,
-        "type": "average",
-        "attempts": [
-          1170,
-          1215,
-          1174,
-          991,
-          1240
-        ],
-        "regional_single_record": null,
-        "regional_average_record": null,
-        "best_index": 3,
         "worst_index": 4
       },
       {
@@ -3319,6 +3476,25 @@
         "regional_average_record": null,
         "best_index": 2,
         "worst_index": 0
+      },
+      {
+        "person_name": "Ho Cheuk Yiu",
+        "wcaid": "2019YIUH01",
+        "competition_id": "Hong Kong Championship 2025",
+        "round_name": null,
+        "value": 1334,
+        "type": "average",
+        "attempts": [
+          1340,
+          1661,
+          1061,
+          1211,
+          1452
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 2,
+        "worst_index": 1
       },
       {
         "person_name": "Yiu Cheuk Fung",
@@ -3357,25 +3533,6 @@
         "regional_average_record": null,
         "best_index": 3,
         "worst_index": 4
-      },
-      {
-        "person_name": "Ho Cheuk Yiu",
-        "wcaid": "2019YIUH01",
-        "competition_id": "LSC Cube Day 2024",
-        "round_name": null,
-        "value": 1507,
-        "type": "average",
-        "attempts": [
-          1443,
-          1250,
-          1846,
-          1655,
-          1422
-        ],
-        "regional_single_record": null,
-        "regional_average_record": null,
-        "best_index": 1,
-        "worst_index": 2
       },
       {
         "person_name": "Lai Hiu Nam",
@@ -4298,6 +4455,25 @@
     ],
     "average": [
       {
+        "person_name": "Liu Shing Chak",
+        "wcaid": "2024CHAK03",
+        "competition_id": "Hong Kong Championship 2025",
+        "round_name": null,
+        "value": 250,
+        "type": "average",
+        "attempts": [
+          325,
+          280,
+          217,
+          231,
+          239
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 2,
+        "worst_index": 0
+      },
+      {
         "person_name": "Ip Pak Tou Zachary",
         "wcaid": "2023TOUZ01",
         "competition_id": "HKRCU 20th Anniversary 2025",
@@ -4315,25 +4491,6 @@
         "regional_average_record": null,
         "best_index": 4,
         "worst_index": 2
-      },
-      {
-        "person_name": "Liu Shing Chak",
-        "wcaid": "2024CHAK03",
-        "competition_id": "LSC Championship 2025",
-        "round_name": null,
-        "value": 268,
-        "type": "average",
-        "attempts": [
-          548,
-          266,
-          241,
-          243,
-          294
-        ],
-        "regional_single_record": null,
-        "regional_average_record": null,
-        "best_index": 2,
-        "worst_index": 0
       },
       {
         "person_name": "Lai Pak Kiu",
@@ -4357,21 +4514,21 @@
       {
         "person_name": "Tang Ue Tze",
         "wcaid": "2024TZET01",
-        "competition_id": "HKRCU 20th Anniversary 2025",
+        "competition_id": "Hong Kong Championship 2025",
         "round_name": null,
-        "value": 321,
+        "value": 291,
         "type": "average",
         "attempts": [
+          290,
+          338,
           -1,
-          270,
-          327,
-          259,
-          367
+          245,
+          243
         ],
         "regional_single_record": null,
         "regional_average_record": null,
-        "best_index": 3,
-        "worst_index": 0
+        "best_index": 4,
+        "worst_index": 2
       },
       {
         "person_name": "Liu Yik Yung",
@@ -4431,6 +4588,25 @@
         "worst_index": 1
       },
       {
+        "person_name": "Ho Cheuk Yiu",
+        "wcaid": "2019YIUH01",
+        "competition_id": "Hong Kong Championship 2025",
+        "round_name": null,
+        "value": 388,
+        "type": "average",
+        "attempts": [
+          329,
+          520,
+          349,
+          459,
+          356
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 0,
+        "worst_index": 1
+      },
+      {
         "person_name": "Yu Wai Sum",
         "wcaid": "2019SUMY01",
         "competition_id": "Shenzhen Cubing 10th Anniversary 2019",
@@ -4448,25 +4624,6 @@
         "regional_average_record": null,
         "best_index": 1,
         "worst_index": 4
-      },
-      {
-        "person_name": "Ho Cheuk Yiu",
-        "wcaid": "2019YIUH01",
-        "competition_id": "Hong Kong Championship 2023",
-        "round_name": null,
-        "value": 446,
-        "type": "average",
-        "attempts": [
-          308,
-          585,
-          647,
-          306,
-          445
-        ],
-        "regional_single_record": null,
-        "regional_average_record": null,
-        "best_index": 3,
-        "worst_index": 2
       },
       {
         "person_name": "Kwok Pak Hei",
@@ -4507,6 +4664,25 @@
         "worst_index": 1
       },
       {
+        "person_name": "Lau Ho Chi",
+        "wcaid": "2023CHIL07",
+        "competition_id": "Hong Kong Championship 2025",
+        "round_name": null,
+        "value": 489,
+        "type": "average",
+        "attempts": [
+          480,
+          584,
+          466,
+          462,
+          520
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 3,
+        "worst_index": 1
+      },
+      {
         "person_name": "Hung Yu Ting",
         "wcaid": null,
         "competition_id": "LSC Championship 2025",
@@ -4524,25 +4700,6 @@
         "regional_average_record": null,
         "best_index": 3,
         "worst_index": 4
-      },
-      {
-        "person_name": "Lau Ho Chi",
-        "wcaid": "2023CHIL07",
-        "competition_id": "Hong Kong Cube Day 2025",
-        "round_name": null,
-        "value": 548,
-        "type": "average",
-        "attempts": [
-          -1,
-          288,
-          582,
-          461,
-          602
-        ],
-        "regional_single_record": null,
-        "regional_average_record": null,
-        "best_index": 1,
-        "worst_index": 0
       },
       {
         "person_name": "Lai Hiu Nam",
@@ -4581,6 +4738,25 @@
         "regional_average_record": null,
         "best_index": 1,
         "worst_index": 0
+      },
+      {
+        "person_name": "Fung Sum Chun",
+        "wcaid": "2023CHUN03",
+        "competition_id": "Hong Kong Championship 2025",
+        "round_name": null,
+        "value": 849,
+        "type": "average",
+        "attempts": [
+          960,
+          1190,
+          756,
+          809,
+          778
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 2,
+        "worst_index": 1
       },
       {
         "person_name": "Lam Chun Fung",
@@ -4638,25 +4814,6 @@
         "regional_average_record": null,
         "best_index": 2,
         "worst_index": 4
-      },
-      {
-        "person_name": "Fung Sum Chun",
-        "wcaid": "2023CHUN03",
-        "competition_id": "Hong Kong Championship 2023",
-        "round_name": null,
-        "value": 1028,
-        "type": "average",
-        "attempts": [
-          826,
-          736,
-          1494,
-          777,
-          1481
-        ],
-        "regional_single_record": null,
-        "regional_average_record": null,
-        "best_index": 1,
-        "worst_index": 2
       },
       {
         "person_name": "Cheong Constantine",
@@ -4781,6 +4938,46 @@
         "worst_index": 0
       },
       {
+        "person_name": "Kwok Pak Hei",
+        "wcaid": "2017HEIK03",
+        "competition_id": "Hong Kong Championship 2025",
+        "round_name": null,
+        "value": 4087,
+        "type": "single",
+        "attempt_index": 0,
+        "attempts": [
+          4087,
+          4604,
+          5104,
+          4822,
+          4804
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 0,
+        "worst_index": 2
+      },
+      {
+        "person_name": "Liu Shing Chak",
+        "wcaid": "2024CHAK03",
+        "competition_id": "Hong Kong Championship 2025",
+        "round_name": null,
+        "value": 4122,
+        "type": "single",
+        "attempt_index": 3,
+        "attempts": [
+          5033,
+          4232,
+          5559,
+          4122,
+          4811
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 3,
+        "worst_index": 2
+      },
+      {
         "person_name": "Tsiang Wei Yan",
         "wcaid": "2023YANT01",
         "competition_id": "Welcome Back Hong Kong 2024",
@@ -4799,46 +4996,6 @@
         "regional_average_record": null,
         "best_index": 2,
         "worst_index": 3
-      },
-      {
-        "person_name": "Liu Shing Chak",
-        "wcaid": "2024CHAK03",
-        "competition_id": "Jiangmen Open 2025",
-        "round_name": null,
-        "value": 4317,
-        "type": "single",
-        "attempt_index": 4,
-        "attempts": [
-          4433,
-          5042,
-          5772,
-          5036,
-          4317
-        ],
-        "regional_single_record": null,
-        "regional_average_record": null,
-        "best_index": 4,
-        "worst_index": 2
-      },
-      {
-        "person_name": "Kwok Pak Hei",
-        "wcaid": "2017HEIK03",
-        "competition_id": "Hong Kong Championship 2023",
-        "round_name": null,
-        "value": 4554,
-        "type": "single",
-        "attempt_index": 0,
-        "attempts": [
-          4554,
-          4744,
-          5711,
-          6286,
-          6563
-        ],
-        "regional_single_record": null,
-        "regional_average_record": null,
-        "best_index": 0,
-        "worst_index": 4
       },
       {
         "person_name": "Cheung Yan Shek",
@@ -4901,6 +5058,26 @@
         "worst_index": 0
       },
       {
+        "person_name": "Lau Ho Chi",
+        "wcaid": "2023CHIL07",
+        "competition_id": "Hong Kong Championship 2025",
+        "round_name": null,
+        "value": 5958,
+        "type": "single",
+        "attempt_index": 0,
+        "attempts": [
+          5958,
+          7543,
+          0,
+          0,
+          0
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 0,
+        "worst_index": 1
+      },
+      {
         "person_name": "Ho Cheuk Yiu",
         "wcaid": "2019YIUH01",
         "competition_id": "Hong Kong Cube Day 2019",
@@ -4919,26 +5096,6 @@
         "regional_average_record": null,
         "best_index": 0,
         "worst_index": 1
-      },
-      {
-        "person_name": "Lau Ho Chi",
-        "wcaid": "2023CHIL07",
-        "competition_id": "Hong Kong Championship 2023",
-        "round_name": null,
-        "value": 10516,
-        "type": "single",
-        "attempt_index": 1,
-        "attempts": [
-          -1,
-          10516,
-          0,
-          0,
-          0
-        ],
-        "regional_single_record": null,
-        "regional_average_record": null,
-        "best_index": 1,
-        "worst_index": 0
       },
       {
         "person_name": "Fung Sum Chun",
@@ -4965,21 +5122,21 @@
       {
         "person_name": "Lai Pak Kiu",
         "wcaid": "2024KIUL01",
-        "competition_id": "Jiangmen Open 2025",
+        "competition_id": "Hong Kong Championship 2025",
         "round_name": null,
-        "value": 3168,
+        "value": 2908,
         "type": "average",
         "attempts": [
-          3147,
-          3060,
-          3373,
-          3298,
-          2697
+          2764,
+          2852,
+          2740,
+          3122,
+          3107
         ],
         "regional_single_record": null,
         "regional_average_record": null,
-        "best_index": 4,
-        "worst_index": 2
+        "best_index": 2,
+        "worst_index": 3
       },
       {
         "person_name": "Alvin Cheng Hiu Yeung",
@@ -5022,21 +5179,21 @@
       {
         "person_name": "Matthew Advani",
         "wcaid": "2023ADVA01",
-        "competition_id": "Rubik's WCA World Championship 2025",
+        "competition_id": "Hong Kong Championship 2025",
         "round_name": null,
-        "value": 4684,
+        "value": 4399,
         "type": "average",
         "attempts": [
-          4257,
-          4724,
-          3882,
-          5072,
-          5486
+          4322,
+          5153,
+          4639,
+          4235,
+          3920
         ],
         "regional_single_record": null,
         "regional_average_record": null,
-        "best_index": 2,
-        "worst_index": 4
+        "best_index": 4,
+        "worst_index": 1
       },
       {
         "person_name": "Kwok Pak Hei",
@@ -5060,20 +5217,20 @@
       {
         "person_name": "Liu Shing Chak",
         "wcaid": "2024CHAK03",
-        "competition_id": "Jiangmen Open 2025",
+        "competition_id": "Hong Kong Championship 2025",
         "round_name": null,
-        "value": 4837,
+        "value": 4692,
         "type": "average",
         "attempts": [
-          4433,
-          5042,
-          5772,
-          5036,
-          4317
+          5033,
+          4232,
+          5559,
+          4122,
+          4811
         ],
         "regional_single_record": null,
         "regional_average_record": null,
-        "best_index": 4,
+        "best_index": 3,
         "worst_index": 2
       },
       {
@@ -5138,6 +5295,26 @@
   "333oh": {
     "single": [
       {
+        "person_name": "Lai Pak Kiu",
+        "wcaid": "2024KIUL01",
+        "competition_id": "Hong Kong Championship 2025",
+        "round_name": null,
+        "value": 1005,
+        "type": "single",
+        "attempt_index": 2,
+        "attempts": [
+          1227,
+          1456,
+          1005,
+          1538,
+          1228
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 2,
+        "worst_index": 3
+      },
+      {
         "person_name": "Liu Yik Yung",
         "wcaid": "2023YUNG02",
         "competition_id": "Welcome Back Hong Kong 2024",
@@ -5156,26 +5333,6 @@
         "regional_average_record": null,
         "best_index": 0,
         "worst_index": 4
-      },
-      {
-        "person_name": "Lai Pak Kiu",
-        "wcaid": "2024KIUL01",
-        "competition_id": "Hong Kong Championship 2024",
-        "round_name": null,
-        "value": 1222,
-        "type": "single",
-        "attempt_index": 1,
-        "attempts": [
-          1659,
-          1222,
-          1534,
-          1898,
-          1637
-        ],
-        "regional_single_record": null,
-        "regional_average_record": null,
-        "best_index": 1,
-        "worst_index": 3
       },
       {
         "person_name": "Matthew Advani",
@@ -5198,44 +5355,44 @@
         "worst_index": 3
       },
       {
-        "person_name": "Kwok Pak Hei",
-        "wcaid": "2017HEIK03",
-        "competition_id": "Hong Kong Cube Day 2025",
-        "round_name": null,
-        "value": 1666,
-        "type": "single",
-        "attempt_index": 4,
-        "attempts": [
-          2121,
-          2518,
-          1893,
-          2006,
-          1666
-        ],
-        "regional_single_record": null,
-        "regional_average_record": null,
-        "best_index": 4,
-        "worst_index": 1
-      },
-      {
         "person_name": "Lau Ho Chi",
         "wcaid": "2023CHIL07",
-        "competition_id": "Hong Kong Cube Day 2025",
+        "competition_id": "Hong Kong Championship 2025",
         "round_name": null,
-        "value": 1709,
+        "value": 1454,
         "type": "single",
-        "attempt_index": 4,
+        "attempt_index": 0,
         "attempts": [
-          2050,
-          1881,
-          3642,
-          2240,
-          1709
+          1454,
+          1458,
+          2068,
+          1966,
+          2112
         ],
         "regional_single_record": null,
         "regional_average_record": null,
-        "best_index": 4,
-        "worst_index": 2
+        "best_index": 0,
+        "worst_index": 4
+      },
+      {
+        "person_name": "Kwok Pak Hei",
+        "wcaid": "2017HEIK03",
+        "competition_id": "Hong Kong Championship 2025",
+        "round_name": null,
+        "value": 1648,
+        "type": "single",
+        "attempt_index": 3,
+        "attempts": [
+          2038,
+          1939,
+          2019,
+          1648,
+          2188
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 3,
+        "worst_index": 4
       },
       {
         "person_name": "Alvin Cheng Hiu Yeung",
@@ -5318,6 +5475,26 @@
         "worst_index": 0
       },
       {
+        "person_name": "Liu Shing Chak",
+        "wcaid": "2024CHAK03",
+        "competition_id": "Hong Kong Championship 2025",
+        "round_name": null,
+        "value": 2526,
+        "type": "single",
+        "attempt_index": 1,
+        "attempts": [
+          3383,
+          2526,
+          0,
+          0,
+          0
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 1,
+        "worst_index": 0
+      },
+      {
         "person_name": "Ho Cheuk Yiu",
         "wcaid": "2019YIUH01",
         "competition_id": "Hong Kong Championship 2023",
@@ -5342,21 +5519,21 @@
       {
         "person_name": "Lai Pak Kiu",
         "wcaid": "2024KIUL01",
-        "competition_id": "Hong Kong Cube Day 2025",
+        "competition_id": "Hong Kong Championship 2025",
         "round_name": null,
-        "value": 1442,
+        "value": 1304,
         "type": "average",
         "attempts": [
-          1430,
-          1394,
-          1425,
-          1472,
-          -1
+          1227,
+          1456,
+          1005,
+          1538,
+          1228
         ],
         "regional_single_record": null,
         "regional_average_record": null,
-        "best_index": 1,
-        "worst_index": 4
+        "best_index": 2,
+        "worst_index": 3
       },
       {
         "person_name": "Matthew Advani",
@@ -5397,23 +5574,42 @@
         "worst_index": 0
       },
       {
-        "person_name": "Kwok Pak Hei",
-        "wcaid": "2017HEIK03",
-        "competition_id": "Hong Kong Cube Day 2025",
+        "person_name": "Lau Ho Chi",
+        "wcaid": "2023CHIL07",
+        "competition_id": "Hong Kong Championship 2025",
         "round_name": null,
-        "value": 2007,
+        "value": 1728,
         "type": "average",
         "attempts": [
-          2121,
-          2518,
-          1893,
-          2006,
-          1666
+          1740,
+          1690,
+          1754,
+          1681,
+          3109
         ],
         "regional_single_record": null,
         "regional_average_record": null,
-        "best_index": 4,
-        "worst_index": 1
+        "best_index": 3,
+        "worst_index": 4
+      },
+      {
+        "person_name": "Kwok Pak Hei",
+        "wcaid": "2017HEIK03",
+        "competition_id": "Hong Kong Championship 2025",
+        "round_name": null,
+        "value": 1999,
+        "type": "average",
+        "attempts": [
+          2038,
+          1939,
+          2019,
+          1648,
+          2188
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 3,
+        "worst_index": 4
       },
       {
         "person_name": "Alvin Cheng Hiu Yeung",
@@ -5433,25 +5629,6 @@
         "regional_average_record": null,
         "best_index": 4,
         "worst_index": 3
-      },
-      {
-        "person_name": "Lau Ho Chi",
-        "wcaid": "2023CHIL07",
-        "competition_id": "Hong Kong Cube Day 2025",
-        "round_name": null,
-        "value": 2057,
-        "type": "average",
-        "attempts": [
-          2050,
-          1881,
-          3642,
-          2240,
-          1709
-        ],
-        "regional_single_record": null,
-        "regional_average_record": null,
-        "best_index": 4,
-        "worst_index": 2
       },
       {
         "person_name": "Yu Wai Sum",

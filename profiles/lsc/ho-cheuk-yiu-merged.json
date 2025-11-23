@@ -277,6 +277,56 @@
       "regional_average_record": null
     },
     {
+      "id": 7711379,
+      "pos": 74,
+      "round_id": 909542,
+      "best": 1061,
+      "average": 1334,
+      "name": "Ho Cheuk Yiu (何卓堯)",
+      "country_iso2": "HK",
+      "competition_id": "Hong Kong Championship 2025",
+      "event_id": "333",
+      "round_type_id": "1",
+      "format_id": "a",
+      "wca_id": "2019YIUH01",
+      "attempts": [
+        1340,
+        1661,
+        1061,
+        1211,
+        1452
+      ],
+      "best_index": 2,
+      "worst_index": 1,
+      "regional_single_record": null,
+      "regional_average_record": null
+    },
+    {
+      "id": 7711675,
+      "pos": 31,
+      "round_id": 909546,
+      "best": 329,
+      "average": 388,
+      "name": "Ho Cheuk Yiu (何卓堯)",
+      "country_iso2": "HK",
+      "competition_id": "Hong Kong Championship 2025",
+      "event_id": "222",
+      "round_type_id": "1",
+      "format_id": "a",
+      "wca_id": "2019YIUH01",
+      "attempts": [
+        329,
+        520,
+        349,
+        459,
+        356
+      ],
+      "best_index": 0,
+      "worst_index": 1,
+      "regional_single_record": null,
+      "regional_average_record": null
+    },
+    {
       "pos": 10,
       "competition_id": "LSC Cube Day 2024",
       "event_id": "333",

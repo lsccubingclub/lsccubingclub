@@ -549,22 +549,22 @@
       {
         "person_name": "Lai Pak Kiu",
         "wcaid": "2024KIUL01",
-        "competition_id": "HKRCU 20th Anniversary 2025",
+        "competition_id": "Hong Kong Championship 2025",
         "round_name": null,
-        "value": 621,
+        "value": 614,
         "type": "single",
-        "attempt_index": 2,
+        "attempt_index": 0,
         "attempts": [
-          886,
-          -1,
-          621,
-          817,
-          710
+          614,
+          719,
+          782,
+          1074,
+          948
         ],
         "regional_single_record": null,
         "regional_average_record": null,
-        "best_index": 2,
-        "worst_index": 1
+        "best_index": 0,
+        "worst_index": 3
       }
     ],
     "average": [
@@ -614,37 +614,18 @@
     ],
     "average": [
       {
-        "person_name": "Ip Pak Tou Zachary",
-        "wcaid": "2023TOUZ01",
-        "competition_id": "HKRCU 20th Anniversary 2025",
-        "round_name": null,
-        "value": 268,
-        "type": "average",
-        "attempts": [
-          226,
-          233,
-          480,
-          346,
-          154
-        ],
-        "regional_single_record": null,
-        "regional_average_record": null,
-        "best_index": 4,
-        "worst_index": 2
-      },
-      {
         "person_name": "Liu Shing Chak",
         "wcaid": "2024CHAK03",
-        "competition_id": "LSC Championship 2025",
+        "competition_id": "Hong Kong Championship 2025",
         "round_name": null,
-        "value": 268,
+        "value": 250,
         "type": "average",
         "attempts": [
-          548,
-          266,
-          241,
-          243,
-          294
+          325,
+          280,
+          217,
+          231,
+          239
         ],
         "regional_single_record": null,
         "regional_average_record": null,
@@ -680,66 +661,66 @@
       {
         "person_name": "Lai Pak Kiu",
         "wcaid": "2024KIUL01",
-        "competition_id": "Jiangmen Open 2025",
+        "competition_id": "Hong Kong Championship 2025",
         "round_name": null,
-        "value": 3168,
+        "value": 2908,
         "type": "average",
         "attempts": [
-          3147,
-          3060,
-          3373,
-          3298,
-          2697
+          2764,
+          2852,
+          2740,
+          3122,
+          3107
         ],
         "regional_single_record": null,
         "regional_average_record": null,
-        "best_index": 4,
-        "worst_index": 2
+        "best_index": 2,
+        "worst_index": 3
       }
     ]
   },
   "333oh": {
     "single": [
       {
-        "person_name": "Liu Yik Yung",
-        "wcaid": "2023YUNG02",
-        "competition_id": "Welcome Back Hong Kong 2024",
+        "person_name": "Lai Pak Kiu",
+        "wcaid": "2024KIUL01",
+        "competition_id": "Hong Kong Championship 2025",
         "round_name": null,
-        "value": 1165,
+        "value": 1005,
         "type": "single",
-        "attempt_index": 0,
+        "attempt_index": 2,
         "attempts": [
-          1165,
-          1802,
-          1536,
-          2158,
-          2162
+          1227,
+          1456,
+          1005,
+          1538,
+          1228
         ],
         "regional_single_record": null,
         "regional_average_record": null,
-        "best_index": 0,
-        "worst_index": 4
+        "best_index": 2,
+        "worst_index": 3
       }
     ],
     "average": [
       {
         "person_name": "Lai Pak Kiu",
         "wcaid": "2024KIUL01",
-        "competition_id": "Hong Kong Cube Day 2025",
+        "competition_id": "Hong Kong Championship 2025",
         "round_name": null,
-        "value": 1442,
+        "value": 1304,
         "type": "average",
         "attempts": [
-          1430,
-          1394,
-          1425,
-          1472,
-          -1
+          1227,
+          1456,
+          1005,
+          1538,
+          1228
         ],
         "regional_single_record": null,
         "regional_average_record": null,
-        "best_index": 1,
-        "worst_index": 4
+        "best_index": 2,
+        "worst_index": 3
       }
     ]
   }

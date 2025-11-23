@@ -40,9 +40,9 @@ jobs:
           SERVICE_ACCOUNT_JSON: ${{ secrets.SERVICE_ACCOUNT_JSON }}
         run: |
           mkdir -p data
-          python fetch_wca_profiles.py
-          python merge_lsc.py
-          python generate_rankings.py
+          python scripts/fetch_wca_profiles.py
+          python scripts/merge_lsc.py
+          python scripts/generate_rankings.py
 
       - name: Commit and push generated data if changed
         env:
