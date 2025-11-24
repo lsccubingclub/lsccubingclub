@@ -420,7 +420,8 @@ def build_podiums_json(comp_info, sheet_values_by_tab):
                 "best": best,
                 "average": parse_mean_value((row.get(format_final_col_name(fmt)) or "").strip(), event_id),
                 "best_index": best_index,
-                "worst_index": worst_index
+                "worst_index": worst_index,
+                "pos": (int(row.get("#")) if "#" in headers and row.get("#") and str(row.get("#")).strip().isdigit() else None)
             })
         if pack:
             by_event[ev] = pack[:3]

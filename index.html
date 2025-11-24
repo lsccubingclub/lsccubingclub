@@ -166,82 +166,40 @@
     .btn:hover { background-color: #dddddd; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2); }
     select:disabled { opacity: 0.6; cursor: not-allowed; }
 
-    #rankings-event-row button {
-      border:1px solid #eee;
-      border-radius:12px;
-      width:56px;
-      height:56px;
-      padding:6px;
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      background:transparent;
-      cursor:pointer;
-      transition:all 180ms ease;
-    }
-    #rankings-event-row button img { width:36px; height:36px; object-fit:contain; pointer-events:none; }
-    #rankings-event-row button.selected { background:#e6f4ea; border-color:#9be08f; box-shadow:0 4px 10px rgba(155,224,143,0.12); }
-
-    #rankings-type-row label,
-    #rankings-mode-row label {
-      display:inline-flex;
-      gap:8px;
-      align-items:center;
-      background:#f6f7f9;
-      padding:6px 10px;
-      border-radius:999px;
-      cursor:pointer;
-      border:1px solid transparent;
-      transition:all 160ms ease;
-      font-size:0.95rem;
-    }
-    #rankings-type-row label.active,
-    #rankings-mode-row label.active {
-      background:#1976D2;
-      color:#fff;
-    }
-
     .rec-tag { font-weight:700; margin-left:0.5rem; white-space:nowrap; font-size:0.95em; }
     .rec-tag.nr { color: #28a745; }   /* NR green */
     .rec-tag.asr { color: #d31515; }  /* AsR red */
     .rec-tag.wr { color: #0869d7; }   /* WR blue */
     .rec-tag.other { color: #424242; }
 
-
-
-    /* button-like radio group shared style */
-    .rank-toggle-btn {
-      padding: 8px 12px;
-      border-radius: 8px;
-      border: 1px solid #e6e6e6;
-      background: transparent;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 0.95rem;
-    }
-    .rank-toggle-btn.active {
-      background: #1976D2;
-      color: #fff;
-      border: none;
-      box-shadow: 0 4px 10px rgba(25,118,210,0.12);
-    }
-    .rank-toggle-btn input[type="radio"] { display: none; }
-
-    /* === Competitions page color scheme and compact sidebar tabs === */
-    /* Use neutral / dark accent (not blue) specifically for competitions view */
     .comp-theme .comp-accent { color: #2b2b2b; }      /* text accent */
     .comp-theme .comp-accent-bg { background: #f6f6f6; } /* small bg accents */
     .comp-theme .comp-header { background: #ffffff; color: #2b2b2b; border-color: #e6e6e6; }
 
-    /* Replace table header color on competitions page only */
-    #view-competitions table th { background-color: #333; color: #fff; }
-    #view-competitions .btn { background: #fff; color: #222; border: 1px solid #ddd; }
-    #view-competitions th { background-color: #333 !important; color: #fff !important; }
-    #competition-summary h3, #comp-title { color: #222; }
 
-    /* Sidebar-like compact tab list (top-left inside competition detail) */
+    #view-competitions table th,
+    #view-competitions th,
+    #view-competitions thead th {
+      background-color: #ffffff !important;
+      color: #000 !important;
+      border: none !important;
+    }
+
+    #comp-person table tbody tr:nth-child(odd),
+    #comp-podiums table tbody tr:nth-child(odd),
+    #comp-all table tbody tr:nth-child(odd),
+    #comp-results table tbody tr:nth-child(odd) {
+      background: #f2f2f2;
+    }
+    #comp-person table tbody tr:nth-child(even),
+    #comp-podiums table tbody tr:nth-child(even),
+    #comp-all table tbody tr:nth-child(even),
+    #comp-results table tbody tr:nth-child(even) {
+      background: #ffffff;
+    }
+
+    #view-competitions th.solves-header { background-color: #ffffff !important; color: #000 !important; }
+
     .comp-tab-list {
       display:flex;
       flex-direction:column;
@@ -250,49 +208,46 @@
       margin-right:12px;
     }
     .comp-tab-list button {
-      display:flex;
-      align-items:center;
-      gap:12px;
-      padding:10px 12px;
-      border-radius:6px;
-      border:1px solid transparent;
-      background:transparent;
-      color:#222;
-      cursor:pointer;
-      font-weight:600;
-      width:100%;
-      justify-content:flex-start;
-      text-align:left;
-      box-sizing:border-box;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      border-radius: 6px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: #222;
+      cursor: pointer;
+      font-weight: 500;        /* unbold */
+      font-size: 15px;         /* larger font size (was smaller) */
+      line-height: 1.2;
+      width: 100%;
+      justify-content: flex-start;
+      text-align: left;
+      box-sizing: border-box;
+      transition: background 160ms ease, border-color 160ms ease, box-shadow 160ms ease, color 160ms ease;
     }
-    .comp-tab-list button:hover {
-      background:#f6f6f6;
-      border-color:#eee;
+
+    .comp-tab-list button:hover,
+    .comp-tab-list button:focus {
+      background: #f6f6f6;
+      border-color: #eee;
+      outline: none;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
     }
+
     .comp-tab-list button.active {
-      background: #222;
-      color: white;
-      border-color: #222;
+      background:#375e97;     /* ultramarine */
+      color: #fff;
+      border-color: #375e97;
+      box-shadow: 0 6px 18px rgba(63,0,255,0.12);
     }
 
-
-    /* compact event icons used in Results header / All UI */
     .event-icon {
       width:36px;
       height:36px;
       object-fit:contain;
       display:inline-block;
       margin-right:8px;
-    }
-
-    /* alternate row colors for By person and Podiums tables */
-    #comp-person table tbody tr:nth-child(odd),
-    #comp-podiums table tbody tr:nth-child(odd) {
-      background: #ffffff;
-    }
-    #comp-person table tbody tr:nth-child(even),
-    #comp-podiums table tbody tr:nth-child(even) {
-      background: #f7f7f7;
     }
 
     .comp-all-events {
@@ -333,6 +288,64 @@
       box-sizing: border-box;
     }
     th.solves-header { text-align: left; padding: 8px; }
+
+
+    /* Segmented toggle base (long rectangle, split in half) */
+    .seg-toggle {
+      display: inline-flex;
+      align-items: center;
+      width: 220px;            /* adjust to fit layout */
+      border-radius: 8px;    /* pill shape */
+      overflow: hidden;
+      background: linear-gradient(90deg, #1976D2 50%, #1976D2 50%);
+      box-shadow: 0 6px 18px rgba(25,118,210,0.08);
+      border: 1px solid rgba(0,0,0,0.04);
+    }
+
+    /* Each half */
+    .seg-toggle .seg-btn {
+      flex: 1 1 50%;
+      padding: 8px 12px;
+      border: 0;
+      margin: 0;
+      background: linear-gradient(180deg, rgba(25,118,210,0.92), rgba(25,118,210,0.92));
+      color: rgba(255,255,255,0.95);
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 150ms ease, color 150ms ease, box-shadow 150ms ease;
+      outline: none;
+    }
+
+    /* Visual seam between halves */
+    .seg-toggle .seg-btn + .seg-btn { box-shadow: inset 1px 0 0 rgba(255,255,255,0.06); }
+
+    /* Selected half uses darker blue */
+    .seg-toggle .seg-btn.active {
+      background: linear-gradient(180deg, #134f86, #0f3f6f);
+      color: #fff;
+    }
+
+    /* Focus ring for keyboard users */
+    .seg-toggle .seg-btn:focus {
+      box-shadow: 0 0 0 4px rgba(19,116,210,0.16);
+    }
+
+    /* Small responsive width */
+    @media (max-width: 520px) {
+      .seg-toggle { width: 170px; }
+      .seg-toggle .seg-btn { padding: 6px 8px; font-size: 0.9rem; }
+    }
+
+    /* Make existing label elements fit into the seg-toggle appearance if you prefer to keep labels */
+    #rankings-type-row .seg-toggle,
+    #rankings-mode-row .seg-toggle,
+    #rankings-top-row .seg-toggle {
+      width: auto;
+    }
   </style>
 
   <!-- Firebase (Auth only) -->
@@ -491,10 +504,11 @@
         <div style="display:flex; gap:16px; align-items:flex-start;">
           <div class="comp-tab-list" aria-hidden="false" id="comp-tab-list">
             <button id="comp-tab-results" class="active" type="button" title="Results">Results</button>
+            <button id="comp-tab-podiums" type="button" title="Podiums">Podiums</button>
             <button id="comp-tab-all" type="button" title="All">All</button>
             <button id="comp-tab-person" type="button" title="By person">By person</button>
-            <button id="comp-tab-podiums" type="button" title="Podiums">Podiums</button>
           </div>
+
 
           <div style="flex:1">
             <div id="competition-summary" style="
@@ -529,17 +543,7 @@
   <main id="view-rankings" hidden>
     <section style="padding:20px 10px; max-width:1100px; margin:auto;">
       <h2 style="margin-top:0;">Rankings</h2>
-      <div class="view-rankings-controls" style="
-        background:#fff;
-        border-radius:12px;
-        padding:14px;
-        box-shadow:0 8px 24px rgba(0,0,0,0.06);
-        margin-top:12px;
-        display:flex;
-        gap:16px;
-        align-items:flex-start;
-        flex-wrap:wrap;
-      ">
+
         <div style="flex:0 1 100%; display:flex; flex-direction:column; gap:8px;">
           <div style="font-size:0.95rem; font-weight:600; line-height:1">Events</div>
           <div id="rankings-event-row" style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;"></div>
@@ -548,19 +552,28 @@
         <div style="display:flex; gap:24px; align-items:center; flex:1 1 420px; min-width:260px;">
           <div style="display:flex; flex-direction:column; gap:6px;">
             <div style="font-size:0.95rem; font-weight:600; line-height:1">Type</div>
-            <div id="rankings-type-row" style="display:flex; gap:8px; align-items:center;"></div>
+            <div id="rankings-type-row" class="seg-toggle" role="tablist" aria-label="Ranking type">
+              <button class="seg-btn seg-left active" role="tab" aria-pressed="true">Single</button>
+              <button class="seg-btn seg-right" role="tab" aria-pressed="false">Average</button>
+            </div>
           </div>
 
           <div style="display:flex; flex-direction:column; gap:6px;">
             <div style="font-size:0.95rem; font-weight:600; line-height:1">Show</div>
-            <div style="display:flex; gap:8px; align-items:center;">
-              <div id="rankings-mode-row" style="display:flex; gap:8px; align-items:center;"></div>
-              <div id="rankings-show-row" style="display:flex; gap:6px; align-items:center;">
-                <button id="show-100" type="button" class="btn" style="padding:8px 12px; border-radius:8px; background:#1976D2; color:#fff; border:none; cursor:pointer;">100</button>
-                <button id="show-1000" type="button" class="btn" style="padding:8px 12px; border-radius:8px; background:transparent; color:black; border:1px solid #e6e6e6; cursor:pointer;">1000</button>
-              </div>
+            <div id="rankings-mode-row" class="seg-toggle" role="tablist" aria-label="Ranking mode">
+              <button class="seg-btn seg-left active" role="tab" aria-pressed="true">Persons</button>
+              <button class="seg-btn seg-right" role="tab" aria-pressed="false">Results</button>
             </div>
           </div>
+
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            <div style="font-size:0.95rem; font-weight:600; line-height:1">Top</div>
+            <div id="rankings-top-row" class="seg-toggle" role="tablist" aria-label="Ranking top">
+              <button class="seg-btn seg-left active" role="tab" aria-pressed="true">100</button>
+              <button class="seg-btn seg-right" role="tab" aria-pressed="false">1000</button>
+            </div>
+          </div>
+ 
         </div>
       </div>
       <div id="rankings-container" style="display:none;"></div>
@@ -571,7 +584,7 @@
 
   <main id="view-records" hidden>
     <section style="padding:20px 10px; max-width:900px; margin:auto;">
-      <h2 id="records-title" style="font-weight:boldl;">Legacy LSC Records</h2>
+      <h2 id="records-title" style="font-weight:boldl;">LSC Records</h2>
       <div id="records-container"></div>
     </section>
   </main>
@@ -1124,7 +1137,7 @@
         t.textContent = name;
         const d = document.createElement('div');
         d.style.cssText = 'color:#555; font-size:13px; margin-top:4px;';
-        d.textContent = date ? `Date: ${date}` : '';
+        d.textContent = date ? `${date}` : '';
         card.appendChild(t);
         card.appendChild(d);
         card.addEventListener('click', () => navigate(`/competitions/${slug(name)}`));
@@ -1227,7 +1240,6 @@
       try { personsJson = await (await fetch(`${base}/persons.json`, { cache: 'no-store' })).json(); } catch (e) {}
       try { podiumsJson = await (await fetch(`${base}/podiums.json`, { cache: 'no-store' })).json(); } catch (e) {}
 
-      // Render "All" by event (WCA order), final to first, best to worst (records page UI resemblance)
       function renderAll() {
         allEl.innerHTML = '';
         const eventsObj = allJson.events || {};
@@ -1247,7 +1259,7 @@
           const evBtn = document.createElement('div');
           evBtn.className = 'ev';
           const code = EVENT_NAME_TO_CODE[(ev || '').toLowerCase()] || 'unknown';
-          evBtn.innerHTML = `<img src="/images/event_icons/${code}.png" alt="${escapeHtml(ev)}" style="width:36px;height:36px;object-fit:contain;">`;          
+          evBtn.innerHTML = `<img src="/images/event_icons/${code}.png" alt="${escapeHtml(ev)}" style="width:36px;height:36px;object-fit:contain;">`;
           evBtn.addEventListener('click', () => {
             const target = allEl.querySelector(`[data-event="${CSS.escape(ev)}"]`);
             if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -1256,17 +1268,23 @@
         });
         allEl.appendChild(iconsRow);
 
+        function roundHeaderText(eventName, roundLabel) {
+          return `${eventName} ${roundLabel}`.trim();
+        }
+
         ordered.forEach(eventName => {
           const rounds = allJson.events[eventName] || [];
-          // event header (anchorable)
-          const evHeader = document.createElement('h3');
-          evHeader.textContent = eventName;
-          evHeader.style.cssText = 'margin-top:16px; font-weight:500;';
-          evHeader.setAttribute('data-event', eventName);
-          allEl.appendChild(evHeader);
+          if (!rounds || !rounds.length) return;
 
           rounds.forEach(roundObj => {
             const rnLabel = roundObj.round || '';
+            const hr = document.createElement('div');
+            hr.style.cssText = 'margin-top:18px; margin-bottom:8px; font-weight:700; font-size:1.5rem;';
+            hr.textContent = roundHeaderText(eventName, rnLabel);
+            // mark anchor so icons row can locate by event (first event header per event)
+            hr.setAttribute('data-event', eventName);
+            allEl.appendChild(hr);
+
             const fmt = (roundFormatMap[compName] && roundFormatMap[compName][`${eventName} - ${rnLabel}`]) || (roundObj.format || 'ao5');
             const isAo5 = (fmt || '').toLowerCase().startsWith('ao');
 
@@ -1280,7 +1298,7 @@
               '<th style="text-align:left; padding:8px;">#</th>' +
               '<th style="text-align:left; padding:8px;">Name</th>' +
               '<th style="text-align:right; padding:8px;">Best</th>' +
-              '<th style="text-align:right; padding:8px;">Average</th>' + 
+              '<th style="text-align:right; padding:8px;">Average</th>' +
               '<th class="solves-header" style="padding:8px;">Solves</th>' +
               '</tr>';
             tbl.appendChild(thead);
@@ -1292,30 +1310,25 @@
               const td2 = document.createElement('td'); td2.style.cssText = 'padding:8px;'; td2.textContent = row.name || '';
               tr.appendChild(td1); tr.appendChild(td2);
 
-              // inside the rounds.forEach(roundObj => { ... }) block, where you currently compute tdBest
               const isFmc = isFewestMovesEvent(eventName || '');
 
               const tdBest = document.createElement('td');
               tdBest.style.cssText = 'padding:8px; text-align:right;';
 
               if (isFmc) {
-                // helper to coerce a raw value into integer moves string, or empty string
                 function toFmcIntString(raw) {
                   if (raw === null || raw === undefined || raw === '' || raw === 0) return '';
                   if (raw === -1) return 'DNF';
                   if (raw === -2) return 'DNS';
                   const n = Number(raw);
                   if (!Number.isFinite(n)) return String(raw);
-                  // If non-integer small magnitude (looks like seconds e.g. 0.29), treat as seconds -> moves = round(n * 100)
                   if (!Number.isInteger(n) && Math.abs(n) < 10) return String(Math.round(n * 100));
-                  // otherwise round to nearest integer
                   return String(Math.round(n));
                 }
 
                 if (row.best !== undefined && row.best !== null && row.best !== '') {
                   tdBest.textContent = toFmcIntString(row.best);
                 } else if (Array.isArray(row.attempts) && row.attempts.length) {
-                  // build numeric attempts, ignore null/0 empty; choose the minimum (fewest moves)
                   const numeric = (row.attempts || []).map(a => {
                     if (a === null || a === undefined || a === 0 || a === '') return null;
                     if (a === -1) return -1;
@@ -1325,10 +1338,8 @@
                   if (!numeric.length) {
                     tdBest.textContent = '';
                   } else {
-                    // For FMC, smaller is better -> pick Math.min (treat -1/-2 specially: DNF/DNS not considered smaller)
                     const nonSpecial = numeric.filter(v => v !== -1 && v !== -2);
                     if (nonSpecial.length === 0) {
-                      // all special codes
                       tdBest.textContent = numeric.includes(-1) ? 'DNF' : (numeric.includes(-2) ? 'DNS' : '');
                     } else {
                       const min = Math.min.apply(null, nonSpecial);
@@ -1339,7 +1350,6 @@
                   tdBest.textContent = '';
                 }
               } else {
-                // existing time path: prefer row.best -> computed from attempts -> empty
                 tdBest.textContent = (row.best !== undefined && row.best !== null) ? csToDisplay(row.best)
                   : (Array.isArray(row.attempts) && row.attempts.length ? (() => {
                       const numeric = (row.attempts || []).filter(v => v !== null && v !== undefined && v !== 0 && v !== -1 && v !== -2);
@@ -1351,7 +1361,6 @@
 
               tr.appendChild(tdBest);
 
-              const fmt = (roundFormatMap[compName] && roundFormatMap[compName][`${eventName} - ${rnLabel}`]) || (roundObj.format || 'ao5');
               const avgVal = (row.average !== undefined && row.average !== null) ? row.average
                 : (row.mean !== undefined && row.mean !== null) ? row.mean: null;
               const tdAvg = document.createElement('td');
@@ -1368,16 +1377,183 @@
 
             tbl.appendChild(tbody);
             tblWrap.appendChild(tbl);
-
-            const rnLabelEl = document.createElement('div');
-            rnLabelEl.style.cssText = 'margin-top:6px;';
-            rnLabelEl.textContent = rnLabel;
-            allEl.appendChild(rnLabelEl);
             allEl.appendChild(tblWrap);
+
+            // Add larger spacing between rounds of different events
+            const spacer = document.createElement('div');
+            spacer.style.height = '8px';
+            allEl.appendChild(spacer);
           });
         });
       }
-    
+
+      function renderByPerson() {
+        const target = document.getElementById('comp-person');
+        target.innerHTML = '';
+        const persons = (personsJson && personsJson.persons) ? personsJson.persons : [];
+        if (!persons.length) {
+          target.innerHTML = '<div style="padding:8px;color:#666">No results</div>';
+          return;
+        }
+
+        // Round priority: higher => should appear earlier
+        const ROUND_PRIORITY = {
+          'final': 4,
+          'third round': 3,
+          'second round': 2,
+          'first round': 1
+        };
+
+        // Helper: normalize event name for matching
+        function norm(s) {
+          return (s || '').toString().trim().toLowerCase();
+        }
+
+        // Helper: create table cell text using existing logic for Best / Average / Solves
+        function createResultRowCells(r) {
+          // Event cell (text) will be filled by caller (first row per event shows name, subsequent rows blank)
+          const tdEvent = document.createElement('td');
+          tdEvent.style.padding = '8px';
+
+          const tdRound = document.createElement('td');
+          tdRound.style.padding = '8px';
+          tdRound.textContent = r.round || '';
+
+          const tdPos = document.createElement('td');
+          tdPos.style.padding = '8px';
+          tdPos.style.textAlign = 'center';
+          tdPos.style.fontWeight = '600';
+          tdPos.textContent = (r.pos && Number.isFinite(Number(r.pos))) ? String(r.pos) : '';
+
+          const tdBest = document.createElement('td');
+          tdBest.style.padding = '8px';
+          tdBest.style.textAlign = 'right';
+          // compute best like original: FMC uses integer moves; else csToDisplay
+          if (isFewestMovesEvent(r.event || '')) {
+            if (r.best !== undefined && r.best !== null) tdBest.textContent = String(Math.round(Number(r.best)));
+            else if (Array.isArray(r.attempts) && r.attempts.length) {
+              const numeric = (r.attempts || []).map(a => (a === null || a === undefined || a === 0 || a === '') ? null : Number(a)).filter(v => v !== null && Number.isFinite(v));
+              if (numeric.length) tdBest.textContent = String(Math.round(Math.min(...numeric)));
+              else tdBest.textContent = '';
+            } else tdBest.textContent = '';
+          } else {
+            if (r.best !== undefined && r.best !== null) tdBest.textContent = csToDisplay(r.best);
+            else {
+              if (Array.isArray(r.attempts) && r.attempts.length) {
+                const numeric = (r.attempts || []).filter(v => v !== null && v !== undefined && v !== 0 && v !== -1 && v !== -2);
+                if (numeric.length) tdBest.textContent = csToDisplay(Math.min.apply(null, numeric));
+                else tdBest.textContent = '';
+              } else tdBest.textContent = '';
+            }
+          }
+
+          const tdAvg = document.createElement('td');
+          tdAvg.style.padding = '8px';
+          tdAvg.style.textAlign = 'right';
+          const avgVal = (r.average !== undefined && r.average !== null) ? r.average : ((r.final !== undefined && r.final !== null) ? r.final : ((r.mean !== undefined && r.mean !== null) ? r.mean : null));
+          tdAvg.textContent = avgVal !== null ? csToDisplay(avgVal) : '';
+
+          const tdSolves = document.createElement('td');
+          tdSolves.style.padding = '8px';
+          tdSolves.style.textAlign = 'left';
+          renderSolvesCell(tdSolves, Array.isArray(r.attempts) ? r.attempts : [], r.best_index, r.worst_index, r.event);
+
+          return { tdEvent, tdRound, tdPos, tdBest, tdAvg, tdSolves };
+        }
+
+        // For each person, create grouped table
+        persons.forEach(p => {
+          const nameH = document.createElement('h3');
+          nameH.textContent = p.name || '';
+          nameH.style.marginTop = '21px';
+          nameH.style.fontWeight = '700';
+          target.appendChild(nameH);
+
+          const tbl = document.createElement('table');
+          tbl.style.width = '100%';
+          const thead = document.createElement('thead');
+          thead.innerHTML = '<tr>' +
+            '<th style="text-align:left;padding:8px;background:#333;color:#fff">Event</th>' +
+            '<th style="text-align:left;padding:8px;background:#333;color:#fff">Round</th>' +
+            '<th style="text-align:center;padding:8px;background:#333;color:#fff;width:64px">#</th>' +
+            '<th style="text-align:right;padding:8px;background:#333;color:#fff">Best</th>' +
+            '<th style="text-align:right;padding:8px;background:#333;color:#fff">Average</th>' +
+            '<th class="solves-header" style="padding:8px;background:#333;color:#fff">Solves</th>' +
+            '</tr>';
+          tbl.appendChild(thead);
+          const tbody = document.createElement('tbody');
+
+          const results = (p.results || []).slice();
+
+          // Group results by event name (normalized) and preserve original event display name for first occurrence
+          const byEvent = {};
+          results.forEach(r => {
+            const evKey = norm(r.event || '');
+            if (!byEvent[evKey]) byEvent[evKey] = { displayName: r.event || '', rounds: [] };
+            byEvent[evKey].rounds.push(r);
+          });
+
+          // Prepare ordered event list according to WCA_EVENT_ORDER. Unknown events come after, sorted alphabetically.
+          const evKeys = Object.keys(byEvent);
+          const orderMap = {};
+          WCA_EVENTS.forEach((ename, idx) => { orderMap[norm(ename)] = idx; });
+          evKeys.sort((a, b) => {
+            const ai = (orderMap.hasOwnProperty(a) ? orderMap[a] : Number.POSITIVE_INFINITY);
+            const bi = (orderMap.hasOwnProperty(b) ? orderMap[b] : Number.POSITIVE_INFINITY);
+            if (ai !== bi) return ai - bi;
+            // both unknown or same index: stable alphabetical fallback using display name
+            const A = (byEvent[a].displayName || a).toLowerCase();
+            const B = (byEvent[b].displayName || b).toLowerCase();
+            if (A < B) return -1;
+            if (A > B) return 1;
+            return 0;
+          });
+
+          // For each event, sort rounds: Final -> Third Round -> Second Round -> First Round (if present)
+          evKeys.forEach(evK => {
+            const evt = byEvent[evK];
+            evt.rounds.sort((r1, r2) => {
+              const r1Name = norm(r1.round || '');
+              const r2Name = norm(r2.round || '');
+              const p1 = ROUND_PRIORITY[r1Name] || 0;
+              const p2 = ROUND_PRIORITY[r2Name] || 0;
+              // higher priority first
+              if (p1 !== p2) return p2 - p1;
+              // fallback: keep original order (stable)
+              return 0;
+            });
+
+            // Append rows for this event. Show event name only on first row for cleaner display.
+            let first = true;
+            evt.rounds.forEach(r => {
+              const tr = document.createElement('tr');
+
+              const cells = createResultRowCells(r);
+              // event cell: show displayName only on first row
+              if (first) {
+                cells.tdEvent.textContent = evt.displayName || r.event || '';
+                first = false;
+              } else {
+                cells.tdEvent.textContent = ''; // omit for cleaner display
+              }
+              tr.appendChild(cells.tdEvent);
+
+              tr.appendChild(cells.tdRound);
+              tr.appendChild(cells.tdPos);
+              tr.appendChild(cells.tdBest);
+              tr.appendChild(cells.tdAvg);
+              tr.appendChild(cells.tdSolves);
+
+              tbody.appendChild(tr);
+            });
+          });
+
+          tbl.appendChild(tbody);
+          target.appendChild(tbl);
+        });
+      }
+                
+
       function renderPodiums() {
         const target = document.getElementById('comp-podiums');
         target.innerHTML = '';
@@ -1400,7 +1576,7 @@
           const evHeader = document.createElement('h3');
           evHeader.textContent = ev;
           evHeader.style.marginTop = '16px';
-          evHeader.style.fontWeight = '500';
+          evHeader.style.fontWeight = '700';
           target.appendChild(evHeader);
 
           const tbl = document.createElement('table');
@@ -1424,7 +1600,7 @@
             const tdPlace = document.createElement('td');
             tdPlace.style.padding = '8px';
             tdPlace.style.fontWeight = '600';
-            tdPlace.textContent = row.place ?? '';
+            tdPlace.textContent = row.pos ?? '';
             tr.appendChild(tdPlace);
 
             const tdName = document.createElement('td');
@@ -1473,103 +1649,7 @@
         });
       }
 
-      
-      function renderByPerson() {
-        const target = document.getElementById('comp-person');
-        target.innerHTML = '';
-        const persons = (personsJson && personsJson.persons) ? personsJson.persons : [];
-        if (!persons.length) {
-          target.innerHTML = '<div style="padding:8px;color:#666">No results</div>';
-          return;
-        }
 
-        // For each person, render a compact table where the Event column shows the event name (text)
-        persons.forEach(p => {
-          const nameH = document.createElement('h3');
-          nameH.textContent = p.name || '';
-          nameH.style.marginTop = '18px';
-          nameH.style.fontWeight = '500';
-          target.appendChild(nameH);
-
-          const tbl = document.createElement('table');
-          tbl.style.width = '100%';
-          const thead = document.createElement('thead');
-          thead.innerHTML = '<tr>' +
-            '<th style="text-align:left;padding:8px;background:#333;color:#fff">Event</th>' +
-            '<th style="text-align:left;padding:8px;background:#333;color:#fff">Round</th>' +
-            '<th style="text-align:center;padding:8px;background:#333;color:#fff;width:64px">#</th>' +
-            '<th style="text-align:right;padding:8px;background:#333;color:#fff">Best</th>' +
-            '<th style="text-align:right;padding:8px;background:#333;color:#fff">Average</th>' +
-            '<th class="solves-header" style="padding:8px;background:#333;color:#fff">Solves</th>' +
-            '</tr>';
-          tbl.appendChild(thead);
-          const tbody = document.createElement('tbody');
-
-          (p.results || []).forEach(r => {
-            const tr = document.createElement('tr');
-
-            // Event name as text (not icon)
-            const tdEvent = document.createElement('td');
-            tdEvent.style.padding = '8px';
-            tdEvent.textContent = r.event || '';
-            tr.appendChild(tdEvent);
-
-            const tdRound = document.createElement('td');
-            tdRound.style.padding = '8px';
-            tdRound.textContent = r.round || '';
-            tr.appendChild(tdRound);
-
-            const tdPos = document.createElement('td');
-            tdPos.style.padding = '8px';
-            tdPos.style.textAlign = 'center';
-            tdPos.style.fontWeight = '600';
-            tdPos.textContent = (r.pos && Number.isFinite(Number(r.pos))) ? String(r.pos) : '';
-            tr.appendChild(tdPos);
-
-            const tdBest = document.createElement('td');
-            tdBest.style.padding = '8px';
-            tdBest.style.textAlign = 'right';
-            // compute best like renderAll: for FMC use integer moves; else use csToDisplay
-            if (isFewestMovesEvent(r.event || '')) {
-              if (r.best !== undefined && r.best !== null) tdBest.textContent = String(Math.round(Number(r.best)));
-              else if (Array.isArray(r.attempts) && r.attempts.length) {
-                const numeric = (r.attempts || []).map(a => (a === null || a === undefined || a === 0 || a === '') ? null : Number(a)).filter(v => v !== null && Number.isFinite(v));
-                if (numeric.length) tdBest.textContent = String(Math.round(Math.min(...numeric)));
-                else tdBest.textContent = '';
-              } else tdBest.textContent = '';
-            } else {
-              if (r.best !== undefined && r.best !== null) tdBest.textContent = csToDisplay(r.best);
-              else {
-                if (Array.isArray(r.attempts) && r.attempts.length) {
-                  const numeric = (r.attempts || []).filter(v => v !== null && v !== undefined && v !== 0 && v !== -1 && v !== -2);
-                  if (numeric.length) tdBest.textContent = csToDisplay(Math.min.apply(null, numeric));
-                  else tdBest.textContent = '';
-                } else tdBest.textContent = '';
-              }
-            }
-            tr.appendChild(tdBest);
-
-            const tdAvg = document.createElement('td');
-            tdAvg.style.padding = '8px';
-            tdAvg.style.textAlign = 'right';
-            const avgVal = (r.average !== undefined && r.average !== null) ? r.average : ((r.final !== undefined && r.final !== null) ? r.final : ((r.mean !== undefined && r.mean !== null) ? r.mean : null));
-            tdAvg.textContent = avgVal !== null ? csToDisplay(avgVal) : '';
-            tr.appendChild(tdAvg);
-
-            const tdSolves = document.createElement('td');
-            tdSolves.style.padding = '8px';
-            tdSolves.style.textAlign = 'left';
-            renderSolvesCell(tdSolves, Array.isArray(r.attempts) ? r.attempts : [], r.best_index, r.worst_index, r.event);
-            tr.appendChild(tdSolves);
-
-            tbody.appendChild(tr);
-          });
-
-          tbl.appendChild(tbody);
-          target.appendChild(tbl);
-        });
-      }
-      
       function renderResults() {
         // Build a compact winners table using winners.json (prefetch_competitions.py)
         const target = document.getElementById('comp-results');
@@ -1598,7 +1678,17 @@
             const arr = byEvent[ev] || [];
             if (!arr.length) return;
             const top = arr[0];
-            winners[ev] = { name: top.name || '', result: top.final || '', solves: top.attempts || [], best: top.best || null, average: top.final || null };
+            winners[ev] = {
+              name: top.name || '',
+              result: top.final || '',
+              solves: top.attempts || [],
+              best: top.best,
+              average: (top.average !== undefined && top.average !== null)
+                ? top.average
+                : top_mean,
+              best_index: top.best_index,
+              worst_index: top.worst_index
+            };
           });
         }
 
@@ -1627,14 +1717,14 @@
           const tdAvg = document.createElement('td');
           tdAvg.style.padding = '8px';
           tdAvg.style.textAlign = 'right';
-          const avgVal = (w.average !== undefined && w.average !== null) ? w.average : ((w.final !== undefined && w.final !== null) ? w.final : ((w.mean !== undefined && w.mean !== null) ? w.mean : null));
+          const avgVal = (w.average !== undefined && w.average !== null) ? w.average :((w.mean !== undefined && w.mean !== null) ? w.mean : null);
           tdAvg.textContent = avgVal !== null ? csToDisplay(avgVal) : '';
           tr.appendChild(tdAvg);
 
           const tdSolves = document.createElement('td');
           tdSolves.style.padding = '8px';
           tdSolves.style.textAlign = 'left';
-          renderSolvesCell(tdSolves, Array.isArray(w.solves) ? w.solves : [], null, null, ev);
+          renderSolvesCell(tdSolves, Array.isArray(w.solves) ? w.solves : [], w.best_index, w.worst_index, ev);
           tr.appendChild(tdSolves);
 
           tbody.appendChild(tr);
@@ -1691,10 +1781,15 @@
         renderPodiums();
       });
 
-      // Default: Results
-      clearActiveTabs();
-      btnResults && btnResults.classList.add('active');
-      await renderResults();
+      if (btnResults) {
+        clearActiveTabs();
+        btnResults.click();
+      } else {
+        clearActiveTabs();
+        document.getElementById('comp-results').style.display = '';
+        await renderResults();
+      }
+
 
     }
 
@@ -1964,31 +2059,39 @@
     }
 
     function showView(id) {
-      document.getElementById('leaderboard').style.display = 'table';
-      // style header for live/competition views
-      if (id === 'live' || id === 'competitor' || id === 'competitors' || id === 'podiums') {
-        document.getElementById('main-header').style.backgroundColor = '#1976D2';
-        document.getElementById('main-header').style.color = 'white';
-        document.getElementById('main-header').classList.add('shrink');
-        document.getElementById('logo').src = "/images/clublogo_whitetext.png";
-        document.getElementById('ig-icon').hidden = true;
+      // header / common nodes
+      const header = document.getElementById('main-header');
+      const logo = document.getElementById('logo');
+      const clubName = document.getElementById('club-name');
+      const igIcon = document.getElementById('ig-icon');
+      const btnOpen = document.getElementById('btn-open-sidebar');
+
+      // always ensure leaderboard table element exists and keep it displayed only on live-related views
+      const leaderboard = document.getElementById('leaderboard');
+      if (leaderboard) leaderboard.style.display = 'table';
+
+      // style header for live/competition-related views
+      const liveViews = new Set(['live', 'competitor', 'competitors', 'podiums']);
+      if (liveViews.has(id)) {
+        header.style.backgroundColor = '#1976D2';
+        header.style.color = 'white';
+        header.classList.add('shrink');
+        if (logo) logo.src = '/images/clublogo_whitetext.png';
+        if (igIcon) igIcon.hidden = true;
       } else {
-        document.getElementById('main-header').style.backgroundColor = 'white';
-        document.getElementById('main-header').style.color = 'black';
-        document.getElementById('club-name').textContent = 'LSC Cubing Club';
-        document.getElementById('logo').src = "/images/clublogo_blacktext.png";
-        document.getElementById('main-header').classList.remove('shrink');
-        document.getElementById('ig-icon').hidden = false;
+        header.style.backgroundColor = 'white';
+        header.style.color = 'black';
+        if (clubName) clubName.textContent = 'LSC Cubing Club';
+        if (logo) logo.src = '/images/clublogo_blacktext.png';
+        header.classList.remove('shrink');
+        if (igIcon) igIcon.hidden = false;
       }
 
-      // Decide whether to show the menu button using the current route (URL)
-      const btnOpen = document.getElementById('btn-open-sidebar');
+      // decide whether to show the menu button using the current route (URL)
       if (btnOpen) {
         const route = getRoute();
-        // If we're on /live and there is no comp segment, hide menu; otherwise show.
         if (route.isLive) {
-          if (route.comp) btnOpen.style.display = 'flex';
-          else btnOpen.style.display = 'none';
+          btnOpen.style.display = route.comp ? 'flex' : 'none';
         } else if (id === 'competitor' || id === 'competitors' || id === 'podiums') {
           btnOpen.style.display = 'flex';
         } else {
@@ -1996,15 +2099,37 @@
         }
       }
 
-      // Toggle view containers
-      document.getElementById('view-home').hidden = id !== 'home';
-      document.getElementById('view-live').hidden = id !== 'live';
-      document.getElementById('view-records').hidden = id !== 'records';
-      document.getElementById('view-competitor-results').hidden = id !== 'competitor';
-      document.getElementById('view-competitors').hidden = id !== 'competitors';
-      document.getElementById('view-podiums').hidden = id !== 'podiums';
-      document.getElementById('view-rankings').hidden = id !== 'rankings';
+      // map view ids to DOM containers
+      const views = {
+        home: 'view-home',
+        live: 'view-live',
+        records: 'view-records',
+        competitor: 'view-competitor-results',
+        competitors: 'view-competitors',
+        podiums: 'view-podiums',
+        rankings: 'view-rankings',
+        competitions: 'view-competitions'
+      };
+
+      // hide / show main views; ensure competitions view is hidden for all non-competitions views
+      Object.keys(views).forEach(v => {
+        const el = document.getElementById(views[v]);
+        if (!el) return;
+        el.hidden = (v !== id);
+      });
+
+      // additionally ensure competition detail and its internal areas are hidden unless we're on competitions
+      const compDetail = document.getElementById('competition-detail');
+      const compLockedList = document.getElementById('competitions-locked-list');
+      if (id === 'competitions') {
+        if (compDetail) compDetail.style.display = ''; // keep whatever internal logic toggles tabs
+        if (compLockedList) compLockedList.style.display = '';
+      } else {
+        if (compDetail) compDetail.style.display = 'none';
+        if (compLockedList) compLockedList.style.display = '';
+      }
     }
+
 
 
     // ===== Auth =====
@@ -3366,8 +3491,6 @@
       search.placeholder = comps.length ? 'Search competitions' : 'No competitions available';
     }
 
-
-
     async function renderRankingsView(eventId = '', category = 'single') {
       const container = document.getElementById('rankings-container');
       const eventRowEl = document.getElementById('rankings-event-row');
@@ -3377,6 +3500,7 @@
 
       if (!eventRowEl || !typeRowEl || !modeRowEl || !tableWrap) return;
 
+      // canonical order for event buttons (codes)
       const explicitOrder = [
         "333","222","444","555","666","777",
         "333bf","333fm","333oh","clock","minx",
@@ -3384,18 +3508,26 @@
       ];
       const eventOrder = explicitOrder.concat(Object.keys(EVENT_CODE_TO_NAME || {}).filter(k => !explicitOrder.includes(k)));
 
-      // Defaults required by your request
-      let selectedEvent = eventId || '333';
-      let selectedType = (category === 'average') ? 'average' : 'single';
-      let selectedMode = 'persons';
-      // show toggle default
-      let selectedShow = 100; // either 100 or 1000
+      // parse querystring params for initialization
+      const qs = new URLSearchParams(window.location.search || '');
+      const showParam = (qs.get('show') || '').toString();
+      const parts = showParam.split('+').map(p => p && p.trim()).filter(Boolean);
+      let parsedShow = parts[0] ? Number(parts[0]) : null;
+      let parsedMode = parts[1] ? parts[1].toLowerCase() : null;
 
-      // fetch data once
+      // initialize state
+      let selectedEvent = eventId || (eventOrder.length ? eventOrder[0] : '333');
+      let selectedType = (qs.get('type') || category || 'single').toLowerCase();
+      if (selectedType !== 'single' && selectedType !== 'average') selectedType = (category === 'average' ? 'average' : 'single');
+      let selectedMode = (parsedMode === 'results' || parsedMode === 'persons') ? parsedMode : 'persons';
+      let selectedShow = (parsedShow === 100 || parsedShow === 1000) ? parsedShow : 100;
+
+      // fetch ranking data once
       let resultsJson = {}, personsJson = {};
       try { resultsJson = await (await fetch('/data/rankings_by_results.json')).json(); } catch(e){ resultsJson = {}; }
       try { personsJson = await (await fetch('/data/rankings_by_person.json')).json(); } catch(e){ personsJson = {}; }
 
+      // value formatting helpers (kept minimal and consistent)
       function formatValueForDisplay(ev, raw, kind) {
         if (raw === null || raw === undefined || raw === '') return '';
         if (raw === -1) return 'DNF';
@@ -3412,12 +3544,12 @@
           const secs = seconds - mins * 60;
           const secsWhole = Math.floor(secs);
           const secsFrac = Math.round((secs - secsWhole) * 100);
-          const secsStr = `${String(secsWhole).padStart(2,'0')}.${String(secsFrac).padStart(2,'0')}`;
-          return `${mins}:${secsStr}`;
+          return `${mins}:${String(secsWhole).padStart(2,'0')}.${String(secsFrac).padStart(2,'0')}`;
         } else {
           return seconds.toFixed(2);
         }
       }
+
       function attemptLabel(ev, a, kind) {
         if (a === null || a === undefined) return '';
         if (a === 0) return '';
@@ -3426,30 +3558,191 @@
         if (ev === '333fm' && kind === 'solve') return String(Math.round(Number(a)));
         return formatValueForDisplay(ev, a, kind);
       }
+
       function slugNameForPerson(name) {
         if (!name) return 'unknown';
         const s = name.trim().replace(/[^0-9A-Za-z]+/g, '_').replace(/_+/g, '_').replace(/^_|_$/g, '');
         return s || 'unknown';
       }
 
-      // Build static UI inside the view slots if empty
+      // replace prior selectedEvent/selectedType/selectedMode/selectedShow with this single state
+      const state = {
+        event: eventId || (eventOrder.length ? eventOrder[0] : '333'),
+        type: (new URLSearchParams(window.location.search).get('type') || category || 'single').toLowerCase(),
+        mode: (function() {
+          const s = new URLSearchParams(window.location.search).get('show') || '';
+          const parts = s.split('+').map(p => (p||'').trim());
+          const maybeMode = parts[1] || null;
+          return (maybeMode === 'results' || maybeMode === 'persons') ? maybeMode : 'persons';
+        })(),
+        top: (function() {
+          const s = new URLSearchParams(window.location.search).get('show') || '';
+          const n = Number((s.split('+')[0] || '').replace(/\D/g, '')) || null;
+          return (n === 1000) ? 1000 : 100;
+        })()
+      };
+
+      // small debounce to avoid double renders when multiple controls change quickly
+      let renderTimeout = null;
+      function scheduleRenderTableArea(delay = 50) {
+        if (renderTimeout) clearTimeout(renderTimeout);
+        renderTimeout = setTimeout(() => {
+          renderTimeout = null;
+          renderTableArea();
+        }, delay);
+      }
+
+      // hydrate UI visuals (used after creating controls or on popstate)
+      function applyStateToUI() {
+        // events row visuals
+        Array.from(eventRowEl.children || []).forEach(btn => {
+          const ev = btn.dataset && btn.dataset.event;
+          const active = ev === state.event;
+          btn.style.background = active ? '#e6f4ea' : 'transparent';
+          btn.style.borderColor = active ? '#9be08f' : 'transparent';
+          btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+        });
+
+        // Type seg
+        const typeRoot = document.getElementById('rankings-type-row');
+        if (typeRoot) {
+          Array.from(typeRoot.querySelectorAll('.seg-btn, button, [role="tab"]')).forEach(b => {
+            const txt = (b.textContent || '').trim().toLowerCase();
+            const active = txt === state.type;
+            b.classList.toggle('active', active);
+            b.setAttribute('aria-pressed', active ? 'true' : 'false');
+          });
+        }
+
+        // Mode seg
+        const modeRoot = document.getElementById('rankings-mode-row');
+        if (modeRoot) {
+          Array.from(modeRoot.querySelectorAll('.seg-btn, button, [role="tab"]')).forEach(b => {
+            const txt = (b.textContent || '').trim().toLowerCase();
+            const active = txt === state.mode;
+            b.classList.toggle('active', active);
+            b.setAttribute('aria-pressed', active ? 'true' : 'false');
+          });
+        }
+
+        // Top seg
+        const topRoot = document.getElementById('rankings-top-row');
+        if (topRoot) {
+          Array.from(topRoot.querySelectorAll('.seg-btn, button, .btn')).forEach(b => {
+            const txt = (b.dataset && b.dataset.show) ? String(b.dataset.show) : (b.textContent || '').trim();
+            const active = String(txt).trim() === String(state.top);
+            b.classList.toggle('active', active);
+            b.setAttribute('aria-pressed', active ? 'true' : 'false');
+          });
+        }
+      }
+
+      // sync state -> URL (pushState)
+      function syncUrlFromState(replace = false) {
+        const qs = new URLSearchParams(window.location.search);
+        qs.set('show', `${state.top}+${state.mode}`);
+        qs.set('type', state.type);
+        // we also encode selected event in path (keep behavior consistent)
+        const path = `/rankings/${encodeURIComponent(state.event)}/${encodeURIComponent(state.type)}`;
+        const newUrl = path + (qs.toString() ? `?${qs.toString()}` : '');
+        try {
+          if (replace) history.replaceState({}, '', newUrl);
+          else history.pushState({}, '', newUrl);
+        } catch (e) {
+          // if pushState fails (very old browsers) fallback to replace
+          history.replaceState({}, '', newUrl);
+        }
+      }
+
+      // hydration from URL -> state (call on initial load / popstate)
+      function hydrateStateFromUrl() {
+        const qs = new URLSearchParams(window.location.search || '');
+        const showParam = (qs.get('show') || '').toString();
+        const parts = showParam.split(/[+\s]+/).map(p => p && p.trim()).filter(Boolean);
+        const maybeTop = Number(parts[0] || '');
+        const maybeMode = (parts[1] || '').toLowerCase();
+        const maybeType = (qs.get('type') || '').toLowerCase();
+        // path event override if route provided (keeps compatibility with navigation)
+        const routeParts = window.location.pathname.split('/').filter(Boolean);
+        const maybeEventFromPath = routeParts[1] || routeParts[0] === 'rankings' ? routeParts[1] : null;
+
+        if (maybeEventFromPath) {
+          // decode only if it matches a known code or exists in map; prefer exact code if present
+          const decoded = decodeURIComponent(maybeEventFromPath || '');
+          if (decoded && (decoded in EVENT_CODE_TO_NAME || Object.values(EVENT_CODE_TO_NAME).some(n => slugNameForPerson(n).toLowerCase() === decoded.toLowerCase()))) {
+            state.event = decoded;
+          } else if (decoded && EVENT_CODE_TO_NAME[decoded]) {
+            state.event = decoded;
+          } else {
+            // fallback: do nothing (keep prior)
+          }
+        }
+
+        if (maybeType === 'average' || maybeType === 'single') state.type = maybeType;
+        if (maybeMode === 'persons' || maybeMode === 'results') state.mode = maybeMode;
+        state.top = (maybeTop === 1000) ? 1000 : 100;
+      }
+
+      function wireSegToggleRoot(rootId, opts) {
+        // Accept either an id string or a container element
+        const roots = [];
+        const maybe = document.getElementById(rootId);
+        if (maybe) roots.push(maybe);
+        // fallback: also consider elements with that class name if templates ever render class instead of id
+        const byClass = document.querySelectorAll('.' + rootId);
+        if (byClass && byClass.length) Array.from(byClass).forEach(r => { if (!roots.includes(r)) roots.push(r); });
+        if (!roots.length) return;
+
+        roots.forEach(root => {
+          if (root._segToggleWired) return;
+          root._segToggleWired = true;
+
+          // Click delegation: include .seg-btn as well as button/label/tab, and tolerate clicks on inner nodes
+          root.addEventListener('click', (ev) => {
+            // Find the nearest actionable control: prefer button elements or elements with role=tab or class .seg-btn
+            const btn = ev.target.closest('button, [role="tab"], .seg-btn');
+            if (!btn || !root.contains(btn)) return;             // nothing actionable
+            if (btn.disabled) return;                             // respect disabled buttons
+
+            // Prefer explicit dataset values: data-value, data-type, data-show (in that order)
+            let raw = '';
+            if (btn.dataset && btn.dataset.value !== undefined && btn.dataset.value !== '') raw = btn.dataset.value;
+            else if (btn.dataset && btn.dataset.type !== undefined && btn.dataset.type !== '') raw = btn.dataset.type;
+            else if (btn.dataset && btn.dataset.show !== undefined && btn.dataset.show !== '') raw = btn.dataset.show;
+            else raw = (btn.textContent || '').trim();
+
+            const normalized = (opts && typeof opts.normalize === 'function')
+              ? opts.normalize(String(raw))
+              : String(raw).trim().toLowerCase();
+
+            // Update central state and reflect change immediately
+            state[opts.key] = normalized;
+            try { applyStateToUI(); } catch (e) {}
+            try { syncUrlFromState(); } catch (e) {}
+            try { scheduleRenderTableArea(); } catch (e) {}
+          });
+        });
+      }
+
       function buildStaticControls() {
+        // Events row
         eventRowEl.innerHTML = '';
         const seen = new Set();
-        (eventOrder).forEach(ev => {
-          if (!ev || seen.has(ev)) return;
+        for (const ev of eventOrder) {
+          if (!ev || seen.has(ev)) continue;
           seen.add(ev);
           const btn = document.createElement('button');
           btn.type = 'button';
           btn.dataset.event = ev;
-          btn.style.border = '1px solid #eee';
-          btn.style.background = (ev === selectedEvent) ? '#e6f4ea' : 'transparent';
-          btn.style.borderRadius = '12px';
+          btn.title = EVENT_CODE_TO_NAME[ev] || ev;
+          btn.setAttribute('aria-label', EVENT_CODE_TO_NAME[ev] || ev);
+          btn.style.border = '1px solid transparent';
+          btn.style.borderRadius = '8px';
           btn.style.width = '56px';
           btn.style.height = '56px';
           btn.style.padding = '6px';
           btn.style.cursor = 'pointer';
-          btn.title = EVENT_CODE_TO_NAME[ev] || ev;
+
           const img = document.createElement('img');
           img.src = `/images/event_icons/${ev}.png`;
           img.alt = EVENT_CODE_TO_NAME[ev] || ev;
@@ -3458,103 +3751,37 @@
           img.style.objectFit = 'contain';
           img.style.pointerEvents = 'none';
           btn.appendChild(img);
+
           btn.addEventListener('click', () => {
-            selectedEvent = ev;
-            eventRowEl.querySelectorAll('button').forEach(b => {
-              b.style.background = (b.dataset.event === selectedEvent) ? '#e6f4ea' : 'transparent';
-              b.style.borderColor = (b.dataset.event === selectedEvent) ? '#9be08f' : '#eee';
-            });
-            renderTableArea();
-            navigate(`/rankings/${encodeURIComponent(selectedEvent)}/${encodeURIComponent(selectedType)}?show=${encodeURIComponent(selectedShow + '+' + selectedMode)}`);
+            if (state.event === ev) return;
+            state.event = ev;
+            applyStateToUI();
+            syncUrlFromState();
+            scheduleRenderTableArea();
           });
+
+          btn.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); btn.click(); }
+          });
+
           eventRowEl.appendChild(btn);
-        });
-
-        // Type radios
-        typeRowEl.innerHTML = '';
-        ['single','average'].forEach(t => {
-          const label = document.createElement('label');
-          label.style.display = 'inline-flex';
-          label.style.alignItems = 'center';
-          label.style.gap = '6px';
-          label.style.cursor = 'pointer';
-          const r = document.createElement('input');
-          r.type = 'radio';
-          r.name = 'rankings-type';
-          r.value = t;
-          r.checked = (t === selectedType);
-          r.addEventListener('change', () => {
-            if (r.checked) {
-              selectedType = t;
-              renderTableArea();
-              navigate(`/rankings/${encodeURIComponent(selectedEvent)}/${encodeURIComponent(selectedType)}?show=${encodeURIComponent(selectedShow + '+' + selectedMode)}`);
-            }
-          });
-          const span = document.createElement('span');
-          span.textContent = t.charAt(0).toUpperCase() + t.slice(1);
-          label.appendChild(r);
-          label.appendChild(span);
-          typeRowEl.appendChild(label);
-        });
-
-        // Mode radios
-        modeRowEl.innerHTML = '';
-        ['persons','results'].forEach(m => {
-          const label = document.createElement('label');
-          label.style.display = 'inline-flex';
-          label.style.alignItems = 'center';
-          label.style.gap = '6px';
-          label.style.cursor = 'pointer';
-          const r = document.createElement('input');
-          r.type = 'radio';
-          r.name = 'rankings-mode';
-          r.value = m;
-          r.checked = (m === selectedMode);
-          r.addEventListener('change', () => {
-            if (r.checked) {
-              selectedMode = m;
-              renderTableArea();
-            }
-          });
-          const span = document.createElement('span');
-          span.textContent = (m === 'persons') ? 'Persons' : 'Results';
-          label.appendChild(r);
-          label.appendChild(span);
-          modeRowEl.appendChild(label);
-        });
-
-        // Show toggle wiring: create or use existing container if present in DOM
-        const showRow = document.getElementById('rankings-show-row');
-        if (showRow) {
-          const btn100 = document.getElementById('show-100');
-          const btn1000 = document.getElementById('show-1000');
-          if (btn100 && btn1000) {
-            const setActive = (n) => {
-              selectedShow = n;
-              if (n === 100) {
-                btn100.style.background = '#1976D2'; btn100.style.color = '#fff'; btn100.style.border = 'none';
-                btn1000.style.background = 'transparent'; btn1000.style.color = 'black'; btn1000.style.border = '1px solid #e6e6e6';
-              } else {
-                btn1000.style.background = '#1976D2'; btn1000.style.color = '#fff'; btn1000.style.border = 'none';
-                btn100.style.background = 'transparent'; btn100.style.color = 'black'; btn100.style.border = '1px solid #e6e6e6';
-              }
-            };
-            btn100.addEventListener('click', () => { setActive(100); renderTableArea(); });
-            btn1000.addEventListener('click', () => { setActive(1000); renderTableArea(); });
-            // initialize visual state
-            setActive(selectedShow);
-          }
         }
+
+        wireSegToggleRoot('rankings-type-row', { key: 'type', normalize: s => (String(s || '').trim().toLowerCase().startsWith('avg') ? 'average' : 'single') });
+        wireSegToggleRoot('rankings-mode-row', { key: 'mode', normalize: s => (String(s || '').trim().toLowerCase().startsWith('res') ? 'results' : 'persons') });
+        wireSegToggleRoot('rankings-top-row', { key: 'top', normalize: s => Number(String(s).replace(/\D/g,'')) === 1000 ? 1000 : 100 });
+
+        applyStateToUI();
       }
 
-      // Render table area (main)
       async function renderTableArea() {
         tableWrap.innerHTML = 'Loading…';
-        const topN = Math.max(1, Number(selectedShow || 100));
-        const src = (selectedMode === 'persons') ? personsJson : resultsJson;
-        const list = (src && src[selectedEvent] && Array.isArray(src[selectedEvent][selectedType]) ? src[selectedEvent][selectedType] : []).slice(0, topN);
+        // choose JSON by state.mode
+        const src = (state.mode === 'persons') ? personsJson : resultsJson;
+        // use state.event and state.type and slice top
+        const list = (src && src[state.event] && Array.isArray(src[state.event][state.type]) ? src[state.event][state.type] : []).slice(0, Math.max(1, Number(state.top || 100)));
 
-        // collect rows and compute max solve columns
+        // build rows same as before but reading from list and state
         const rowsInfo = [];
         let maxSolvesCols = 0;
         list.forEach((rowObj, idx) => {
@@ -3563,27 +3790,27 @@
           const personSlug = slugNameForPerson(rawName);
           const nameLink = `<a href="/persons/${encodeURIComponent(personSlug)}" style="color:#1976D2;text-decoration:none">${escapeHtml(rawName)}</a>`;
           const competitionDisplay = rowObj.competition_id;
-          const resultDisplay = formatValueForDisplay(selectedEvent, rowObj.value, selectedType === 'average' ? 'average' : 'single');
+          const resultDisplay = formatValueForDisplay(state.event, rowObj.value, state.type === 'average' ? 'average' : 'single');
           const attempts = Array.isArray(rowObj.attempts) ? rowObj.attempts.slice() : [];
           const solvesCols = attempts.length > 0 ? attempts.length : 0;
           if (solvesCols > maxSolvesCols) maxSolvesCols = solvesCols;
 
           const wrapIndices = new Set();
           if (Array.isArray(attempts) && attempts.length === 5) {
-            const nonZeroAllFive = attempts.every(a => (a !== 0 && a !== null && a !== undefined));
-            if (nonZeroAllFive) {
+            const nonEmpty = attempts.every(a => a !== 0 && a !== null && a !== undefined && a !== '');
+            if (nonEmpty) {
               const bi = (typeof rowObj.best_index === 'number') ? rowObj.best_index : null;
               const wi = (typeof rowObj.worst_index === 'number') ? rowObj.worst_index : null;
-              if (bi !== null && bi >=0 && bi <5) wrapIndices.add(bi);
-              if (wi !== null && wi >=0 && wi <5) wrapIndices.add(wi);
+              if (bi !== null && bi >= 0 && bi < 5) wrapIndices.add(bi);
+              if (wi !== null && wi >= 0 && wi < 5) wrapIndices.add(wi);
             }
           }
 
           const solveCells = [];
           for (let i = 0; i < solvesCols; i++) {
             const raw = attempts[i];
-            const kind = (selectedType === 'average' && selectedEvent === '333fm') ? 'solve' : (selectedType === 'average' ? 'average' : 'solve');
-            const lab = attemptLabel(selectedEvent, raw, kind);
+            const kind = (state.type === 'average' && state.event === '333fm') ? 'solve' : (state.type === 'average' ? 'average' : 'solve');
+            const lab = attemptLabel(state.event, raw, kind);
             const needsParen = wrapIndices.has(i);
             const content = lab === '' ? '' : (needsParen ? `(${escapeHtml(lab)})` : escapeHtml(lab));
             solveCells.push(`<td style="padding:8px; vertical-align:top; text-align:center; width:88px">${content}</td>`);
@@ -3624,17 +3851,24 @@
 
         const tableHtml = headerHtml + rowsHtml + '</tbody></table></div>';
         tableWrap.innerHTML = tableHtml;
+
+        // patch competition links (async)
         patchCompetitionCells(tableWrap).catch(()=>{});
       }
 
-      // initial build of static parts + render
       buildStaticControls();
-      // respect passed-in event/type if provided
+      hydrateStateFromUrl();
+
       if (eventId) selectedEvent = eventId;
       if (category) selectedType = (category === 'average') ? 'average' : 'single';
+      // ensure UI reflects selected event after overriding defaults
+      Array.from(document.getElementById('rankings-event-row').children || []).forEach(c => {
+        c.style.background = (c.dataset.event === selectedEvent) ? '#e6f4ea' : 'transparent';
+        c.style.borderColor = (c.dataset.event === selectedEvent) ? '#9be08f' : 'transparent';
+      });
       renderTableArea();
     }
-          
+            
 
     async function renderRecordsView() {
       const EVENT_ORDER = [
