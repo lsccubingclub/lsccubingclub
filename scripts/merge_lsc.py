@@ -1,4 +1,4 @@
-#merge_lsc.py
+# merge_lsc.py
 """
 merge_lsc.py
 
@@ -316,6 +316,69 @@ def refresh_comp_titles_in_wca_profiles(wca_profiles_dir=WCA_CACHE_DIR):
                 logging.warning("Failed writing updated profile %s: %s", path, e)
     _save_wca_title_cache(cache)
 
+# --- New minimal helpers for requested workflow ---
+def clear_merged_files():
+    """
+    Make existing -merged.json files empty (do not delete them).
+    """
+    ensure_dir(LSC_CACHE_DIR)
+    for fn in os.listdir(LSC_CACHE_DIR):
+        if fn.endswith("-merged.json"):
+            path = os.path.join(LSC_CACHE_DIR, fn)
+            try:
+                atomic_write(path, {})  # write empty object
+            except Exception:
+                logging.warning("Failed to clear merged file %s", path)
+
+def copy_wca_profiles_to_merged():
+    """
+    Copy each WCA profile JSON into a corresponding -merged.json file in LSC_CACHE_DIR.
+    Uses the same base filename but appends -merged.json.
+    """
+    ensure_dir(LSC_CACHE_DIR)
+    if not os.path.isdir(WCA_CACHE_DIR):
+        return
+    for fn in os.listdir(WCA_CACHE_DIR):
+        if not fn.lower().endswith(".json"):
+            continue
+        src = os.path.join(WCA_CACHE_DIR, fn)
+        data = load_json_if_exists(src) or {}
+        base = os.path.splitext(fn)[0]
+        merged_fn = f"{base}-merged.json"
+        dst = os.path.join(LSC_CACHE_DIR, merged_fn)
+        try:
+            atomic_write(dst, data)
+        except Exception:
+            logging.warning("Failed to copy WCA profile %s to merged %s", src, dst)
+
+def replace_competition_ids_with_names_from_cache():
+    """
+    Replace competition_id values in existing merged files using the WCA title cache (wca_comp_titles.json).
+    If a competition_id is a short WCA id (no spaces) and exists in the cache, replace it with the cached name.
+    """
+    cache = _load_wca_title_cache()
+    if not cache:
+        return
+    for fn in os.listdir(LSC_CACHE_DIR):
+        if not fn.endswith("-merged.json"):
+            continue
+        path = os.path.join(LSC_CACHE_DIR, fn)
+        data = load_json_if_exists(path)
+        if not data:
+            continue
+        modified = False
+        results = data.get("results") or []
+        for r in results:
+            cid = r.get("competition_id")
+            if isinstance(cid, str) and cid in cache and cache[cid] != cid:
+                r["competition_id"] = cache[cid]
+                modified = True
+        if modified:
+            try:
+                atomic_write(path, data)
+            except Exception:
+                logging.warning("Failed to update competition_id in merged file %s", path)
+
 # --- Main merge helpers ---
 def write_merged_for_name(name, matched_wcaid, lsc_results):
     ensure_dir(WCA_CACHE_DIR)
@@ -543,6 +606,17 @@ def process_competition(comp, rounds_for_comp, wca_list, results_by_name):
 
 def main():
     ensure_dir(WCA_CACHE_DIR)
+
+    # --- New requested workflow (minimal changes) ---
+    # 1) Clear existing -merged.json files (write empty object, do not delete)
+    clear_merged_files()
+
+    # 2) Copy WCA profiles into LSC merged files (base -> base-merged.json)
+    copy_wca_profiles_to_merged()
+
+    # 3) Replace competition_id values in merged files using wca_comp_titles cache
+    replace_competition_ids_with_names_from_cache()
+
     # Optional: refresh WCA competition titles in existing profile files
     try:
         refresh_comp_titles_in_wca_profiles(WCA_CACHE_DIR)
