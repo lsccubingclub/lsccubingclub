@@ -663,7 +663,6 @@
   </main>
 
   <script>
-    // ===== Config =====
     const MASTER_SHEET_ID = '1fjWyEbc7a5A3RjkFm0BEnE_lyHXCa3kYiKRd2IP9j5Q';
     const API_KEY = 'AIzaSyA_4BKwiXfv_T9XhbdenwHuGm0k5uc89S8';
     const READ_ENDPOINT = '/api/read';
@@ -674,6 +673,42 @@
     const numRx = /^-?\d+(\.\d+)?$/;
     const attRx = /^[1-5]$/;
 
+    const WCA_EVENTS = [
+      "3x3x3 Cube","2x2x2 Cube","4x4x4 Cube","5x5x5 Cube","6x6x6 Cube","7x7x7 Cube",
+      "3x3x3 Blindfolded","3x3x3 Fewest Moves","3x3x3 One-handed","Clock","Megaminx",
+      "Pyraminx","Skewb","Square-1","4x4x4 Blindfolded","5x5x5 Blindfolded","3x3x3 Multi-Blind"
+    ];
+
+    const WCA_EVENTS_CODES = [
+      "333","222","444","555","666","777",
+      "333bf","333fm","333oh","clock","minx",
+      "pyram","skewb","sq1","444bf","555bf","333mbf"
+    ];
+
+    const EVENT_CODE_TO_NAME = {
+      "333": "3x3x3 Cube",
+      "222": "2x2x2 Cube",
+      "444": "4x4x4 Cube",
+      "555": "5x5x5 Cube",
+      "666": "6x6x6 Cube",
+      "777": "7x7x7 Cube",
+      "333bf": "3x3x3 Blindfolded",
+      "333fm": "3x3x3 Fewest Moves",
+      "333oh": "3x3x3 One-handed",
+      "clock": "Clock",
+      "minx": "Megaminx",
+      "pyram": "Pyraminx",
+      "skewb": "Skewb",
+      "sq1": "Square-1",
+      "444bf": "4x4x4 Blindfolded",
+      "555bf": "5x5x5 Blindfolded",
+      "333mbf": "3x3x3 Multi-Blind"
+    };
+
+    const EVENT_NAME_TO_CODE = Object.fromEntries(
+      Object.entries(EVENT_CODE_TO_NAME).map(([code, name]) => [name.toString().trim().toLowerCase(), code])
+    );
+
     // --- Competition link helper: map competition display strings to either WCA or local /live links ---
     let __wcaCompTitleCachePromise = null;
     function loadWcaCompTitleCache() {
@@ -682,12 +717,6 @@
         .then(r => r.ok ? r.json() : {})
         .catch(()=> ({}));
       return __wcaCompTitleCachePromise;
-    }
-
-    function hideCompetitionsListWhenDetailOpen(hide) {
-      const list = document.getElementById('competitions-locked-list');
-      if (!list) return;
-      list.style.display = hide ? 'none' : '';
     }
 
     function csToDisplay(cs) {
@@ -747,23 +776,17 @@
           text = '';
         } else {
           if (isFMC) {
-            // If JSON already contains integer moves (e.g. 29) keep it.
-            // If JSON contains a small fractional value like 0.29 (seconds), convert to integer moves
-            // by multiplying by 100 and rounding.
             const n = Number(raw);
             if (Number.isFinite(n)) {
               if (!Number.isInteger(n) && Math.abs(n) < 10) {
-                // looks like seconds (0.29) -> convert to moves (29)
                 text = String(Math.round(n * 100));
               } else {
-                // already integer-like (e.g. 22 or 29), show as integer
                 text = String(Math.round(n));
               }
             } else {
               text = String(raw);
             }
           } else {
-            // normal time-formatting path: centiseconds -> human string
             text = csToDisplay(raw);
           }
         }
@@ -928,37 +951,6 @@
       else if (mq.addListener) mq.addListener((e) => handleMobileChange(e.matches));
     }
 
-
-    const WCA_EVENTS = [
-      "3x3x3 Cube","2x2x2 Cube","4x4x4 Cube","5x5x5 Cube","6x6x6 Cube","7x7x7 Cube",
-      "3x3x3 Blindfolded","3x3x3 Fewest Moves","3x3x3 One-handed","Clock","Megaminx",
-      "Pyraminx","Skewb","Square-1","4x4x4 Blindfolded","5x5x5 Blindfolded","3x3x3 Multi-Blind"
-    ];
-
-    const EVENT_CODE_TO_NAME = {
-      "333": "3x3x3 Cube",
-      "222": "2x2x2 Cube",
-      "444": "4x4x4 Cube",
-      "555": "5x5x5 Cube",
-      "666": "6x6x6 Cube",
-      "777": "7x7x7 Cube",
-      "333bf": "3x3x3 Blindfolded",
-      "333fm": "3x3x3 Fewest Moves",
-      "333oh": "3x3x3 One-handed",
-      "clock": "Clock",
-      "minx": "Megaminx",
-      "pyram": "Pyraminx",
-      "skewb": "Skewb",
-      "sq1": "Square-1",
-      "444bf": "4x4x4 Blindfolded",
-      "555bf": "5x5x5 Blindfolded",
-      "333mbf": "3x3x3 Multi-Blind"
-    };
-
-    const EVENT_NAME_TO_CODE = Object.fromEntries(
-      Object.entries(EVENT_CODE_TO_NAME).map(([code, name]) => [name.toString().trim().toLowerCase(), code])
-    );
-
     // map human event name -> event id using exact or prefix match
     function eventNameToId(eventName) {
       if (!eventName) return '';
@@ -987,7 +979,6 @@
 
 
     function buildLiveRoundPath(compName, eventName, roundName) {
-      // compSlug and helpers use slug()
       const compSlug = slug(compName || '');
       // try compact mapping: eventName -> eventCode, roundName -> roundId
       const eventId = eventNameToId(eventName);
@@ -1100,7 +1091,7 @@
 
       const listEl = document.getElementById('competitions-locked-list');
       listEl.innerHTML = '';
-      hideCompetitionsListWhenDetailOpen(false);
+      listEl.style.display = '';
 
       const items = comps.map(name => {
         const isLocked = !!compLockMap[name];
@@ -1149,7 +1140,7 @@
     async function renderCompetitionDetail(compSlug) {
       showView('competitions');
       document.getElementById('view-competitions').hidden = false;
-      hideCompetitionsListWhenDetailOpen(true);
+      document.getElementById('competitions-locked-list').style.display = 'none';
 
       const compName = unslug(compSlug);
       const detailEl = document.getElementById('competition-detail');
@@ -3491,13 +3482,7 @@
 
       if (!eventRowEl || !typeRowEl || !modeRowEl || !tableWrap) return;
 
-      // canonical order for event buttons (codes)
-      const explicitOrder = [
-        "333","222","444","555","666","777",
-        "333bf","333fm","333oh","clock","minx",
-        "pyram","skewb","sq1","444bf","555bf","333mbf"
-      ];
-      const eventOrder = explicitOrder.concat(Object.keys(EVENT_CODE_TO_NAME || {}).filter(k => !explicitOrder.includes(k)));
+      const eventOrder = WCA_EVENTS_CODES.concat(Object.keys(EVENT_CODE_TO_NAME || {}).filter(k => !WCA_EVENTS_CODES.includes(k)));
 
       // parse querystring params for initialization
       const qs = new URLSearchParams(window.location.search || '');
@@ -3749,8 +3734,6 @@
         state.top = (parsedShow === 100 || parsedShow === 1000) ? parsedShow : state.top || 100;
       }
 
-
-
       function buildStaticControls() {
         // Events row
         eventRowEl.innerHTML = '';
@@ -3909,7 +3892,6 @@
         const tableHtml = headerHtml + rowsHtml + '</tbody></table></div>';
         tableWrap.innerHTML = tableHtml;
 
-        // patch competition links (async)
         patchCompetitionCells(tableWrap).catch(()=>{});
       }
       

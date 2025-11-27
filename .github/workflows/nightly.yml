@@ -43,6 +43,7 @@ jobs:
           python scripts/fetch_wca_profiles.py
           python scripts/merge_lsc.py
           python scripts/generate_rankings.py
+          python scripts/prefetch_competitions.py
 
       - name: Commit and push generated data if changed
         env:
