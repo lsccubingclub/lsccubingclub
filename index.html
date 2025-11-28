@@ -428,6 +428,7 @@
         ">Go to LSC Cubing Club Live</a>
       </div>
 
+
       <div class="section" style="margin-top:40px;">
         <h2 style="color:#1976D2;">Competitions</h2>
         <p>Browse past competitions and full results.</p>
@@ -1409,24 +1410,27 @@
           const tdBest = document.createElement('td');
           tdBest.style.padding = '8px';
           tdBest.style.textAlign = 'right';
-          // compute best like original: FMC uses integer moves; else csToDisplay
-          if (isFewestMovesEvent(r.event || '')) {
-            if (r.best !== undefined && r.best !== null) tdBest.textContent = String(Math.round(Number(r.best)));
-            else if (Array.isArray(r.attempts) && r.attempts.length) {
-              const numeric = (r.attempts || []).map(a => (a === null || a === undefined || a === 0 || a === '') ? null : Number(a)).filter(v => v !== null && Number.isFinite(v));
-              if (numeric.length) tdBest.textContent = String(Math.round(Math.min(...numeric)));
-              else tdBest.textContent = '';
-            } else tdBest.textContent = '';
-          } else {
-            if (r.best !== undefined && r.best !== null) tdBest.textContent = csToDisplay(r.best);
-            else {
-              if (Array.isArray(r.attempts) && r.attempts.length) {
-                const numeric = (r.attempts || []).filter(v => v !== null && v !== undefined && v !== 0 && v !== -1 && v !== -2);
-                if (numeric.length) tdBest.textContent = csToDisplay(Math.min.apply(null, numeric));
-                else tdBest.textContent = '';
-              } else tdBest.textContent = '';
+
+          let bestDisplay = '';
+          if (best === -1) {
+            bestDisplay = 'DNF';
+          } else if (best === -2) {
+            bestDisplay = 'DNS';
+          } else if (isFewestMovesEvent(eventId)) {
+            // Fewest moves: prefer integer moves if present (handles "29" or 0.29 cases)
+            const n = Number(best);
+            if (Number.isFinite(n)) {
+              if (Number.isInteger(n) || Math.abs(n) >= 10) bestDisplay = String(Math.round(n));
+              else bestDisplay = String(Math.round(n * 100));
+            } else {
+              bestDisplay = String(best || '');
             }
+          } else {
+            // normal time formatting (centiseconds -> human string)
+            bestDisplay = csToDisplay(best);
           }
+
+          tdBest.textContent = (r.best !== undefined && r.best !== null) ? bestDisplay : '';
 
           const tdAvg = document.createElement('td');
           tdAvg.style.padding = '8px';
@@ -1673,6 +1677,16 @@
           });
         }
 
+        function parseFMCBest(best) {
+          if (best === null || best === undefined || best === '' || best === 0) return null;
+          if (best === -1) return 'DNF';
+          if (best === -2) return 'DNS';
+          const n = Number(best);
+          if (!Number.isFinite(n)) return String(best);
+          if (!Number.isInteger(n) && Math.abs(n) < 10) return String(Math.round(n * 100));
+          return String(Math.round(n));
+        }
+
         Object.keys(winners).forEach(ev => {
           const w = winners[ev] || {};
           const tr = document.createElement('tr');
@@ -1692,7 +1706,7 @@
           const tdBest = document.createElement('td');
           tdBest.style.padding = '8px';
           tdBest.style.textAlign = 'right';
-          tdBest.textContent = (w.best !== undefined && w.best !== null) ? csToDisplay(w.best) : (w.result ? csToDisplay(w.result) : '');
+          tdBest.textContent = (ev === '3x3x3 Fewest Moves')? parseFMCBest(w.best) : csToDisplay(w.best);
           tr.appendChild(tdBest);
 
           const tdAvg = document.createElement('td');

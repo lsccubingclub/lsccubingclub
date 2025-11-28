@@ -141,22 +141,11 @@ def format_final_col_name(fmt: str) -> str:
     if fmt == "mo3": return "Mean"
     if fmt in ("bo1", "bo2", "bo3"): return "Best"
     if fmt == "ao5": return "Average"
-    return "Average"
 
-# ---- REPLACED ATTEMPT HANDLING ----
-
-# Collect attempts only from headers named exactly "1","2","3","4","5"
 ATTEMPT_HEADER_NAMES = ["1", "2", "3", "4", "5"]
 
 def parse_attempt_value(cell, event_id):
-    """
-    Normalize a single attempt cell:
-    - empty / None / '' -> 0
-    - 'DNF' -> -1
-    - 'DNS' -> -2
-    - for normal time strings -> centiseconds (int)
-    - for FMC events prefer integer moves
-    """
+
     if cell is None:
         return 0
     s = str(cell).strip()
@@ -189,11 +178,15 @@ def parse_attempt_value(cell, event_id):
         except Exception:
             return 0
 
-def parse_mean_value(cell, event_id):
-    # Return centiseconds for mean-like values
+def parse_mean_value(cell):
     if cell is None or str(cell).strip() == "":
         return None
     s = str(cell).strip()
+    su = s.upper()
+    if su == "DNF":
+        return -1
+    if su == "DNS":
+        return -2
     try:
         if ":" in s:
             mm, rest = s.split(":", 1)
@@ -203,9 +196,11 @@ def parse_mean_value(cell, event_id):
         return int(round(seconds * 100))
     except Exception:
         try:
-            return int(float(s))
+            # fallback: maybe the mean is already an integer (e.g., mo3 mean as integer moves)
+            return int(round(float(s)))
         except Exception:
             return None
+
 
 def collect_attempts_from_row(row, headers, event_id):
     """
@@ -331,7 +326,15 @@ def build_all_json(comp_info, sheet_values_by_tab):
                 v = row.get("#")
                 if v not in (None, "") and str(v).strip().isdigit():
                     pos = int(str(v).strip())
-            avg_val = parse_mean_value((row.get(final_col) or "").strip(), event_id)
+
+            mean_source = None
+            if avg_hdr:
+                mean_source = avg_hdr
+            else:
+                mean_source = final_col
+
+            avg_val = parse_mean_value((row.get(mean_source) or "").strip())
+
             pack.append({
                 "name": name,
                 "attempts": attempts,
@@ -379,7 +382,7 @@ def build_persons_json(comp_info, sheet_values_by_tab):
             if avg_hdr:
                 v = row.get(avg_hdr)
                 if v not in (None, ""):
-                    avg_val = parse_mean_value(v, event_id)
+                    avg_val = parse_mean_value(v)
             result_obj = {
                 "event": ev,
                 "round": rn,
@@ -414,11 +417,19 @@ def build_podiums_json(comp_info, sheet_values_by_tab):
             attempts = collect_attempts_from_row(row, headers, event_id)
             best, best_index, worst_index = compute_best_and_indices(attempts, event_id)
             
+            mean_hdr = None
+            for h in headers:
+                if isinstance(h, str) and h.strip().lower() in ("mean", "average"):
+                    mean_hdr = h
+                    break
+            mean_source = mean_hdr if mean_hdr else format_final_col_name(fmt)
+            avg = parse_mean_value((row.get(mean_source) or "").strip())
+
             pack.append({
                 "name": name,
                 "attempts": attempts,
                 "best": best,
-                "average": parse_mean_value((row.get(format_final_col_name(fmt)) or "").strip(), event_id),
+                "average": avg,
                 "best_index": best_index,
                 "worst_index": worst_index,
                 "pos": (int(row.get("#")) if "#" in headers and row.get("#") and str(row.get("#")).strip().isdigit() else None)
