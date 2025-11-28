@@ -219,7 +219,7 @@ def collect_attempts_from_row(row, headers, event_id):
             attempts.append(parse_attempt_value(raw, event_id))
     return attempts
 
-def compute_best_and_indices(attempts_list, event_id):
+def compute_best_and_indices(attempts_list):
     positives = [a for a in attempts_list if a > 0]
     best = min(positives) if positives else None
     best_index = None
@@ -314,7 +314,7 @@ def build_all_json(comp_info, sheet_values_by_tab):
             if not name:
                 continue
             attempts = collect_attempts_from_row(row, headers, event_id)
-            best, best_index, worst_index = compute_best_and_indices(attempts, event_id)
+            best, best_index, worst_index = compute_best_and_indices(attempts)
             best_val = None
             if "Best" in headers:
                 v = row.get("Best")
@@ -377,7 +377,7 @@ def build_persons_json(comp_info, sheet_values_by_tab):
             if not name:
                 continue
             attempts = collect_attempts_from_row(row, headers, event_id)
-            best, best_index, worst_index = compute_best_and_indices(attempts, event_id)
+            best, best_index, worst_index = compute_best_and_indices(attempts)
             avg_val = None
             if avg_hdr:
                 v = row.get(avg_hdr)
@@ -415,7 +415,7 @@ def build_podiums_json(comp_info, sheet_values_by_tab):
             if not name:
                 continue
             attempts = collect_attempts_from_row(row, headers, event_id)
-            best, best_index, worst_index = compute_best_and_indices(attempts, event_id)
+            best, best_index, worst_index = compute_best_and_indices(attempts)
             
             mean_hdr = None
             for h in headers:
