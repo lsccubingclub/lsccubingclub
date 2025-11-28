@@ -220,26 +220,66 @@ def collect_attempts_from_row(row, headers, event_id):
     return attempts
 
 def compute_best_and_indices(attempts_list):
+    """
+    Compute best value and indices for a list of attempts.
+
+    - positives: attempts > 0
+    - best: minimum of positives (or None)
+    - best_index: index of first occurrence of best (or None)
+    - worst_index:
+        * index of first DNF (-1) if present
+        * else index of first DNS (-2) if present
+        * else index of first occurrence of the maximum positive value
+    Special case:
+    - If all positive attempts are present and all equal (i.e., tied),
+      and there are at least two positive attempts, return best_index as
+      the first positive attempt index and worst_index as the second positive index.
+    """
     positives = [a for a in attempts_list if a > 0]
-    best = min(positives) if positives else None
+    best = min(positives) if positives else (-1 if -1 in attempts_list else None)
     best_index = None
     worst_index = None
+
+    # If best exists, find its first occurrence
     if best is not None:
         for i, a in enumerate(attempts_list):
             if a == best:
                 best_index = i
                 break
+
+    # If any DNF present, worst_index is first DNF
     if any(a == -1 for a in attempts_list):
         worst_index = attempts_list.index(-1)
-    elif any(a == -2 for a in attempts_list):
+        return best, best_index, worst_index
+
+    # If any DNS present, worst_index is first DNS
+    if any(a == -2 for a in attempts_list):
         worst_index = attempts_list.index(-2)
-    elif positives:
+        return best, best_index, worst_index
+
+    # If positives exist, normally worst is the max positive
+    if positives:
+        # Detect tied positives: all positive values equal
+        unique_positives = set(positives)
+        if len(unique_positives) == 1:
+            # find indices of positive attempts
+            pos_indices = [i for i, a in enumerate(attempts_list) if a > 0]
+            if len(pos_indices) >= 2:
+                # return first positive as best_index and second positive as worst_index
+                return best, pos_indices[0], pos_indices[1]
+            else:
+                # only one positive attempt -> best_index is that index, worst_index remains None
+                return best, pos_indices[0], None
+
+        # Normal (non-tied) case: worst is the first occurrence of the max positive
         worst_val = max(positives)
         for i, a in enumerate(attempts_list):
             if a == worst_val:
                 worst_index = i
                 break
+
     return best, best_index, worst_index
+
 
 def build_offered_from_meta(comp_info):
     by_event = defaultdict(list)
