@@ -394,7 +394,7 @@ def build_persons_json(comp_info, sheet_values_by_tab):
                 "pos": (int(row.get("#")) if "#" in headers and row.get("#") and str(row.get("#")).strip().isdigit() else None)
             }
             persons_map.setdefault(name, []).append(result_obj)
-    persons = [{"name": n, "results": persons_map.get(n, [])} for n in sorted(persons_map.keys(), key=lambda s: s.lower())]
+            persons = [{"name": n, "results": persons_map.get(n, [])} for n in sorted(persons_map.keys(), key=lambda s: s.lower())]
     return {"persons": persons}
 
 def build_podiums_json(comp_info, sheet_values_by_tab):
