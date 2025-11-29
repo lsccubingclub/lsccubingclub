@@ -665,13 +665,41 @@
   <script>
     const MASTER_SHEET_ID = '1fjWyEbc7a5A3RjkFm0BEnE_lyHXCa3kYiKRd2IP9j5Q';
     const API_KEY = 'AIzaSyA_4BKwiXfv_T9XhbdenwHuGm0k5uc89S8';
-    const READ_ENDPOINT = '/api/read';
-    const WRITE_ENDPOINT = '/api/write';
 
     window._competitorViewToken = window._competitorViewToken || 0;
 
     const numRx = /^-?\d+(\.\d+)?$/;
     const attRx = /^[1-5]$/;
+
+    let masterValues = [];   // A1:Z? matrix from master
+    let currentComp = '';
+    let currentRound = '';
+    let currentSheetName = ''; // editor label
+    let initLiveDone = false;
+    let currentFetchAbort;   // shared abort controller (prevents stale responses)
+
+    const COMP_HEADER_ROW    = 0;
+    const SHEET_ID_ROW     =   1;
+    const LOCK_STATUS_ROW    = 2;
+    const FIRST_ROUND_ROW    = LOCK_STATUS_ROW + 1;
+    let compLockMap = {};
+    let compSheetMap = {};
+    let roundSheetsMap = Object.create(null);
+    let roundFormatMap = {};
+    let roundAdvanceMap = {};
+
+    let _isCurrentlyMobile = isMobile();
+    let _sidebarOpen = false;
+
+    // ===== Auth =====
+    let isLoggedIn = false;
+    const firebaseConfig = {
+      apiKey: "AIzaSyDUMb1cAuCzRwDfLipld8YrNX-WG4a7P2s",
+      authDomain: "lsccubingclub-ebd29.firebaseapp.com",
+      projectId: "lsccubingclub-ebd29",
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
 
     const WCA_EVENTS = [
       "3x3x3 Cube","2x2x2 Cube","4x4x4 Cube","5x5x5 Cube","6x6x6 Cube","7x7x7 Cube",
@@ -709,7 +737,6 @@
       Object.entries(EVENT_CODE_TO_NAME).map(([code, name]) => [name.toString().trim().toLowerCase(), code])
     );
 
-    // --- Competition link helper: map competition display strings to either WCA or local /live links ---
     let __wcaCompTitleCachePromise = null;
     function loadWcaCompTitleCache() {
       if (__wcaCompTitleCachePromise) return __wcaCompTitleCachePromise;
@@ -806,8 +833,6 @@
       });
     }
 
-
-
     async function patchCompetitionCells(container = document) {
       const cache = await loadWcaCompTitleCache();
       const nameToId = {};
@@ -831,7 +856,7 @@
             a.textContent = display;
           } else {
             a = document.createElement('a');
-            a.href = `/live/${encodeURIComponent(slug(display))}`;
+            a.href = `/competitions/${encodeURIComponent(slug(display))}`;
             a.textContent = display;
           }
           // preserve title tooltip if present
@@ -844,8 +869,291 @@
       });
     }
 
+    // ---------- Helper: compute best & average for a row (WCA-like rules) ----------
+    function computeBestAndAverage(row, format) {
+    // row: { attempt1, attempt2, attempt3, attempt4, attempt5 } (integers or null/0/-1/-2)
+    // format: 'ao5', 'mo3', 'bo3', 'bo2', 'bo1', 'fmc' (fewest moves)
+    const attempts = [
+        normalizeAttempt(row.attempt1),
+        normalizeAttempt(row.attempt2),
+        normalizeAttempt(row.attempt3),
+        normalizeAttempt(row.attempt4),
+        normalizeAttempt(row.attempt5)
+    ];
 
-    let _isCurrentlyMobile = isMobile();
+    function normalizeAttempt(v) {
+        if (v === null || v === undefined || v === 0 || v === '') return null;
+        // keep -1 (DNF) and -2 (DNS) as-is
+        const n = Number(v);
+        if (!Number.isFinite(n)) return null;
+        return Math.trunc(n);
+    }
+
+    // Helper: filter valid numeric attempts (exclude null, 0, DNS)
+    const valid = attempts.filter(a => a !== null && a !== -2);
+
+    // If FMC (fewest moves) treat differently: best = min moves, average not applicable
+    if (String(format || '').toLowerCase().includes('fmc')) {
+        const best = valid.length ? Math.min(...valid) : null;
+        return { best: best, average: null };
+    }
+
+    // bo1/bo2/bo3/mo3/ao5 handling
+    if (format === 'bo1' || format === 'bo2' || format === 'bo3' || format === 'mo3') {
+        // For boX or mo3: best = min of available; average for mo3 = average of 3 (if 3 present)
+        const best = valid.length ? Math.min(...valid) : null;
+        let average = null;
+        if (format === 'mo3' && valid.length === 3) {
+        average = Math.round(valid.reduce((s, x) => s + x, 0) / 3);
+        }
+        return { best, average };
+    }
+
+    if (format === 'ao5') {
+        // WCA ao5: need 5 attempts to compute average; drop best and worst, average remaining 3
+        if (valid.length < 5) {
+        // compute best if any
+        const best = valid.length ? Math.min(...valid) : null;
+        return { best, average: null };
+        }
+        // If any DNF (-1) among the 5, average is DNF (-1) per WCA rules; best is computed ignoring DNF for best?
+        // We'll follow a simple approach: treat -1 as very large for average calculation and mark average as -1 if any -1 present.
+        const hasDNF = attempts.some(a => a === -1);
+        const numericAttempts = attempts.map(a => (a === -1 ? null : a));
+        const best = Math.min(...attempts.filter(a => a !== null && a !== -1));
+        if (hasDNF) {
+        return { best, average: -1 };
+        }
+        // drop min and max
+        const sorted = numericAttempts.slice().sort((a,b)=>a-b);
+        // remove first and last
+        const middle = sorted.slice(1, 4);
+        const avg = Math.round(middle.reduce((s,x)=>s+x,0) / 3);
+        return { best, average: avg };
+    }
+
+    // fallback
+    const best = valid.length ? Math.min(...valid) : null;
+    return { best, average: null };
+    }
+
+    // ---------- Client: fetch leaderboard for a round from Netlify function ----------
+    async function loadLeaderboard(roundId, options = {}) {
+    // roundId: integer (rounds.id)
+    // options: { sortBy: 'best'|'average', limit: number }
+    const url = new URL(READ_ENDPOINT, window.location.origin);
+    url.searchParams.set('round_id', String(roundId));
+    if (options.sortBy) url.searchParams.set('sort_by', options.sortBy);
+    if (options.limit) url.searchParams.set('limit', String(options.limit));
+
+    const res = await fetch(url.toString(), { method: 'GET', credentials: 'same-origin' });
+    if (!res.ok) {
+        const txt = await res.text();
+        throw new Error('Failed to load leaderboard: ' + txt);
+    }
+    const data = await res.json();
+    // data.rows: array of rows with computed best/average and ranks
+    return data;
+    }
+
+    // ---------- Client: render leaderboard into #leaderboard table ----------
+    function renderLeaderboard(data, containerId = 'leaderboard') {
+    // data: { round: {...}, rows: [ {id, competitor_name, attempt1..5, best, average, rank_by_best, rank_by_average} ] }
+    const table = document.getElementById(containerId);
+    if (!table) return;
+    const thead = table.querySelector('thead');
+    const tbody = table.querySelector('tbody');
+    thead.innerHTML = '';
+    tbody.innerHTML = '';
+
+    // header
+    const headerRow = document.createElement('tr');
+    ['Rank','Name','1','2','3','4','5','Best','Average'].forEach(h => {
+        const th = document.createElement('th');
+        th.textContent = h;
+        headerRow.appendChild(th);
+    });
+    thead.appendChild(headerRow);
+
+    // rows
+    (data.rows || []).forEach(r => {
+        const tr = document.createElement('tr');
+        const rankCell = document.createElement('td');
+        rankCell.textContent = r.rank_by_best != null ? String(r.rank_by_best) : '';
+        tr.appendChild(rankCell);
+
+        const nameCell = document.createElement('td');
+        nameCell.textContent = r.competitor_name || '';
+        tr.appendChild(nameCell);
+
+        for (let i=1;i<=5;i++) {
+        const td = document.createElement('td');
+        const val = r['attempt' + i];
+        td.textContent = formatAttemptForDisplay(val);
+        tr.appendChild(td);
+        }
+
+        const bestTd = document.createElement('td');
+        bestTd.textContent = formatAttemptForDisplay(r.best);
+        tr.appendChild(bestTd);
+
+        const avgTd = document.createElement('td');
+        avgTd.textContent = r.average === null ? '' : formatAttemptForDisplay(r.average);
+        tr.appendChild(avgTd);
+
+        tbody.appendChild(tr);
+    });
+    }
+
+    function formatAttemptForDisplay(v) {
+    if (v === null || v === undefined || v === 0) return '';
+    if (v === -1) return 'DNF';
+    if (v === -2) return 'DNS';
+    // assume integer centiseconds or moves depending on event; if you store centiseconds, convert to display
+    // Here we assume values are integer centiseconds for time events; if moves, they are integers.
+    // If value > 1000 treat as centiseconds -> convert to seconds
+    if (Number.isFinite(v)) {
+        // Heuristic: if v >= 100 -> treat as centiseconds
+        if (Math.abs(v) >= 100) {
+        const sec = v / 100;
+        return sec >= 60 ? formatMinutesSeconds(sec) : sec.toFixed(2);
+        } else {
+        return String(v);
+        }
+    }
+    return String(v);
+    }
+    function formatMinutesSeconds(sec) {
+    const mins = Math.floor(sec / 60);
+    const secs = Math.floor(sec - mins * 60);
+    const frac = Math.round((sec - Math.floor(sec)) * 100);
+    return `${mins}:${String(secs).padStart(2,'0')}.${String(frac).padStart(2,'0')}`;
+    }
+
+    // ---------- Client: render podiums view ----------
+    function renderPodiumsView(data, containerId = 'podiums-results') {
+    // data.rows assumed sorted by rank_by_best
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    container.innerHTML = '';
+    const top3 = (data.rows || []).slice(0,3);
+    top3.forEach((r, idx) => {
+        const div = document.createElement('div');
+        div.style.padding = '8px';
+        div.style.borderBottom = '1px solid #eee';
+        div.innerHTML = `<strong>#${idx+1}</strong> ${r.competitor_name} — Best: ${formatAttemptForDisplay(r.best)} Average: ${r.average===null?'':formatAttemptForDisplay(r.average)}`;
+        container.appendChild(div);
+    });
+    }
+
+    // ---------- Client: render competitor results view ----------
+    function renderCompetitorResultsView(competitorIdOrName, data, containerId = 'competitor-results') {
+    // data: { rows: [...] } filter by competitor
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    const rows = (data.rows || []).filter(r => {
+        if (!competitorIdOrName) return false;
+        return String(r.competitor_id) === String(competitorIdOrName) || String(r.competitor_name).toLowerCase().includes(String(competitorIdOrName).toLowerCase());
+    });
+    container.querySelector('thead').innerHTML = '';
+    container.querySelector('tbody').innerHTML = '';
+    const thead = container.querySelector('thead');
+    const headerRow = document.createElement('tr');
+    ['Round','1','2','3','4','5','Best','Average'].forEach(h => {
+        const th = document.createElement('th'); th.textContent = h; headerRow.appendChild(th);
+    });
+    thead.appendChild(headerRow);
+    const tbody = container.querySelector('tbody');
+    rows.forEach(r => {
+        const tr = document.createElement('tr');
+        const roundTd = document.createElement('td'); roundTd.textContent = r.round_id; tr.appendChild(roundTd);
+        for (let i=1;i<=5;i++) {
+        const td = document.createElement('td'); td.textContent = formatAttemptForDisplay(r['attempt' + i]); tr.appendChild(td);
+        }
+        const bestTd = document.createElement('td'); bestTd.textContent = formatAttemptForDisplay(r.best); tr.appendChild(bestTd);
+        const avgTd = document.createElement('td'); avgTd.textContent = r.average===null?'':formatAttemptForDisplay(r.average); tr.appendChild(avgTd);
+        tbody.appendChild(tr);
+    });
+    }
+
+    // ---------- Client: load editable sheet (for admin editing) ----------
+    async function loadEditableSheet(roundId) {
+    // fetch rows for editing
+    const data = await loadLeaderboard(roundId);
+    // show editor panel and populate table
+    const editor = document.getElementById('editor-panel');
+    const editTable = document.getElementById('edit-table');
+    editor.style.display = 'block';
+    editTable.querySelector('thead').innerHTML = '';
+    editTable.querySelector('tbody').innerHTML = '';
+    const thead = editTable.querySelector('thead');
+    const headerRow = document.createElement('tr');
+    ['Name','1','2','3','4','5','Save'].forEach(h => {
+        const th = document.createElement('th'); th.textContent = h; headerRow.appendChild(th);
+    });
+    thead.appendChild(headerRow);
+    const tbody = editTable.querySelector('tbody');
+    (data.rows || []).forEach(r => {
+        const tr = document.createElement('tr');
+        const nameTd = document.createElement('td'); nameTd.textContent = r.competitor_name; tr.appendChild(nameTd);
+        for (let i=1;i<=5;i++) {
+        const td = document.createElement('td');
+        const input = document.createElement('input');
+        input.type = 'number';
+        input.value = r['attempt' + i] == null ? '' : String(r['attempt' + i]);
+        input.dataset.rowId = r.id;
+        input.dataset.attempt = i;
+        td.appendChild(input);
+        tr.appendChild(td);
+        }
+        const saveTd = document.createElement('td');
+        const btn = document.createElement('button');
+        btn.textContent = 'Save';
+        btn.className = 'btn';
+        btn.onclick = () => submitEdits(r.id, roundId);
+        saveTd.appendChild(btn);
+        tr.appendChild(saveTd);
+        tbody.appendChild(tr);
+    });
+    }
+
+    // ---------- Client: submit edits (single row) ----------
+    async function submitEdits(rowId, roundId) {
+    // gather inputs for this row
+    const inputs = Array.from(document.querySelectorAll(`#edit-table input[data-row-id="${rowId}"]`));
+    const payload = { id: Number(rowId), round_id: Number(roundId) };
+    inputs.forEach(inp => {
+        const attemptIndex = inp.dataset.attempt;
+        payload['attempt' + attemptIndex] = inp.value === '' ? null : Number(inp.value);
+    });
+
+    const res = await fetch(WRITE_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'update_row', payload })
+    });
+    if (!res.ok) {
+        const txt = await res.text();
+        alert('Update failed: ' + txt);
+        return;
+    }
+    // reload leaderboard and editor
+    await refreshCurrentRound();
+    alert('Saved');
+    }
+
+    // ---------- Client: helper to refresh current round view ----------
+    async function refreshCurrentRound() {
+    if (!currentRound) return;
+    try {
+        const data = await loadLeaderboard(currentRound);
+        renderLeaderboard(data);
+        renderPodiumsView(data);
+    } catch (err) {
+        console.error(err);
+    }
+    }
+    
     function handleMobileChange(nowMobile) {
       // only act on actual changes
       if (nowMobile === _isCurrentlyMobile) return;
@@ -2145,18 +2453,6 @@
       }
     }
 
-
-
-    // ===== Auth =====
-    let isLoggedIn = false;
-    const firebaseConfig = {
-      apiKey: "AIzaSyDUMb1cAuCzRwDfLipld8YrNX-WG4a7P2s",
-      authDomain: "lsccubingclub-ebd29.firebaseapp.com",
-      projectId: "lsccubingclub-ebd29",
-    };
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-
     // ====== Login UI ======
     function showLogin() {
       document.getElementById('login-panel').style.display = 'block';
@@ -2206,37 +2502,14 @@
         alert(`“${currentComp}” is locked. You cannot edit live results.`);
         return;
       } else if (isLoggedIn) {
-       // hide login (if open) and dropdowns
-        document.getElementById('login-panel').style.display      = 'none';
-        // show editor
-        document.getElementById('editor-panel').style.display     = 'block';
-        // update the sheet name in the editor header
+        document.getElementById('login-panel').style.display = 'none';
+        document.getElementById('editor-panel').style.display = 'block';
         document.getElementById('editing-sheet-name').textContent = currentSheetName || currentRound;
-        // load the CSV into the edit table
         loadEditableSheet();
       } else {
         alert('Please sign in to input live results.');
-        
       }
     });
-
-
-    // ===== State =====
-    let masterValues = [];   // A1:Z? matrix from master
-    let currentComp = '';
-    let currentRound = '';
-    let currentSheetName = ''; // editor label
-    let initLiveDone = false;
-    let currentFetchAbort;   // shared abort controller (prevents stale responses)
-
-    const COMP_HEADER_ROW    = 0;
-    const SHEET_ID_ROW     =   1;
-    const LOCK_STATUS_ROW    = 2;
-    const FIRST_ROUND_ROW    = LOCK_STATUS_ROW + 1;
-    // ===== Master sheet fetch (competitions + rounds) =====
-    let compLockMap = {};
-    let compSheetMap = {};
-
 
     function getEventsForComp(comp) {
       const compIdx = (masterValues[COMP_HEADER_ROW]||[]).indexOf(comp);
@@ -2314,8 +2587,6 @@
           }
           if (Array.isArray(headers) && Array.isArray(rows)) {
             const key = `${compCandidate}|${candidateRound}`;
-            leaderboardCache[key] = { headers, rows };
-            leaderboardCache[`${compCandidate}/${candidateRound}`] = { headers, rows };
             return { headers, rows };
           }
         } catch (err) {
@@ -2367,7 +2638,7 @@
       return attempts.join(', ');
     }
 
-    // Mobile HTML for leaderboard / podium rows (consistent font sizing)
+    // Mobile HTML for leaderboard / podium rows
     function buildMobileLeaderHtml(headers, rowObj, compName, roundName) {
       const name = (rowObj['Name'] || rowObj['name'] || '').toString().trim();
       const rank = (rowObj['#'] || rowObj['Number'] || '').toString().trim();
@@ -2427,8 +2698,6 @@
         ${metrics}
       </div>`;
     }
-    // -------------------------------------------------------------------------
-
 
     (function injectMobileStyles() {
       const css = `
@@ -2473,10 +2742,10 @@
       document.head.appendChild(s);
     })();
 
-    /* 3) small helpers: isMobile, pMap (bounded concurrency), getCachedRound */
     function isMobile() {
       return window.matchMedia && window.matchMedia('(max-width:720px)').matches;
     }
+
     async function pMap(inputs, mapper, concurrency = 6) {
       const results = new Array(inputs.length);
       let i = 0;
@@ -2491,84 +2760,12 @@
       return results;
     }
 
-    async function getCachedRound(compName, fullRound) {
-      const compCandidate = String(compName);
-      // try all canonical candidates for this fullRound
-      const tries = getCanonicalTabCandidates(compCandidate, fullRound);
-
-    for (const t of tries) {
-      const key1 = `${compCandidate}/${t}`;
-      if (leaderboardCache[key1]) return leaderboardCache[key1];
-      const key2 = `${compCandidate}|${t}`;
-      if (leaderboardCache[key2]) return leaderboardCache[key2];
-    }
-
-      // finally attempt network fetch via getRoundData, which itself tries candidates
-      const data = await getRoundData(compCandidate, fullRound);
-      return data;
-    }
-
-    async function prefetchRecentCompRounds() {
-      const headersRow = Array.isArray(masterValues[COMP_HEADER_ROW]) ? masterValues[COMP_HEADER_ROW] : [];
-      const roundRows = masterValues.slice(FIRST_ROUND_ROW);
-      const recentCount = Math.min(3, Math.max(0, headersRow.length - 1));
-      if (recentCount <= 0) return;
-
-      // Map spreadsheetId -> [rangeStrings]
-      const rangesBySheet = Object.create(null);
-
-      for (let ci = 1; ci <= recentCount; ci++) {
-        const compName = unslug(String(headersRow[ci] || ''));
-        const sheetId = compSheetMap[compName] || MASTER_SHEET_ID;
-        roundRows.forEach(r => {
-          const round = r[ci];
-          if (!round) return;
-          const candidates = getCanonicalTabCandidates(compName, String(round));
-          if (!candidates.length) return;
-          // only the tab name (no comp/ prefix) belongs in the range for that spreadsheet
-          const tab = candidates[0];
-          rangesBySheet[sheetId] = rangesBySheet[sheetId] || new Set();
-          rangesBySheet[sheetId].add(`'${tab}'!A:Z`);
-        });
-      }
-
-      // Perform batchGet per spreadsheetId, chunked
-      const CHUNK = 30;
-      for (const [sheetId, rangeSet] of Object.entries(rangesBySheet)) {
-        const ranges = Array.from(rangeSet);
-        for (let i = 0; i < ranges.length; i += CHUNK) {
-          const chunk = ranges.slice(i, i + CHUNK);
-          const rangesParam = chunk.map(r => `ranges=${encodeURIComponent(r)}`).join('&');
-          const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values:batchGet?${rangesParam}&majorDimension=ROWS&key=${API_KEY}`;
-          try {
-            const res = await fetch(url);
-            if (!res.ok) continue;
-            const body = await res.json();
-            (body.valueRanges || []).forEach(vr => {
-              const name = vr.range ? vr.range.split('!')[0] : null;
-              const vals = Array.isArray(vr.values) ? vr.values : [];
-              const [h, ...rows] = vals;
-              if (name) leaderboardCache[name] = { headers: Array.isArray(h) ? h : [], rows: Array.isArray(rows) ? rows : [] };
-            });
-          } catch (e) {
-            // ignore per-sheet failures and continue
-          }
-        }
-      }
-    }
-
     async function initLiveOnce() {
       if (initLiveDone) return;
       initLiveDone = true;
 
       await fetchMeta();
-
-      if (leaderboardCache._init) return;
-      leaderboardCache._init = true;
-
-      // try fast prefetch; non-fatal
-      try { await prefetchRecentCompRounds(); } catch (e) {}
-
+      
       // Build ranges grouped by spreadsheet id (do not include "CompName/" prefix)
       const headersRow = Array.isArray(masterValues[COMP_HEADER_ROW]) ? masterValues[COMP_HEADER_ROW] : [];
       const roundRows = masterValues.slice(FIRST_ROUND_ROW);
@@ -2608,7 +2805,6 @@
               const name = vr.range ? vr.range.split('!')[0] : null;
               const vals = Array.isArray(vr.values) ? vr.values : [];
               const [h, ...rows] = vals;
-              if (name) leaderboardCache[name] = { headers: Array.isArray(h) ? h : [], rows: Array.isArray(rows) ? rows : [] };
             });
           } catch (e) {
             // swallow and continue
@@ -2618,554 +2814,13 @@
       }
     }
 
-
-    function renderLeaderboard(headers, rows) {
-      const theadEl = document.querySelector('#leaderboard thead');
-      const tbodyEl = document.querySelector('#leaderboard tbody');
-      theadEl.innerHTML = '';
-      tbodyEl.innerHTML = '';
-
-      document.getElementById('subtitle').textContent = currentRound;
-
-      const isLocked = !!compLockMap[currentComp];
-      const attemptCols = [];
-      headers.forEach((h,i) => { if (/^[1-5]$/.test(h)) attemptCols.push(i); });
-
-      let missingCount = 0;
-      for (const row of rows) {
-        if (attemptCols.every(i => !(row[headers[i]]||'').toString().trim())) missingCount++;
-      }
-
-      const displayRows = (isLocked && attemptCols.length)
-        ? rows.filter(row => attemptCols.some(i => (row[headers[i]]||'').toString().trim()))
-        : rows;
-
-      const fmt = (roundFormatMap[currentComp]||{})[currentRound] || 'ao5';
-      const finalColName = fmt === 'mo3' ? 'Mean' : (fmt === 'bo1'||fmt==='bo2'||fmt==='bo3') ? 'Best' : 'Average';
-
-      let highlightCount = (roundAdvanceMap[currentComp]?.[currentRound] || 0);
-      if (highlightCount < 1) highlightCount = currentRound.toLowerCase().includes('final') ? 3 : 0;
-      const isFMC = currentRound.toLowerCase().includes('fewest moves');
-
-      const alignMap = {};
-      headers.forEach(h => {
-        const k = h.toLowerCase();
-        alignMap[h] = (k === '#' || k === 'number') ? 'center' : (k === 'name' || k === 'class') ? 'left' : 'right';
-      });
-
-      // header row with data-col-role
-      const headerRow = document.createElement('tr');
-      headers.forEach(h => {
-        const th = document.createElement('th');
-        th.textContent = h;
-        th.style.textAlign = alignMap[h];
-        th.style.padding = '8px';
-        if (h === finalColName) th.style.fontWeight = 'bold';
-        // mark roles for mobile hide
-        const role = (/^[1-5]$/.test(h) ? h : (h.trim().toLowerCase() === 'class' ? 'class' : (h.trim() === '#' ? 'number' : h.trim().toLowerCase())));
-        th.setAttribute('data-col-role', role);
-        headerRow.appendChild(th);
-      });
-      theadEl.appendChild(headerRow);
-
-      const frag = document.createDocumentFragment();
-
-      displayRows.forEach((rowObj, rowIndex) => {
-        const tr = document.createElement('tr');
-
-        const noAttempts = attemptCols.every(i => !(rowObj[headers[i]]||'').toString().trim());
-
-        headers.forEach((h, colIdx) => {
-          const td = document.createElement('td');
-          let cell = (rowObj[h] ?? '').toString().trim();
-
-          if (numRx.test(cell)) {
-            const n = parseFloat(cell);
-            if (h === 'Average' || h === 'Mean') cell = n.toFixed(2);
-            else if (attRx.test(h) || h === 'Best') {
-              if (isFMC && (attRx.test(h) || h === 'Best')) cell = Math.round(n).toString();
-              else cell = (Math.floor(n * 100) / 100).toFixed(2);
-            }
-          }
-
-          if ((h === '#' || h.toLowerCase() === 'number') && noAttempts) cell = '';
-
-          if (h.trim().toLowerCase() === 'name') {
-            const slugName = slug(cell);
-            const a = document.createElement('a');
-            a.href = `/live/${slug(currentComp)}/competitors/${slugName}`;
-            a.textContent = cell;
-            a.style.textDecoration = 'none';
-            a.onmouseenter = () => a.style.textDecoration = 'underline';
-            a.onmouseleave = () => a.style.textDecoration = 'none';
-            td.appendChild(a);
-            td.style.color = '#1976D2';
-          } else {
-            td.textContent = cell;
-          }
-
-          td.style.textAlign = alignMap[h];
-          td.style.padding = '8px';
-
-          if (h === finalColName) td.style.fontWeight = 'bold';
-
-          if ((h === '#') && !noAttempts && rowIndex < highlightCount) {
-            const color = isLocked ? '#00e676' : (missingCount >= (highlightCount - rowIndex) ? '#fff59d' : '#00e676');
-            td.style.backgroundColor = color;
-          }
-
-          // data-col-role for mobile hiding
-          const role = (/^[1-5]$/.test(h) ? h : (h.trim().toLowerCase() === 'class' ? 'class' : (h.trim() === '#' ? 'number' : h.trim().toLowerCase())));
-          td.setAttribute('data-col-role', role);
-
-          // mark name for click delegation (desktop behavior unchanged)
-          if (h === 'Name') {
-            td.dataset.name = cell;
-            td.style.cursor = 'pointer';
-            td.style.color = '#1976D2';
-          }
-
-          tr.appendChild(td);
-        });
-
-        // mobile: attach click to open detail modal
-        if (isMobile()) {
-          tr.style.cursor = 'pointer';
-          tr.addEventListener('click', () => {
-            const html = buildMobileLeaderHtml(headers, rowObj, currentComp, currentRound);
-            showRowDetail(html);
-          });
-        }
-        frag.appendChild(tr);
-      });
-
-      tbodyEl.appendChild(frag);
-    }
-
-    async function renderPodiumsView(comp) {
-      const compName = unslug(comp || currentComp);
-      currentComp = compName;
-
-      showView('podiums');
-      document.getElementById('view-podiums').hidden = false;
-
-      const resultsEl = document.getElementById('podiums-results');
-      resultsEl.innerHTML = '';
-
-      const loadingEl = document.createElement('div');
-      loadingEl.textContent = 'Loading…';
-      resultsEl.appendChild(loadingEl);
-
-      await initLiveOnce();
-
-      if (!compName) {
-        resultsEl.textContent = 'No finals';
-        return;
-      }
-
-      const compIdx = (masterValues[COMP_HEADER_ROW] || []).indexOf(compName);
-      if (compIdx < 0) {
-        resultsEl.textContent = 'No finals';
-        return;
-      }
-
-      const finals = masterValues.slice(FIRST_ROUND_ROW).map(r => r[compIdx]).filter(name => / - Final$/i.test(name));
-      if (!finals.length) {
-        resultsEl.textContent = 'No finals';
-        return;
-      }
-
-      // group by event name (unique)
-      const byEvent = {};
-      finals.forEach(full => {
-        const eventName = full.replace(/ - Final$/i, '');
-        byEvent[eventName] = full;
-      });
-
-      const container = document.createElement('div');
-      const isLocked = !!compLockMap[compName];
-
-      // fetch all finals in parallel with bounded concurrency using pMap + getCachedRound
-      const finalRounds = Object.values(byEvent);
-      const fetched = await pMap(finalRounds, async fr => {
-        const data = await getCachedRound(compName, fr);
-        return { fr, data };
-      }, 6);
-
-      for (const { fr: fullRound, data } of fetched) {
-        if (!data) continue;
-        // find event name
-        const eventName = fullRound.replace(/ - Final$/i, '');
-        // final-column decision
-        const fmt = (roundFormatMap[compName]||{})[fullRound] || 'ao5';
-        const finalColName = fmt === 'mo3' ? 'Mean' : (/^bo[1-3]$/i.test(fmt) ? 'Best' : 'Average');
-
-        const headers = data.headers || [];
-        const rows = data.rows || [];
-
-        const alignMap = {};
-        headers.forEach(h => {
-          const k = h.toLowerCase();
-          alignMap[h] = (k === '#' || k === 'number') ? 'center' : (k === 'name' || k === 'class') ? 'left' : 'right';
-        });
-
-        const h3 = document.createElement('h3');
-        h3.textContent = eventName;
-        h3.style.marginTop = '20px';
-        h3.style.fontWeight = 'normal';
-        container.appendChild(h3);
-
-        const tbl = document.createElement('table');
-        const thead = document.createElement('thead');
-        const trh = document.createElement('tr');
-        headers.forEach(h => {
-          const th = document.createElement('th');
-          th.textContent = h;
-          th.style.textAlign = alignMap[h];
-          th.style.padding = '8px';
-          // data-col-role
-          const role = (/^[1-5]$/.test(h) ? h : (h.trim().toLowerCase() === 'class' ? 'class' : (h.trim() === '#' ? 'number' : h.trim().toLowerCase())));
-          th.setAttribute('data-col-role', role);
-          trh.appendChild(th);
-        });
-        thead.appendChild(trh);
-        tbl.appendChild(thead);
-
-        const tbody = document.createElement('tbody');
-
-        const numRe = /^-?\d+(\.\d+)?$/;
-        const isFMC = /fewest moves/i.test(eventName);
-
-        rows.slice(0,3).forEach((rowObj, idx) => {
-          const advVal = roundAdvanceMap[compName]?.[fullRound];
-          const cnt = Number.isInteger(advVal) && advVal > 0 ? advVal : (fullRound.toLowerCase().includes('final') ? 3 : 0);
-          const attemptIdxs = headers.map((h,i) => ({h,i})).filter(o => /^[1-5]$/.test(o.h)).map(o => o.i);
-          const missingCount = rows.filter(r => attemptIdxs.every(i => !(r[headers[i]]||'').toString().trim())).length;
-          const rank = parseInt(rowObj['Rank'],10) || (idx + 1);
-          const highlightColor = rank <= cnt ? (isLocked ? '#00e676' : (missingCount >= cnt - rank + 1 ? '#fff59d' : '#00e676')) : null;
-
-          const tr = document.createElement('tr');
-          headers.forEach(h => {
-            let v = (rowObj[h] || '').toString().trim();
-            if ((/^[1-5]$/.test(h) || h === 'Best' || h === 'Average' || h === 'Mean') && numRe.test(v)) {
-              const n = parseFloat(v);
-              if (h === 'Average' || h === 'Mean') v = n.toFixed(2);
-              else if (isFMC && (/^[1-5]$/.test(h) || h === 'Best')) v = Math.round(n).toString();
-              else v = (Math.floor(n * 100) / 100).toFixed(2);
-            }
-            const td = document.createElement('td');
-            td.textContent = v;
-            td.style.textAlign = alignMap[h];
-            td.style.padding = '8px';
-            const role = (/^[1-5]$/.test(h) ? h : (h.trim().toLowerCase() === 'class' ? 'class' : (h.trim() === '#' ? 'number' : h.trim().toLowerCase())));
-            td.setAttribute('data-col-role', role);
-
-            if (h === '#' && highlightColor) td.style.backgroundColor = highlightColor;
-            if (h === finalColName) td.style.fontWeight = 'bold';
-
-            if (h.trim().toLowerCase() === 'name') {
-              td.innerHTML = `<a href="/live/${slug(currentComp)}/competitors/${slug(v)}" style="color:#1976D2;text-decoration:none">${v}</a>`;
-              td.style.cursor = 'pointer';
-            }
-
-            tr.appendChild(td);
-          });
-
-
-          if (isMobile()) {
-            tr.style.cursor = 'pointer';
-            tr.addEventListener('click', () => {
-              const html = buildMobileLeaderHtml(headers, rowObj, currentComp, currentRound);
-              showRowDetail(html);
-            });
-          }
-
-
-          tbody.appendChild(tr);
-        });
-
-        tbl.appendChild(tbody);
-        container.appendChild(tbl);
-      }
-
-      // cache & render
-      const html = container.innerHTML;
-      if (!isLocked) podiumsCache[compName] = html;
-      resultsEl.innerHTML = html;
-      attachMobileHandlersToPodiums();
-    }
-
     function splitEventRound(full) {
       if (!full) return { eventName: '', roundName: '', fullRound: '' };
       const parts = String(full).split(/\s*-\s*/);
       if (parts.length >= 2) return { eventName: parts[0], roundName: parts.slice(1).join(' - '), fullRound: full };
       return { eventName: full, roundName: full, fullRound: full };
     }
-
-    async function renderCompetitorResultsView() {
-      const route = getRoute();
-      const compFromUrl = unslug(route.comp || currentComp);
-      const competitorSlug = route.competitorName || route.competitor || '';
-      const competitorName = unslug(competitorSlug).trim();
-      currentComp = compFromUrl;
-
-      const section = document.querySelector('#view-competitor-results section');
-      const titleEl = document.getElementById('competitor-title');
-      titleEl.textContent = competitorName;
-      titleEl.style.cssText = 'font-size:1.2rem;font-weight:500;margin:16px 0;';
-      
-      const myToken = ++window._competitorViewToken;
-      const compSlug = slug(compFromUrl || '');
-      const cSlug = slug(competitorName || competitorSlug || 'unknown');
-      const isLocked = !!compLockMap[compFromUrl];
-
-      // quick persisted HTML path (if you store it)
-      const persisted = readCompetitorResultsCache(compFromUrl, cSlug);
-      if (persisted && persisted.html) {
-        if (myToken !== window._competitorViewToken) return;
-        section.querySelectorAll('h3, table:not(#competitor-results), #loader').forEach(el => el.remove());
-        section.appendChild(document.createRange().createContextualFragment(persisted.html));
-        attachMobileHandlersToCompetitorResults();
-        handleMobileChange(isMobile());
-        return;
-      }
-
-      // loader
-      section.querySelectorAll('h3, table:not(#competitor-results), #loader').forEach(el => el.remove());
-      const loader = document.createElement('div');
-      loader.id = 'loader';
-      loader.textContent = 'Loading…';
-      loader.style.margin = '20px 0';
-      section.appendChild(loader);
-
-      if (!masterValues.length) await initLiveOnce();
-
-      const compIdx = (masterValues[COMP_HEADER_ROW] || []).indexOf(compFromUrl);
-      if (compIdx < 0) {
-        if (myToken === window._competitorViewToken) {
-          section.appendChild(document.createTextNode('No rounds found.'));
-          if (loader) loader.remove();
-        }
-        return;
-      }
-
-      const rounds = masterValues.slice(FIRST_ROUND_ROW).map(r => r[compIdx]).filter(Boolean);
-      const advMap = roundAdvanceMap[compFromUrl] || {};
-      const excludeKeys = new Set(['name','class','number']);
-
-      const eventMap = new Map();
-      rounds.forEach(full => {
-        const { eventName } = splitEventRound(full);
-        if (!eventMap.has(eventName)) eventMap.set(eventName, []);
-        eventMap.get(eventName).push(full);
-      });
-
-      async function buildFragment() {
-        const root = document.createDocumentFragment();
-
-        for (const [eventName, fullRounds] of eventMap) {
-          if (myToken !== window._competitorViewToken) return null;
-
-          const eventContainer = document.createDocumentFragment();
-          let anyRowForEvent = false;
-
-          const roundsWithFmt = fullRounds.map(fr => {
-            const fmt = (roundFormatMap[compFromUrl]||{})[fr] || 'ao5';
-            const finalColName = fmt === 'mo3' ? 'Mean' : (/^bo[1-3]$/i.test(fmt) ? 'Best' : 'Average');
-            return { fullRound: fr, fmt, finalColName };
-          });
-
-          const byFmt = new Map();
-          roundsWithFmt.forEach(rf => {
-            const key = rf.finalColName + '|' + rf.fmt;
-            if (!byFmt.has(key)) byFmt.set(key, []);
-            byFmt.get(key).push(rf.fullRound);
-          });
-
-          for (const [fmtKey, groupRounds] of byFmt) {
-            if (myToken !== window._competitorViewToken) return null;
-
-            // pick representative headers
-            let baseHeaders = null;
-            for (const fr of groupRounds) {
-              const cached = leaderboardCache[`${compFromUrl}/${fr}`];
-              if (cached && Array.isArray(cached.headers)) { baseHeaders = cached.headers.slice(); break; }
-              const d = await getRoundData(compFromUrl, fr);
-              if (d && Array.isArray(d.headers)) { baseHeaders = d.headers.slice(); break; }
-            }
-            if (!baseHeaders) continue;
-
-            const displayH = baseHeaders.filter(h => !excludeKeys.has((h||'').trim().toLowerCase()));
-            const insertAfterIndex = displayH.findIndex(h => (h === '#' || h.toLowerCase() === 'number'));
-            const roundColName = 'Round';
-            if (insertAfterIndex >= 0) {
-              if (!displayH.includes(roundColName)) displayH.splice(insertAfterIndex + 1, 0, roundColName);
-            } else {
-              if (!displayH.includes(roundColName)) displayH.unshift(roundColName);
-            }
-
-            const alignMap = {};
-            displayH.forEach(h => {
-              const k = (h||'').toLowerCase();
-              alignMap[h] = (k === '#' || k === 'number') ? 'center' : (k === 'name' || k === 'class' || k === 'round') ? 'left' : 'right';
-            });
-
-            const tbl = document.createElement('table');
-            const thead = document.createElement('thead');
-            const trh = document.createElement('tr');
-            displayH.forEach(h => {
-              const th = document.createElement('th');
-              th.textContent = h;
-              th.style.textAlign = alignMap[h];
-              th.style.padding = '8px';
-              if (h === fmtKey.split('|')[0]) th.style.fontWeight = 'bold';
-              const role = (/^[1-5]$/.test(h) ? h : (h.trim().toLowerCase() === 'class' ? 'class' : (h.trim() === '#' ? 'number' : h.trim().toLowerCase())));
-              th.setAttribute('data-col-role', role);
-              trh.appendChild(th);
-            });
-            thead.appendChild(trh);
-            tbl.appendChild(thead);
-            const tbody = document.createElement('tbody');
-
-            const fetched = await pMap(groupRounds, async fr => {
-              const d = await getCachedRound(compFromUrl, fr);
-              return { fr, d };
-            }, 6);
-
-            for (const { fr: fullRoundName, d } of fetched) {
-              if (myToken !== window._competitorViewToken) return null;
-              if (!d) continue;
-              const headers = d.headers || [];
-              const rows = d.rows || [];
-
-              const rowObj = rows.find(r => {
-                const n = (r['Name'] || r['name'] || '').toString().trim();
-                return n === competitorName;
-              });
-              if (!rowObj) continue;
-
-              const attemptIdxs = headers.map((h,i) => ({h,i})).filter(o => /^[1-5]$/.test(o.h)).map(o => o.i);
-              if (!attemptIdxs.length) continue;
-              const hasAnyAttempt = attemptIdxs.some(i => ((rowObj[headers[i]]||'').toString().trim() !== ''));
-              if (!hasAnyAttempt) continue;
-
-              const advVal = advMap[fullRoundName];
-              const cnt = Number.isInteger(advVal) && advVal > 0 ? advVal : (fullRoundName.toLowerCase().includes('final') ? 3 : 0);
-              const missingCount = rows.filter(r => attemptIdxs.every(i => !(r[headers[i]]||'').toString().trim())).length;
-              const rank = parseInt(rowObj['Rank'],10) || (rows.indexOf(rowObj) + 1);
-              const highlightColor = (rank <= cnt) ? (isLocked ? '#00e676' : (missingCount >= (cnt - rank + 1) ? '#fff59d' : '#00e676')) : null;
-
-              const fmt = (roundFormatMap[compFromUrl]||{})[fullRoundName] || 'ao5';
-              const finalColName = fmt === 'mo3' ? 'Mean' : (/^bo[1-3]$/i.test(fmt) ? 'Best' : 'Average');
-              const finalColIndex = displayH.indexOf(finalColName);
-
-              const tr = document.createElement('tr');
-
-              for (const h of displayH) {
-                const td = document.createElement('td');
-                td.style.textAlign = alignMap[h];
-                td.style.padding = '8px';
-
-                if (h === roundColName) {
-                  const parts = splitEventRound(fullRoundName);
-                  const rnd = parts.roundName;
-                  const a = document.createElement('a');
-                  a.textContent = rnd;
-                  a.href = buildLiveRoundPath(compFromUrl, parts.eventName, parts.roundName);
-                  a.style.textDecoration = 'none';
-                  a.style.color = '#1976D2';
-                  a.onmouseenter = () => a.style.textDecoration = 'underline';
-                  a.onmouseleave = () => a.style.textDecoration = 'none';
-                  td.appendChild(a);
-                } else {
-                  const origIdx = headers.indexOf(h);
-                  let v = origIdx >= 0 ? (rowObj[h]||'').toString().trim() : '';
-                  const isFMC = fullRoundName.toLowerCase().includes('fewest moves');
-                  if ((attRx.test(h) || h === 'Best' || h === 'Average' || h === 'Mean') && numRx.test(v)) {
-                    const n = parseFloat(v);
-                    if (h === 'Average' || h === 'Mean') v = n.toFixed(2);
-                    else if (isFMC && (attRx.test(h) || h === 'Best')) v = Math.round(n).toString();
-                    else v = (Math.floor(n * 100) / 100).toFixed(2);
-                  }
-
-                  if (h.trim().toLowerCase() === 'name') {
-                    const anchor = document.createElement('a');
-                    anchor.href = `/live/${slug(currentComp)}/competitors/${slug(v)}`;
-                    anchor.textContent = v;
-                    anchor.style.textDecoration = 'none';
-                    anchor.style.color = '#1976D2';
-                    anchor.onmouseenter = () => anchor.style.textDecoration = 'underline';
-                    anchor.onmouseleave = () => anchor.style.textDecoration = 'none';
-                    td.appendChild(anchor);
-
-                    // Append WCA icon (tries multiple name normalizations)
-                    appendWcaButton(td, v);
-                  } else {
-                    td.textContent = v;
-                  }
-
-                  if ((h === '#' || h.toLowerCase() === 'number') && highlightColor) td.style.backgroundColor = highlightColor;
-                  if (displayH.indexOf(h) === finalColIndex) td.style.fontWeight = 'bold';
-                }
-
-                const role = (/^[1-5]$/.test(h) ? h : (h.trim().toLowerCase() === 'class' ? 'class' : (h.trim() === '#' ? 'number' : h.trim().toLowerCase())));
-                td.setAttribute('data-col-role', role);
-                tr.appendChild(td);
-              }
-
-              if (isMobile()) {
-                tr.style.cursor = 'pointer';
-                tr.addEventListener('click', () => {
-                  const html = buildMobileCompetitorRowHtml(displayH, rowObj, compFromUrl, eventName, fullRoundName);
-                  showRowDetail(html);
-                });
-              }
-
-              tbody.appendChild(tr);
-              anyRowForEvent = true;
-            } // end fetched rounds loop
-
-            if (tbody.children.length) {
-              tbl.appendChild(tbody);
-              eventContainer.appendChild(tbl);
-            }
-          } // end byFmt
-
-          if (anyRowForEvent) {
-            const evH = document.createElement('h3');
-            evH.textContent = eventName;
-            evH.style.marginTop = '30px';
-            evH.style.color = 'black';
-            evH.style.fontWeight = 'normal';
-            root.appendChild(evH);
-            root.appendChild(eventContainer);
-          }
-        } // end eventMap loop
-
-        return root;
-      } // buildFragment
-
-      try {
-        const fragment = await buildFragment();
-        if (myToken !== window._competitorViewToken) return;
-        if (fragment) {
-          const container = document.createElement('div');
-          container.appendChild(fragment.cloneNode(true));
-          const html = container.innerHTML;
-          writeCompetitorResultsCache(compFromUrl, cSlug, html);
-          section.appendChild(fragment);
-          // attach mobile handlers and ensure mobile state is applied
-          attachMobileHandlersToCompetitorResults();
-          handleMobileChange(isMobile());
-        }
-      } finally {
-        if (loader) loader.remove();
-      }
-    }
-          
-
-
-    const leaderboardCache = {};
+         
     if (!document.getElementById('row-detail-overlay')) {
       const ov = document.createElement('div'); ov.id = 'row-detail-overlay';
       ov.style.position = 'fixed'; ov.style.inset = '0'; ov.style.display = 'none';
@@ -3184,8 +2839,6 @@
       box.innerHTML = html || '<div style="padding:8px">No details</div>';
       ov.style.display = 'flex';
     }
-
-    let _sidebarOpen = false;
 
     // Sidebar open/close using body.sidebar-open class and overlay
     function openSidebar() {
@@ -3337,7 +2990,6 @@
       wireSidebarButtons(comp);
     }
 
-
     function wireSidebarButtons(comp) {
       const btnCompetitors = document.getElementById('btn-sidebar-competitors');
       const btnPodiums     = document.getElementById('btn-sidebar-podiums');
@@ -3368,8 +3020,10 @@
       const wrap = document.getElementById('competitions-list');
       if (!wrap) return;
 
-      // collect competition names (skip empty / header cell)
-      const header = Array.isArray(masterValues[COMP_HEADER_ROW]) ? masterValues[COMP_HEADER_ROW] : [];
+      const rawHeader = Array.isArray(masterValues[COMP_HEADER_ROW]) ? masterValues[COMP_HEADER_ROW] : [];
+      const header = rawHeader.filter(name => {
+        return compLockMap && !compLockMap[name];
+      });
       const comps = header.slice(1).map(c => (c || '').toString().trim()).filter(Boolean);
 
       // Clear wrapper and center a column in the page
@@ -3951,7 +3605,6 @@
       renderTableArea();
     }
             
-
     async function renderRecordsView() {
       const EVENT_ORDER = [
         "333","222","444","555","666","777",
@@ -4151,53 +3804,15 @@
       container.innerHTML = parts.length ? parts.join('') : '<div style="padding:12px;color:#666">No records found</div>';
       patchCompetitionCells(container).catch(()=>{});
     }
-
-
-    const podiumsCache = {};
-
-    // Round meta: comp+round → format/sheet names
-    let roundSheetsMap   = Object.create(null); // { [comp]: { [round]: { public:'', private:'' } } }
-
-    // Round Metadata (format + advance count)
-    let roundFormatMap  = {};  // comp → round → format
-    let roundAdvanceMap = {};  // comp → round → advanceCount
    
     function getRoundFormat(comp, round) {
       return (roundFormatMap[comp] && roundFormatMap[comp][round]) || 'ao5';
     }
+
     function getRoundSheetNames(comp, round) {
       const entry = roundSheetsMap[comp] && roundSheetsMap[comp][round];
       return entry || { public: round, private: round };
     }
-
-    const CACHE_TTL = 2 * 60 * 1000; // 2 minutes
-    async function fetchWithCache(url) {
-      const key = 'cache:' + url;
-      const raw = sessionStorage.getItem(key);
-      if (raw) {
-        const { ts, data } = JSON.parse(raw);
-        if (Date.now() - ts < CACHE_TTL) {
-          return data;
-        }
-      }
-      const res  = await fetch(url);
-      const data = await res.json();
-      sessionStorage.setItem(key,
-        JSON.stringify({ ts: Date.now(), data })
-      );
-      return data;
-    }
-
-    function readCompetitorsCache(compName) {
-      const raw = localStorage.getItem(`competitors:${compName}`);
-      if (!raw) return null;
-      return JSON.parse(raw);
-    }
-
-    function writeCompetitorsCache(compName, data) {
-      localStorage.setItem(`competitors:${compName}`, JSON.stringify(data));
-    }
-
 
     async function renderCompetitorsView(comp) {
       const compName = unslug(comp || currentComp);
@@ -4259,210 +3874,6 @@
       renderList('');
     }
 
-    function _competitorCacheKey(compName, competitorSlug) {
-      return `competitorResults:${compName}:${competitorSlug}`;
-    }
-    function readCompetitorResultsCache(compName, competitorSlug) {
-      const raw = localStorage.getItem(_competitorCacheKey(compName, competitorSlug));
-      if (!raw) return null;
-      return JSON.parse(raw);
-    }
-    function writeCompetitorResultsCache(compName, competitorSlug, html) {
-      localStorage.setItem(_competitorCacheKey(compName, competitorSlug), JSON.stringify({ html }));
-    }
-
-
-    function makeCacheKeys(comp, round) {
-      const encComp = encodeURIComponent(String(comp || ''));
-      const encRound = encodeURIComponent(String(round || ''));
-      // two styles the app uses: encoded pipe-form and legacy slash-form
-      return [
-        `${encComp}|${encRound}`,
-        `${comp}/${round}`
-      ];
-    }
-
-    async function loadLeaderboard(silent = false) {
-      // normalize silent parameter
-      if (typeof silent === 'object' && silent !== null) silent = !!silent.silent;
-      silent = !!silent;
-
-      if (!currentComp || !currentRound) return;
-
-      function dbg(...args) { try { console.debug('[LSC loadLeaderboard]', ...args); } catch (e) {} }
-
-      // loading UI
-      let loadingMsg = document.getElementById('loading-message');
-      if (!loadingMsg) {
-        const els = document.querySelectorAll('#loading-message');
-        loadingMsg = els && els[0];
-      }
-      if (!silent && loadingMsg) {
-        loadingMsg.textContent = 'Loading…';
-        loadingMsg.style.display = 'block';
-      }
-
-      // cancel prior request
-      try { if (currentFetchAbort) currentFetchAbort.abort(); } catch (e) {}
-      currentFetchAbort = new AbortController();
-      const signal = currentFetchAbort.signal;
-
-      const isLocked = !!compLockMap[currentComp];
-      const compParam = encodeURIComponent(currentComp);
-
-      // candidates to try
-      const candidates = (typeof getCanonicalTabCandidates === 'function')
-        ? getCanonicalTabCandidates(currentComp, currentRound)
-        : [currentRound];
-
-      dbg('candidates', candidates);
-
-      // helper keys
-      const makeKeys = (comp, round) => {
-        const encComp = encodeURIComponent(String(comp || ''));
-        const encRound = encodeURIComponent(String(round || ''));
-        return [`${encComp}|${encRound}`, `${comp}/${round}`];
-      };
-
-      // quick cache hit
-      let cacheHit = null;
-      for (const cand of candidates) {
-        for (const k of makeKeys(currentComp, cand)) {
-          if (leaderboardCache[k]) { cacheHit = leaderboardCache[k]; dbg('cache hit', k); break; }
-        }
-        if (cacheHit) break;
-      }
-      if (cacheHit && isLocked && !silent) {
-        renderLeaderboard(cacheHit.headers, cacheHit.rows);
-        if (loadingMsg) loadingMsg.style.display = 'none';
-        return;
-      }
-      if (cacheHit) {
-        renderLeaderboard(cacheHit.headers, cacheHit.rows);
-      }
-
-      // 1) Try /api/read for each candidate
-      for (const cand of candidates) {
-        const roundParam = encodeURIComponent(cand);
-        const url = `${READ_ENDPOINT}?comp=${compParam}&round=${roundParam}&public=true&format=json`;
-        dbg('trying /api/read', url);
-        try {
-          const res = await fetch(url, { signal });
-          if (!res.ok) { dbg('read status', res.status, cand); continue; }
-          let json;
-          try { json = await res.json(); } catch (e) { dbg('json parse fail', cand, e); continue; }
-
-          let headers = json && json.headers;
-          let rows = json && json.rows;
-          if ((!headers || !Array.isArray(rows)) && Array.isArray(json && json.values)) {
-            headers = json.values[0] || [];
-            rows = json.values.slice(1) || [];
-          }
-
-          if (Array.isArray(headers) && Array.isArray(rows) && rows.length) {
-            const [encKey, slashKey] = makeKeys(currentComp, cand);
-            leaderboardCache[encKey] = { headers, rows };
-            leaderboardCache[slashKey] = { headers, rows };
-            const [encKeyUI, slashKeyUI] = makeKeys(currentComp, currentRound || '');
-            if (!leaderboardCache[encKeyUI]) leaderboardCache[encKeyUI] = { headers, rows };
-            if (!leaderboardCache[slashKeyUI]) leaderboardCache[slashKeyUI] = { headers, rows };
-
-            renderLeaderboard(headers, rows);
-            if (loadingMsg) loadingMsg.style.display = 'none';
-            dbg('rendered from /api/read', cand);
-            return;
-          } else {
-            dbg('/api/read returned no usable rows for', cand);
-          }
-        } catch (err) {
-          if (err && err.name === 'AbortError') { dbg('fetch aborted /api/read'); break; }
-          dbg('/api/read error for', cand, err);
-          // try next candidate
-        }
-      }
-
-      // 2) If /api/read didn't return usable rows, try public Sheets API batchGet directly for each candidate
-      // Use the spreadsheet id from compSheetMap for this competition (fallback to MASTER_SHEET_ID)
-      const sheetIdForComp = compSheetMap[currentComp] || MASTER_SHEET_ID;
-      const sheetBase = `https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(sheetIdForComp)}/values:batchGet`;
-
-      for (const cand of candidates) {
-        // The meta tab naming convention uses the literal "public" suffix: "{event} - {round}public"
-        const tabName = `${cand}public`;
-        // guard against single-quote in tab name: escape single quotes inside the single-quoted range string
-        const safeTab = tabName.replace(/'/g, "\\'");
-        const range = `'${safeTab}'!A:Z`;
-        const url = `${sheetBase}?ranges=${encodeURIComponent(range)}&majorDimension=ROWS&key=${encodeURIComponent(API_KEY)}`;
-        dbg('trying Sheets API (sheetId,tab)', sheetIdForComp, tabName, url);
-        try {
-          const res = await fetch(url, { signal });
-          if (!res.ok) { dbg('sheets.status', res.status, cand, sheetIdForComp); continue; }
-          const body = await res.json();
-          const vr = Array.isArray(body.valueRanges) && body.valueRanges[0];
-          const vals = vr && Array.isArray(vr.values) ? vr.values : null;
-          if (Array.isArray(vals) && vals.length >= 1) {
-            const headers = vals[0] || [];
-            const rows = vals.slice(1).map(r => {
-              const obj = {};
-              headers.forEach((h, idx) => { obj[h] = (r[idx] !== undefined ? r[idx] : ''); });
-              return obj;
-            });
-            if (Array.isArray(headers) && Array.isArray(rows) && rows.length) {
-              const [encKey, slashKey] = makeKeys(currentComp, cand);
-              leaderboardCache[encKey] = { headers, rows };
-              leaderboardCache[slashKey] = { headers, rows };
-              const [encKeyUI, slashKeyUI] = makeKeys(currentComp, currentRound || '');
-              if (!leaderboardCache[encKeyUI]) leaderboardCache[encKeyUI] = { headers, rows };
-              if (!leaderboardCache[slashKeyUI]) leaderboardCache[slashKeyUI] = { headers, rows };
-
-              renderLeaderboard(headers, rows);
-              if (loadingMsg) loadingMsg.style.display = 'none';
-              dbg('rendered from Sheets API (comp sheet)', cand, sheetIdForComp, tabName);
-              return;
-            }
-          } else {
-            dbg('Sheets API returned no values for', cand, sheetIdForComp, body);
-          }
-        } catch (err) {
-          if (err && err.name === 'AbortError') { dbg('fetch aborted sheets'); break; }
-          dbg('Sheets API fetch error', cand, sheetIdForComp, err);
-        }
-      }
-
-      // 3) try getRoundData fallback (it itself tries candidates)
-      try {
-        dbg('trying getRoundData fallback for', currentComp, currentRound);
-        const fallback = await getRoundData(currentComp, currentRound);
-        if (fallback && Array.isArray(fallback.headers) && Array.isArray(fallback.rows) && fallback.rows.length) {
-          renderLeaderboard(fallback.headers, fallback.rows);
-          if (loadingMsg) loadingMsg.style.display = 'none';
-          dbg('rendered fallback via getRoundData');
-          return;
-        } else {
-          dbg('getRoundData returned no usable data');
-        }
-      } catch (e) {
-        dbg('getRoundData error', e);
-      }
-
-      // nothing found
-      renderEmpty();
-      if (loadingMsg) {
-        loadingMsg.textContent = 'No data for this round';
-        setTimeout(() => { if (loadingMsg) loadingMsg.textContent = ''; }, 2500);
-        loadingMsg.style.display = '';
-      }
-      dbg('no data after trying all sources');
-    }
-
-
-
-    function renderEmpty() {
-      const thead = document.querySelector('#leaderboard thead');
-      const tbody = document.querySelector('#leaderboard tbody');
-      thead.innerHTML = '';
-      tbody.innerHTML = '';
-    }
 
     // ===== Private editor: load CSV for inputs (reuse parser) =====
     function parseCSV(text) {
@@ -4490,110 +3901,6 @@
       }
       if (value.length > 0 || row.length > 0) { row.push(value); rows.push(row); }
       return rows.filter(r => r.length > 0);
-    }
-
-    function loadEditableSheet() {
-      document.getElementById('leaderboard').style.display = 'none';
-      if (!currentComp || !currentRound) return;
-
-      const privateUrl = `${READ_ENDPOINT}?comp=${encodeURIComponent(currentComp)}&round=${encodeURIComponent(currentRound)}&public=false&format=csv`;
-
-      fetch(privateUrl)
-        .then(res => res.text())
-        .then(text => {
-          const rows = parseCSV(text.trim());
-          const headers = rows[0] || [];
-          const thead = document.querySelector('#edit-table thead');
-          const tbody = document.querySelector('#edit-table tbody');
-
-          thead.innerHTML = '';
-          tbody.innerHTML = '';
-
-          // Show columns with indices 2 through 10
-          const visibleIndices = Array.from({ length: 9 }, (_, i) => i + 2); // [2..10]
-          const editableIndices = visibleIndices.filter(i => i >= 6);       // [6..10]
-
-          const headerRow = document.createElement('tr');
-          visibleIndices.forEach(i => {
-            const th = document.createElement('th');
-            th.textContent = headers[i] ?? `Col ${i + 1}`;
-            headerRow.appendChild(th);
-          });
-          thead.appendChild(headerRow);
-
-          rows.slice(1).forEach(row => {
-            const tr = document.createElement('tr');
-            visibleIndices.forEach(i => {
-              const td = document.createElement('td');
-              const value = (row[i] ?? '').trim();
-              if (editableIndices.includes(i)) {
-                const input = document.createElement('input');
-                input.value = value;
-                input.setAttribute('data-col-index', i.toString());
-                td.appendChild(input);
-              } else {
-                td.textContent = value;
-              }
-              tr.appendChild(td);
-            });
-            tbody.appendChild(tr);
-          });
-        })
-        .catch(err => {
-          document.getElementById('submit-status').textContent = "Error loading private sheet: " + err.message;
-          document.getElementById('submit-status').style.display = 'block';
-          setTimeout(() => {
-            document.getElementById('submit-status').style.display = 'none';
-          }, 3000);
-        });
-    }
-
-    async function submitEdits() {
-      const table = document.querySelector('#edit-table');
-      const rows  = Array.from(table.rows).slice(1);
-      const data = rows.map(row => {
-        return Array.from(row.cells)
-          .map(cell => {
-            const input = cell.querySelector('input');
-            if (input) {
-              return {
-                colIndex: parseInt(input.getAttribute('data-col-index'), 10),
-                value: input.value
-              };
-            }
-            return null;
-          })
-          .filter(cell => cell !== null);
-      });
-
-      const payload = { comp: currentComp, round: currentRound, data };
-
-      fetch(WRITE_ENDPOINT, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      })
-      .then(res => res.json())
-      .then(msg => {
-        const text = msg.status
-          ? `Submitted: ${msg.status} (${msg.rows || 0} rows)`
-          : `Error: ${JSON.stringify(msg)}`;
-        document.getElementById('submit-status').textContent = text;
-        document.getElementById('submit-status').style.color = msg.status ? 'green' : 'red';
-      })
-      .catch(err => {
-        document.getElementById('submit-status').textContent = `Fetch error: ${err.message}`;
-        document.getElementById('submit-status').style.color = 'red';
-      });
-
-      document.getElementById('editor-panel').style.display = 'none';
-      document.getElementById('submit-status').style.display = 'block';
-      loadLeaderboard();
-
-      document.getElementById('leaderboard').style.display = 'table';
-      setTimeout(() => {
-        document.getElementById('submit-status').style.display = 'none';
-      }, 3000);
     }
 
     function cancelEdit() {
