@@ -665,8 +665,9 @@
   <script>
     const MASTER_SHEET_ID = '1fjWyEbc7a5A3RjkFm0BEnE_lyHXCa3kYiKRd2IP9j5Q';
     const API_KEY = 'AIzaSyA_4BKwiXfv_T9XhbdenwHuGm0k5uc89S8';
-    const READ_ENDPOINT = '/.netlify/functions/read';
-    const WRITE_ENDPOINT = '/.netlify/functions/write';
+    const READ_ENDPOINT = '/api/read';
+    const WRITE_ENDPOINT = '/api/write';
+
 
     window._competitorViewToken = window._competitorViewToken || 0;
 
@@ -1970,22 +1971,18 @@
       }
     }
       
-    // Replace existing fetchMeta with this
     async function fetchMeta() {
-      // call Netlify function to read the 'meta' tab
       const tab = 'meta';
       const range = 'A2:H500';
-      const url = `/.netlify/functions/sheets-read?tab=${encodeURIComponent(tab)}&range=${encodeURIComponent(range)}`;
+      const url =
+        `https://sheets.googleapis.com/v4/spreadsheets/${MASTER_SHEET_ID}` +
+        `/values/${encodeURIComponent(tab + '!' + range)}?key=${API_KEY}`;
+
       const res = await fetch(url);
-      if (!res.ok) {
-        // keep previous state if read fails
-        console.warn('fetchMeta failed', await res.text());
-        return;
-      }
       const json = await res.json();
       const rows = Array.isArray(json.values) ? json.values : [];
 
-      // Reset state (same shapes as before)
+      // Reset state
       masterValues = [];
       compLockMap = {};
       compSheetMap = {};
@@ -1993,8 +1990,10 @@
       roundAdvanceMap = {};
       roundSheetsMap = {};
 
+      // We'll group rows under the last-seen competition when comp cell is empty
+      // columns: 0: Competition name, 1: sheet ID, 2: isLocked?, 3: event, 4: round, 5: format, 6: advance, 7: date
       const compsOrder = [];
-      const compEvents = {};
+      const compEvents = {}; // comp -> { eventName -> [roundLabel,...] }
       let lastComp = '';
       let lastSheetId = '';
       let lastLocked = false;
@@ -2009,6 +2008,7 @@
         const advRaw = (r[6] || '').toString().trim();
         const date = (r[7] || '').toString().trim();
 
+        // If row has empty comp and sheetId, inherit from last seen block
         let comp = compCell;
         let compSheet = sheetId;
         let isLocked = (lockedCell === 'true' || lockedCell === 'locked');
@@ -2019,8 +2019,11 @@
           isLocked = lastLocked;
         }
 
+        // If still missing comp or no round/event, skip (cannot attribute)
         if (!comp || !eventName || !roundLabel) {
+          // allow rows that define a new comp with sheet id but missing event/round to set lastComp context
           if (comp && compSheet) {
+            // record new competition context even if no event/round present
             if (!compsOrder.includes(comp)) compsOrder.push(comp);
             compSheetMap[comp] = compSheet || compSheetMap[comp];
             compLockMap[comp] = compLockMap[comp] || isLocked;
@@ -2031,6 +2034,7 @@
           return;
         }
 
+        // record comp context if first time
         if (!compsOrder.includes(comp)) compsOrder.push(comp);
         if (compSheet) compSheetMap[comp] = compSheet;
         compLockMap[comp] = compLockMap[comp] || isLocked;
@@ -2043,18 +2047,21 @@
         roundAdvanceMap[comp][fullRound] = advRaw ? (Number.isFinite(Number(advRaw)) ? Number(advRaw) : null) : (roundAdvanceMap[comp][fullRound] || null);
 
         roundSheetsMap[comp] = roundSheetsMap[comp] || {};
+        // store public/private both as the canonical fullRound for now (server + client will canonicalize to public-first when reading)
         roundSheetsMap[comp][fullRound] = { public: fullRound, private: fullRound, date: date };
 
         compEvents[comp] = compEvents[comp] || {};
         compEvents[comp][eventName] = compEvents[comp][eventName] || [];
         if (!compEvents[comp][eventName].includes(roundLabel)) compEvents[comp][eventName].push(roundLabel);
 
+        // update last-seen context for subsequent blank rows
         lastComp = comp;
         lastSheetId = compSheet;
         lastLocked = isLocked;
       });
 
-      // Rebuild masterValues matrix (same shape as before)
+      // Rebuild a lightweight masterValues matrix so older code paths still work
+      // headerRow = ['Competition', comp1, comp2, ...]
       const headerRow = ['Competition', ...Object.keys(compEvents)];
       const perCompFullRounds = {};
       Object.keys(compEvents).forEach(comp => {
@@ -2071,7 +2078,7 @@
       const roundRows = [];
       for (let ri = 0; ri < maxRows; ri++) {
         const row = [];
-        row.push('round');
+        row.push('round'); // placeholder first column like old sheet
         Object.keys(perCompFullRounds).forEach(comp => {
           row.push(perCompFullRounds[comp][ri] || '');
         });
@@ -2492,7 +2499,7 @@
           const candidates = getCanonicalTabCandidates(compName, String(round));
           const tabName = (candidates && candidates.length) ? candidates[0] : String(round);
           rangesBySheet[sheetId] = rangesBySheet[sheetId] || new Set();
-          rangesBySheet[sheetId].add(`'${tabName}'!A:Z`);
+          rangesBySheet[sheetId].add(`'${tabName}'!A1:L50`);
         });
       });
 
@@ -4060,6 +4067,17 @@
       return entry || { public: round, private: round };
     }
 
+    function readCompetitorsCache(compName) {
+      const raw = localStorage.getItem(`competitors:${compName}`);
+      if (!raw) return null;
+      return JSON.parse(raw);
+    }
+
+    function writeCompetitorsCache(compName, data) {
+      localStorage.setItem(`competitors:${compName}`, JSON.stringify(data));
+    }
+
+
     async function renderCompetitorsView(comp) {
       const compName = unslug(comp || currentComp);
       currentComp = compName;
@@ -4075,29 +4093,26 @@
       const compIdx = (masterValues[COMP_HEADER_ROW] || []).indexOf(compName);
       if (compIdx < 0) { listWrap.innerHTML = 'No data'; return; }
 
-      // Build set of competitor names by fetching each round via getRoundData
-      const offered = masterValues.slice(FIRST_ROUND_ROW).map(r => r[compIdx]).filter(Boolean);
-      const nameSet = new Set();
+      const cached = readCompetitorsCache(compName);
+      let names;
+      if (Array.isArray(cached) && cached.length) {
+        names = cached;
+      } else {
+        const offered = masterValues.slice(FIRST_ROUND_ROW).map(r => r[compIdx]).filter(Boolean);
+        const nameSet = new Set();
 
-      await Promise.all(offered.map(async roundName => {
-        const data = await getRoundData(compName, roundName);
-        if (!data || !Array.isArray(data.rows)) return;
-        // rows may be arrays (if headers are array) or objects; normalize
-        const headers = Array.isArray(data.headers) ? data.headers.map(h => (h||'').toString().trim()) : [];
-        data.rows.forEach(row => {
-          let n = '';
-          if (Array.isArray(row)) {
-            const nameIdx = headers.findIndex(h => /name/i.test(h));
-            n = nameIdx >= 0 ? (row[nameIdx] || '') : (row[1] || '');
-          } else if (row && typeof row === 'object') {
-            n = (row['Name'] || row['name'] || '') + '';
-          }
-          n = (n || '').toString().trim();
-          if (n) nameSet.add(n);
-        });
-      }));
+        await Promise.all(offered.map(async roundName => {
+          const data = await getRoundData(compName, roundName);
+          if (!data || !Array.isArray(data.rows)) return;
+          data.rows.forEach(row => {
+            const n = (row['Name'] || row['name'] || '').toString().trim();
+            if (n) nameSet.add(n);
+          });
+        }));
 
-      const names = Array.from(nameSet).sort((a,b) => a.localeCompare(b));
+        names = Array.from(nameSet).sort((a,b) => a.localeCompare(b));
+        writeCompetitorsCache(compName, names);
+      }
 
       function renderList(q='') {
         const ql = q.trim().toLowerCase();
@@ -4216,7 +4231,7 @@
         const tabName = `${cand}public`;
         // guard against single-quote in tab name: escape single quotes inside the single-quoted range string
         const safeTab = tabName.replace(/'/g, "\\'");
-        const range = `'${safeTab}'!A:Z`;
+        const range = `'${safeTab}'!A1:L50`;
         const url = `${sheetBase}?ranges=${encodeURIComponent(range)}&majorDimension=ROWS&key=${encodeURIComponent(API_KEY)}`;
         dbg('trying Sheets API (sheetId,tab)', sheetIdForComp, tabName, url);
         try {
@@ -4273,161 +4288,284 @@
     }
 
     // ===== Private editor: load CSV for inputs (reuse parser) =====
-    // robust CSV parser -> returns { headers:[], rows:[[]] }
+    // Robust CSV parser: handles CRLF, LF, quoted fields, escaped quotes, final line without newline
     function parseCSV(text) {
-      // simple RFC4180 parser (handles quoted fields, CRLF)
+      if (!text) return [];
+      // strip BOM
+      if (text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
+
       const rows = [];
-      let cur = '';
-      let row = [];
+      let cur = [];
+      let field = '';
       let inQuotes = false;
+
       for (let i = 0; i < text.length; i++) {
         const ch = text[i];
-        const next = text[i+1];
+
         if (inQuotes) {
-          if (ch === '"' && next === '"') { cur += '"'; i++; continue; }
-          if (ch === '"') { inQuotes = false; continue; }
-          cur += ch;
+          if (ch === '"') {
+            // double quote escape
+            if (text[i + 1] === '"') {
+              field += '"';
+              i++;
+            } else {
+              inQuotes = false;
+            }
+          } else {
+            field += ch;
+          }
         } else {
-          if (ch === '"') { inQuotes = true; continue; }
-          if (ch === ',' ) { row.push(cur); cur = ''; continue; }
-          if (ch === '\r') continue;
-          if (ch === '\n') { row.push(cur); rows.push(row); row = []; cur = ''; continue; }
-          cur += ch;
+          if (ch === '"') {
+            inQuotes = true;
+          } else if (ch === ',') {
+            cur.push(field);
+            field = '';
+          } else if (ch === '\r') {
+            // handle CRLF or lone CR
+            if (text[i + 1] === '\n') i++;
+            cur.push(field);
+            field = '';
+            rows.push(cur);
+            cur = [];
+          } else if (ch === '\n') {
+            cur.push(field);
+            field = '';
+            rows.push(cur);
+            cur = [];
+          } else {
+            field += ch;
+          }
         }
       }
-      // push last
-      if (cur !== '' || row.length) { row.push(cur); rows.push(row); }
-      const headers = rows.length ? rows[0].map(h => (h||'').toString().trim()) : [];
-      const dataRows = rows.slice(1);
-      return { headers, rows: dataRows };
+
+      // push last field/row if any
+      if (inQuotes) {
+        // malformed CSV (unclosed quote) — still push what we have
+        cur.push(field);
+        rows.push(cur);
+      } else if (field !== '' || cur.length > 0) {
+        cur.push(field);
+        rows.push(cur);
+      }
+
+      // normalize: ensure each row is an array (already) and trim trailing empty rows
+      while (rows.length && rows[rows.length - 1].length === 1 && rows[rows.length - 1][0] === '') {
+        rows.pop();
+      }
+
+      return rows;
     }
 
-    async function loadEditableSheet(compName, sheetName) {
-      // sheetName is the human round name or sheet tab name
-      currentSheetName = sheetName || '';
-      const panel = document.getElementById('editor-panel');
-      const editTable = document.getElementById('edit-table');
-      panel.style.display = 'block';
-      document.getElementById('editing-sheet-name').textContent = currentSheetName;
+    // loadEditableSheet: builds an editor table showing a compact leaderboard and makes attempts editable.
+    // Minimal changes from your original: shows editor panel, sets editing-sheet-name, defends against short rows,
+    // includes a stable rowIndex and competitor name for each editable row so submitEdits can identify rows.
+    function loadEditableSheet() {
+      // hide main leaderboard and show editor
+      const lb = document.getElementById('leaderboard');
+      if (lb) lb.style.display = 'none';
+      if (!currentComp || !currentRound) return;
 
-      // fetch via Netlify function
-      const url = `/.netlify/functions/sheets-read?comp=${encodeURIComponent(compName)}&round=${encodeURIComponent(sheetName)}`;
-      const res = await fetch(url);
-      if (!res.ok) {
-        editTable.querySelector('thead').innerHTML = '';
-        editTable.querySelector('tbody').innerHTML = '';
-        editTable.insertAdjacentHTML('beforeend', '<tbody><tr><td style="padding:8px;color:#900">Failed to load sheet</td></tr></tbody>');
-        return;
+      const privateUrl = `${READ_ENDPOINT}?comp=${encodeURIComponent(currentComp)}&round=${encodeURIComponent(currentRound)}&public=false&format=csv`;
+
+      // show loading state
+      const submitStatus = document.getElementById('submit-status');
+      if (submitStatus) {
+        submitStatus.textContent = 'Loading editable sheet…';
+        submitStatus.style.display = 'block';
+        submitStatus.style.color = 'black';
       }
-      const json = await res.json();
-      let headers = json.headers;
-      let rows = json.rows;
-      if ((!headers || !Array.isArray(rows)) && Array.isArray(json.values)) {
-        headers = json.values[0] || [];
-        rows = json.values.slice(1) || [];
-      }
-      headers = headers || [];
-      rows = rows || [];
 
-      // Build table header
-      const thead = editTable.querySelector('thead');
-      const tbody = editTable.querySelector('tbody');
-      thead.innerHTML = '';
-      tbody.innerHTML = '';
+      fetch(privateUrl)
+        .then(res => {
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          return res.text();
+        })
+        .then(text => {
+          const rows = parseCSV((text || '').trim());
+          if (!rows || !rows.length) throw new Error('Empty sheet');
 
-      const trh = document.createElement('tr');
-      headers.forEach(h => {
-        const th = document.createElement('th');
-        th.style.padding = '6px';
-        th.textContent = h || '';
-        trh.appendChild(th);
-      });
-      thead.appendChild(trh);
+          const headers = rows[0] || [];
+          const thead = document.querySelector('#edit-table thead');
+          const tbody = document.querySelector('#edit-table tbody');
 
-      // Build rows with inputs
-      rows.forEach((r, ri) => {
-        const tr = document.createElement('tr');
-        const cells = Array.isArray(r) ? r : headers.map(h => r[h] || '');
-        cells.forEach((c, ci) => {
-          const td = document.createElement('td');
-          td.style.padding = '6px';
-          const input = document.createElement('input');
-          input.value = (c === null || c === undefined) ? '' : String(c);
-          input.dataset.row = ri;
-          input.dataset.col = ci;
-          input.style.width = '100%';
-          td.appendChild(input);
-          tr.appendChild(td);
+          thead.innerHTML = '';
+          tbody.innerHTML = '';
+
+          // Decide which columns to show:
+          // Keep this minimal and predictable: show Name (if present), Best, Average, Attempts 1..5 (or columns 2..10 fallback)
+          // Try to detect "Name" header index
+          const nameIdx = headers.findIndex(h => /name/i.test(String(h)));
+          // detect attempt-like headers (common names: "1", "Attempt 1", "a1", "Solve 1")
+          const attemptIndices = [];
+          for (let i = 0; i < headers.length; i++) {
+            const h = String(headers[i] || '').toLowerCase();
+            if (/^(?:attempt|solve|a|s)?\s*1$/.test(h) || /^1$/.test(h) || /attempt\s*1/.test(h) || /solve\s*1/.test(h)) attemptIndices.push(i);
+          }
+          // fallback: if no detection, use columns 2..10 as before
+          const fallbackVisible = Array.from({ length: 9 }, (_, i) => i + 2); // [2..10]
+          const visibleIndices = (headers.length >= 11)
+            ? (nameIdx >= 0 ? [nameIdx] : []).concat(['Best','Average'].map(k => {
+                const idx = headers.findIndex(h => new RegExp(`^${k}$`, 'i').test(String(h)));
+                return idx >= 0 ? idx : -1;
+              }).filter(i => i >= 0))
+              .concat((attemptIndices.length ? attemptIndices : fallbackVisible.filter(i => i < headers.length)))
+            : fallbackVisible.filter(i => i < headers.length);
+
+          // ensure unique and sorted
+          const uniq = Array.from(new Set(visibleIndices)).filter(i => i >= 0 && i < headers.length);
+          uniq.sort((a,b) => a - b);
+
+          // determine which of those are editable attempts: prefer last 5 columns of uniq or those detected as attempts
+          let editableIndices = [];
+          if (attemptIndices.length) {
+            editableIndices = attemptIndices.slice(0,5).filter(i => uniq.includes(i));
+          } else {
+            // pick up to 5 rightmost visible columns as editable
+            editableIndices = uniq.slice(-5);
+          }
+
+          // Build header row
+          const headerRow = document.createElement('tr');
+          uniq.forEach(i => {
+            const th = document.createElement('th');
+            th.textContent = headers[i] ?? `Col ${i + 1}`;
+            headerRow.appendChild(th);
+          });
+          thead.appendChild(headerRow);
+
+          // Build body rows. Keep original CSV row index so we can identify rows on submit.
+          rows.slice(1).forEach((row, rIdx) => {
+            const tr = document.createElement('tr');
+            // store original CSV row index on the tr for submit identification
+            tr.setAttribute('data-csv-row', String(rIdx + 1)); // +1 because rows[0] is header
+            uniq.forEach(colIdx => {
+              const td = document.createElement('td');
+              const raw = (row[colIdx] !== undefined && row[colIdx] !== null) ? String(row[colIdx]) : '';
+              const value = raw.trim();
+              if (editableIndices.includes(colIdx)) {
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.value = value;
+                input.setAttribute('data-col-index', String(colIdx));
+                // also attach row index so we can easily map on submit
+                input.setAttribute('data-row-index', String(rIdx + 1));
+                input.style.minWidth = '6ch';
+                td.appendChild(input);
+              } else {
+                td.textContent = value;
+              }
+              tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+          });
+
+          // show editor panel and set label
+          const editorPanel = document.getElementById('editor-panel');
+          if (editorPanel) editorPanel.style.display = '';
+          const editingLabel = document.getElementById('editing-sheet-name');
+          if (editingLabel) editingLabel.textContent = `${currentComp} — ${currentRound}`;
+
+          // clear status
+          if (submitStatus) {
+            submitStatus.style.display = 'none';
+            submitStatus.textContent = '';
+          }
+        })
+        .catch(err => {
+          const submitStatus = document.getElementById('submit-status');
+          if (submitStatus) {
+            submitStatus.textContent = "Error loading private sheet: " + (err && err.message ? err.message : String(err));
+            submitStatus.style.display = 'block';
+            submitStatus.style.color = 'red';
+          }
         });
-        tbody.appendChild(tr);
-      });
-
-      // store a snapshot for submitEdits to compute ranges
-      panel._editable = { compName, sheetName, headers, rowsCount: rows.length };
     }
 
+    // submitEdits: collect edited inputs, include row identifier (csvRow) and column index, send to WRITE_ENDPOINT.
+    // Disables the Confirm button while submitting and shows clear status messages.
+    // Expects server to accept payload: { comp, round, edits: [ { csvRow, colIndex, value }, ... ] }
     async function submitEdits() {
-      const panel = document.getElementById('editor-panel');
-      if (!panel || !panel._editable) return;
-      const { compName, sheetName, headers } = panel._editable;
-      const editTable = document.getElementById('edit-table');
-      const tbody = editTable.querySelector('tbody');
-      const rows = Array.from(tbody.rows).map(tr => {
-        return Array.from(tr.cells).map(td => {
-          const inp = td.querySelector('input');
-          return inp ? inp.value : td.textContent || '';
-        });
-      });
+      const table = document.querySelector('#edit-table');
+      if (!table) return;
 
-      // Build values with header row first
-      const values = [ headers, ...rows ];
+      // collect inputs from tbody only
+      const tbody = table.querySelector('tbody');
+      if (!tbody) return;
 
-      // Determine range: write to sheetName!A1:{lastCol}{lastRow}
-      const lastColIndex = Math.max(0, headers.length - 1);
-      const lastColLetter = (colIndex => {
-        // convert 0-based index to A..Z..AA
-        let s = '';
-        let n = colIndex + 1;
-        while (n > 0) {
-          const rem = (n - 1) % 26;
-          s = String.fromCharCode(65 + rem) + s;
-          n = Math.floor((n - 1) / 26);
-        }
-        return s;
-      })(lastColIndex);
-      const lastRow = values.length;
-      const range = `${sheetName}!A1:${lastColLetter}${lastRow}`;
-
-      // POST to Netlify write function
-      const payload = {
-        spreadsheetId: process.env && process.env.GOOGLE_SHEETS_SPREADSHEET_ID ? process.env.GOOGLE_SHEETS_SPREADSHEET_ID : undefined,
-        range,
-        values
-      };
-
-      // If you want to pass spreadsheetId from client, include it; otherwise Netlify uses env var
-      const res = await fetch('/.netlify/functions/sheets-write', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-
-      if (!res.ok) {
-        const txt = await res.text();
-        document.getElementById('submit-status').textContent = 'Save failed';
-        console.error('submitEdits failed', txt);
+      const inputs = Array.from(tbody.querySelectorAll('input[data-col-index]'));
+      if (!inputs.length) {
+        document.getElementById('submit-status').textContent = 'No edits to submit';
+        document.getElementById('submit-status').style.color = 'black';
+        document.getElementById('submit-status').style.display = 'block';
+        setTimeout(() => { document.getElementById('submit-status').style.display = 'none'; }, 2500);
         return;
       }
-      const json = await res.json();
-      document.getElementById('submit-status').textContent = 'Saved';
-      // hide editor or reload sheet
-      setTimeout(() => { document.getElementById('submit-status').textContent = ''; }, 1500);
-      // Optionally reload meta and leaderboard
-      await fetchMeta();
-      if (typeof loadLeaderboard === 'function') {
-        try { await loadLeaderboard({ silent: true }); } catch (e) {}
+
+      // build edits array
+      const edits = inputs.map(inp => {
+        const colIndex = parseInt(inp.getAttribute('data-col-index'), 10);
+        const csvRow = parseInt(inp.getAttribute('data-row-index') || inp.closest('tr')?.getAttribute('data-csv-row') || '-1', 10);
+        return {
+          csvRow: Number.isFinite(csvRow) ? csvRow : null,
+          colIndex: Number.isFinite(colIndex) ? colIndex : null,
+          value: inp.value
+        };
+      }).filter(e => e.colIndex !== null && e.csvRow !== null);
+
+      const payload = { comp: currentComp, round: currentRound, edits };
+
+      // disable confirm button to prevent double submits
+      const confirmBtn = Array.from(document.querySelectorAll('#editor-panel .btn')).find(b => b.textContent && b.textContent.toLowerCase().includes('confirm'));
+      if (confirmBtn) confirmBtn.disabled = true;
+
+      const submitStatus = document.getElementById('submit-status');
+      if (submitStatus) {
+        submitStatus.style.display = 'block';
+        submitStatus.style.color = 'black';
+        submitStatus.textContent = 'Submitting edits…';
+      }
+
+      try {
+        const res = await fetch(WRITE_ENDPOINT, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        let msg;
+        try { msg = await res.json(); } catch (e) { msg = { status: null, raw: await res.text() }; }
+
+        if (res.ok && msg && msg.status) {
+          submitStatus.textContent = `Submitted: ${msg.status} (${msg.rows || 0} rows)`;
+          submitStatus.style.color = 'green';
+        } else {
+          submitStatus.textContent = `Error: ${JSON.stringify(msg)}`;
+          submitStatus.style.color = 'red';
+        }
+      } catch (err) {
+        if (submitStatus) {
+          submitStatus.textContent = `Fetch error: ${err && err.message ? err.message : String(err)}`;
+          submitStatus.style.color = 'red';
+        }
+      } finally {
+        if (confirmBtn) confirmBtn.disabled = false;
+        // hide editor and refresh leaderboard
+        const editorPanel = document.getElementById('editor-panel');
+        if (editorPanel) editorPanel.style.display = 'none';
+        // show status briefly then reload leaderboard
+        setTimeout(() => {
+          loadLeaderboard().catch(()=>{});
+          const lb = document.getElementById('leaderboard');
+          if (lb) lb.style.display = 'table';
+        }, 300);
+        // auto-hide status after a short delay
+        setTimeout(() => {
+          if (submitStatus) submitStatus.style.display = 'none';
+        }, 3500);
       }
     }
+
+
 
     function cancelEdit() {
       document.getElementById('editor-panel').style.display = 'none';
