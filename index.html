@@ -662,12 +662,12 @@
     </section>
   </main>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
   <script>
-    const SUPABASE_URL = 'https://bkzosvxbkhzkskaejqcb.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJrem9zdnhia2h6a3NrYWVqcWNiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQzOTczMzIsImV4cCI6MjA3OTk3MzMzMn0.iqZZCfEtSdWksHGfbxUAOoaInu6ZpR-7mEIRtmvW9io';
-    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const MASTER_SHEET_ID = '1fjWyEbc7a5A3RjkFm0BEnE_lyHXCa3kYiKRd2IP9j5Q';
+    const API_KEY = 'AIzaSyA_4BKwiXfv_T9XhbdenwHuGm0k5uc89S8';
+    const READ_ENDPOINT = '/api/read';
+    const WRITE_ENDPOINT = '/api/write';
+
 
     window._competitorViewToken = window._competitorViewToken || 0;
 
@@ -686,6 +686,8 @@
     const LOCK_STATUS_ROW    = 2;
     const FIRST_ROUND_ROW    = LOCK_STATUS_ROW + 1;
     let compLockMap = {};
+    let compSheetMap = {};
+    let roundSheetsMap = Object.create(null);
     let roundFormatMap = {};
     let roundAdvanceMap = {};
 
@@ -882,7 +884,7 @@
       } else if (route.isCompetitorDetail) {
         attachMobileHandlersToCompetitorResults();
       } else if (currentComp && currentRound) {
-        renderLeaderboard({ silent: true }).catch(()=>{});
+        loadLeaderboard({ silent: true }).catch(()=>{});
       }
       const ov = document.getElementById('row-detail-overlay');
       if (ov) ov.style.zIndex = '2147483647';
@@ -1038,24 +1040,17 @@
       return unslug(seg).replace(/\s-\s?_/,' - ').replace(/_-_/g,' - ').replace(/_-\s_/g,' - ');
     }
 
-    // ---------- navigate (replace existing) ----------
     function navigate(path) {
       if (!path.startsWith('/')) path = '/' + path;
-
-      // Normalize path segments when path contains spaces (encode then slug)
-      if (path.includes('%20') || /[\s]/.test(path)) {
+      if (path.includes('%20')) {
         const parts = path.split('/').map(p => decodeURIComponent(p));
         const newPath = parts.map((seg, i) => i === 0 ? '' : slug(seg)).join('/');
         history.pushState({}, '', newPath || '/');
       } else {
         history.pushState({}, '', path);
       }
-
-      // Re-render current route
-      // render() will call showView('live') and hide/show competitions list appropriately
-      render().catch(e => console.error('navigate -> render error', e));
+      render();
     }
-
 
     function updateTitles() {
       const h1 = document.getElementById('club-name');
@@ -1839,149 +1834,80 @@
 
     }
 
-    // Render only round cards for a competition (used for /live/COMPETITION_NAME)
-    async function renderLiveSummary(compSlug) {
-      const compName = typeof unslug === 'function' ? unslug(compSlug) : (compSlug || '').replace(/_/g, ' ');
-      if (!compName) return;
-
-      if (typeof initLiveOnce === 'function') {
-        try { await initLiveOnce(); } catch (e) { console.warn('initLiveOnce failed', e); }
-      }
-
-      // show live view
-      const viewLive = document.getElementById('view-live');
-      if (viewLive) viewLive.hidden = false;
-
-      const summaryWrap = document.getElementById('live-competition-summary');
+    // Live: show summary and round cards
+    async function renderLiveSummary(compName) {
+      const summary = document.getElementById('live-competition-summary');
       const titleEl = document.getElementById('live-comp-title');
       const metaEl = document.getElementById('live-comp-meta');
-      const roundsWrap = document.getElementById('live-round-cards');
-      if (!summaryWrap || !roundsWrap || !titleEl || !metaEl) return;
+      const cards = document.getElementById('live-round-cards');
 
-      // reset
-      roundsWrap.innerHTML = '';
+      await fetchMeta();
+      if (!compName) { summary.style.display = 'none'; return; }
+
       titleEl.textContent = compName;
-      metaEl.textContent = '';
+      const venueDate = getCompetitionDate(compName) || '';
+      // Try details.json if present
+      let details = {};
+      try { details = await (await fetch(`/data/competitions/${encodeURIComponent(slug(compName))}/details.json`, { cache: 'no-store' })).json(); } catch (e) {}
+      const venue = details.venue || '';
+      const date = details.date || venueDate || '';
+      metaEl.textContent = [venue, date].filter(Boolean).join(' • ');
 
-      // find competition record
-      let compRow = null;
-      try {
-        const { data: comps, error } = await supabaseClient
-          .from('competitions')
-          .select('id, name, date, venue')
-          .eq('name', compName)
-          .limit(1);
-        if (error) throw error;
-        if (Array.isArray(comps) && comps.length) compRow = comps[0];
-      } catch (err) {
-        console.error('renderLiveSummary: fetch competition error', err);
-      }
+      cards.innerHTML = '';
+      // Build round cards from roundSheetsMap order
+      const rounds = Object.keys(roundSheetsMap[compName] || {}).filter(Boolean)
+        // show unlocked competitions only here; filter by compLockMap
+        .filter(() => !compLockMap[compName]);
 
-      if (!compRow) {
-        summaryWrap.style.display = 'none';
-        return;
-      }
-
-      // fetch rounds
-      let rounds = [];
-      try {
-        const { data: rdata, error } = await supabaseClient
-          .from('rounds')
-          .select('id, event_id, round_code')
-          .eq('comp_id', compRow.id)
-          .order('id', { ascending: true });
-        if (error) throw error;
-        rounds = Array.isArray(rdata) ? rdata : [];
-      } catch (err) {
-        console.error('renderLiveSummary: fetch rounds error', err);
-        rounds = [];
-      }
-
-      if (!rounds.length) {
-        summaryWrap.style.display = 'none';
-        return;
-      }
-
-      // show container (we use it to host round cards)
-      summaryWrap.style.display = 'block';
-
-      // create cards
-      rounds.forEach(r => {
-        const card = document.createElement('div');
-        card.className = 'ev';
-        card.style.minWidth = '140px';
-        card.style.padding = '10px';
-        card.style.border = '1px solid #eee';
-        card.style.borderRadius = '8px';
-        card.style.background = '#fff';
-        card.style.cursor = 'pointer';
-        card.style.display = 'flex';
-        card.style.flexDirection = 'column';
-        card.style.alignItems = 'center';
-        card.style.gap = '6px';
-
-        const label = document.createElement('div');
-        label.className = 'label';
-        label.style.fontWeight = '600';
-        label.style.fontSize = '14px';
-        label.textContent = EVENT_CODE_TO_NAME[String(r.event_id)] || String(r.event_id);
-
-        const sub = document.createElement('div');
-        sub.style.color = '#666';
-        sub.style.fontSize = '13px';
-        // map round_code to friendly short label (no format)
-        const rc = String(r.round_code).toLowerCase();
-        const short = (rc === 'f' ? 'Final' : (rc === '3' ? 'Third Round' : (rc === '2' ? 'Second Round' : (rc === '1' ? 'First Round' : `R${r.round_code}`))));
-        sub.textContent = short;
-
-        card.appendChild(label);
-        card.appendChild(sub);
-
-        card.onclick = () => {
-          const path = `/live/${slug(compRow.name)}/${String(r.event_id)}/${String(r.round_code)}`;
-          try {
-            history.pushState({}, '', path);
-            if (typeof handleLiveRoute === 'function') {
-              handleLiveRoute().catch(e => console.error(e));
-            } else {
-              currentRound = r.id;
-              currentRoundMeta = { event_id: r.event_id, round_code: r.round_code };
-              if (typeof loadLeaderboard === 'function') loadLeaderboard().catch(e => console.error(e));
-            }
-          } catch (e) {
-            console.error('renderLiveSummary navigation error', e);
-          }
-        };
-
-        roundsWrap.appendChild(card);
+      // group by event; render big rounded rectangles
+      const byEvent = {};
+      rounds.forEach(full => {
+        const parts = full.split(/\s*-\s*/);
+        const ev = parts[0]; const rn = parts.slice(1).join(' - ');
+        if (!byEvent[ev]) byEvent[ev] = [];
+        if (!byEvent[ev].includes(rn)) byEvent[ev].push(rn);
       });
 
-      // clear leaderboard until a round path is visited
-      const lb = document.getElementById('leaderboard');
-      if (lb) { lb.querySelector('thead').innerHTML = ''; lb.querySelector('tbody').innerHTML = ''; }
+      const orderedEvents = WCA_EVENTS.filter(e => byEvent[e]).concat(Object.keys(byEvent).filter(e => !WCA_EVENTS.includes(e)).sort());
+      orderedEvents.forEach(ev => {
+        (byEvent[ev] || []).forEach(rn => {
+          const card = document.createElement('div');
+          card.style.cssText = `
+            display:flex; align-items:center; gap:10px; padding:16px 18px; border:1px solid #e6e6e6;
+            border-radius:18px; cursor:pointer; background:#fafafa; font-weight:600;
+          `;
+          const icon = document.createElement('img');
+          const code = EVENT_NAME_TO_CODE[(ev || '').toLowerCase()] || 'unknown';
+          icon.src = `/images/event_icons/${code}.png`;
+          icon.alt = ev;
+          icon.style.cssText = 'width:28px;height:28px;object-fit:contain;';
+          const label = document.createElement('div');
+          label.textContent = `${ev} - ${rn}`;
+          card.appendChild(icon); card.appendChild(label);
+          card.addEventListener('click', () => navigate(buildLiveRoundPath(compName, ev, rn)));
+          cards.appendChild(card);
+        });
+      });
+
+      summary.style.display = orderedEvents.length ? '' : 'none';
     }
 
     // Router integration
     async function render() {
       const route = getRoute();
 
-      // Rankings
       if (route.isRankings && route.routeEvent && route.routeCat) {
         showView('rankings');
         document.getElementById('view-rankings').hidden = false;
         await renderRankingsView(route.routeEvent, route.routeCat);
         return;
       }
-
-      // Records
       if (route.isRecords) {
         showView('records');
         document.getElementById('view-records').hidden = false;
         await renderRecordsView();
         return;
       }
-
-      // Competitions (site-wide)
       if (route.isCompetitions) {
         showView('competitions');
         if (route.isCompetitionDetail) {
@@ -1991,60 +1917,28 @@
         }
         return;
       }
-
-      // Non-live home
       if (!route.isLive) {
         showView('home');
         return;
       }
 
-      // ---------- Live handling ----------
+      // Existing live handling
       showView('live');
 
-      // Top-level /live -> show competitions list only
       if (!route.comp) {
-        const compsWrap = document.getElementById('competitions-list');
-        if (compsWrap) compsWrap.style.display = '';
-        const summaryWrap = document.getElementById('live-competition-summary');
-        if (summaryWrap) summaryWrap.style.display = 'none';
-        const lb = document.getElementById('leaderboard');
-        if (lb) { lb.querySelector('thead').innerHTML = ''; lb.querySelector('tbody').innerHTML = ''; }
+        // live competitions list view
+        document.getElementById('live-competition-summary').style.display = 'none';
         await renderCompetitionsList();
         return;
       }
 
-      // Competition selected (any path under /live/COMP_SLUG)
-      // hide competitions list whenever a competition is selected or deeper path
-      const compsWrap = document.getElementById('competitions-list');
-      if (compsWrap) compsWrap.style.display = 'none';
-
+      // Live competition selected
       const compName = unslug(route.comp);
       currentComp = compName;
       updateTitles();
-
-      // Always render sidebar for the competition
       await renderSidebar(compName);
+      await renderLiveSummary(compName);
 
-      // Determine whether the URL is exactly /live/COMP_SLUG (no event/round or other tail)
-      // We treat the route as exact competition path when none of these are present:
-      //   - compactEvent/compactRound (canonical event+round)
-      //   - roundSegment (legacy round segment)
-      //   - isPodiums / isCompetitorDetail / isCompetitors (other subviews)
-      const isExactCompPath = !route.compactEvent && !route.compactRound && !route.roundSegment && !route.isPodiums && !route.isCompetitorDetail && !route.isCompetitors;
-
-      if (isExactCompPath) {
-        // show round cards and hide leaderboard
-        await renderLiveSummary(compName);
-        const lb = document.getElementById('leaderboard');
-        if (lb) { lb.querySelector('thead').innerHTML = ''; lb.querySelector('tbody').innerHTML = ''; }
-        return;
-      } else {
-        // deeper path: hide the live summary area (round cards)
-        const summaryWrap = document.getElementById('live-competition-summary');
-        if (summaryWrap) summaryWrap.style.display = 'none';
-      }
-
-      // Podiums / competitor / competitors special views under a competition
       if (route.isPodiums) {
         await renderPodiumsView(compName);
         return;
@@ -2059,7 +1953,7 @@
         return;
       }
 
-      // Leaderboard route: only call leaderboard when event+round present
+      // Leaderboard route
       if (route.compactEvent && route.compactRound) {
         const eventCode = decodeURIComponent(route.compactEvent);
         const roundId = decodeURIComponent(route.compactRound);
@@ -2067,20 +1961,131 @@
         const roundLabel = (roundId === 'f') ? 'Final' : (roundId === '1' ? 'First Round' : (roundId === '2' ? 'Second Round' : (roundId === '3' ? 'Third Round' : roundId)));
         currentRound = eventName ? `${eventName} - ${roundLabel}` : '';
         currentCanonicalCandidates = getCanonicalTabCandidates(currentComp, currentRound);
-        await renderLeaderboard();
+        await loadLeaderboard();
         return;
-      }
-
-      if (route.roundSegment) {
-        currentRound = decodeRoundSegment(route.roundSegment);
+      } else {
+        currentRound = route.roundSegment ? decodeRoundSegment(route.roundSegment) : '';
         currentCanonicalCandidates = getCanonicalTabCandidates(currentComp, currentRound);
-        await renderLeaderboard();
+        await loadLeaderboard();
         return;
       }
+    }
+      
+    // Replace existing fetchMeta with this
+    async function fetchMeta() {
+      // call Netlify function to read the 'meta' tab
+      const tab = 'meta';
+      const range = 'A2:H500';
+      const url = `/.netlify/functions/sheets-read?tab=${encodeURIComponent(tab)}&range=${encodeURIComponent(range)}`;
+      const res = await fetch(url);
+      if (!res.ok) {
+        // keep previous state if read fails
+        console.warn('fetchMeta failed', await res.text());
+        return;
+      }
+      const json = await res.json();
+      const rows = Array.isArray(json.values) ? json.values : [];
 
-      // If no round specified, ensure leaderboard cleared
-      const lbFinal = document.getElementById('leaderboard');
-      if (lbFinal) { lbFinal.querySelector('thead').innerHTML = ''; lbFinal.querySelector('tbody').innerHTML = ''; }
+      // Reset state (same shapes as before)
+      masterValues = [];
+      compLockMap = {};
+      compSheetMap = {};
+      roundFormatMap = {};
+      roundAdvanceMap = {};
+      roundSheetsMap = {};
+
+      const compsOrder = [];
+      const compEvents = {};
+      let lastComp = '';
+      let lastSheetId = '';
+      let lastLocked = false;
+
+      rows.forEach(r => {
+        const compCell = (r[0] || '').toString().trim();
+        const sheetId = (r[1] || '').toString().trim();
+        const lockedCell = (r[2] || '').toString().trim().toLowerCase();
+        const eventName = (r[3] || '').toString().trim();
+        const roundLabel = (r[4] || '').toString().trim();
+        const format = (r[5] || '').toString().trim().toLowerCase();
+        const advRaw = (r[6] || '').toString().trim();
+        const date = (r[7] || '').toString().trim();
+
+        let comp = compCell;
+        let compSheet = sheetId;
+        let isLocked = (lockedCell === 'true' || lockedCell === 'locked');
+
+        if (!comp && !compSheet && lastComp) {
+          comp = lastComp;
+          compSheet = lastSheetId;
+          isLocked = lastLocked;
+        }
+
+        if (!comp || !eventName || !roundLabel) {
+          if (comp && compSheet) {
+            if (!compsOrder.includes(comp)) compsOrder.push(comp);
+            compSheetMap[comp] = compSheet || compSheetMap[comp];
+            compLockMap[comp] = compLockMap[comp] || isLocked;
+            lastComp = comp;
+            lastSheetId = compSheet;
+            lastLocked = isLocked;
+          }
+          return;
+        }
+
+        if (!compsOrder.includes(comp)) compsOrder.push(comp);
+        if (compSheet) compSheetMap[comp] = compSheet;
+        compLockMap[comp] = compLockMap[comp] || isLocked;
+        roundFormatMap[comp] = roundFormatMap[comp] || {};
+        roundAdvanceMap[comp] = roundAdvanceMap[comp] || {};
+
+        const fullRound = `${eventName} - ${roundLabel}`;
+
+        roundFormatMap[comp][fullRound] = format || (roundFormatMap[comp][fullRound] || 'ao5');
+        roundAdvanceMap[comp][fullRound] = advRaw ? (Number.isFinite(Number(advRaw)) ? Number(advRaw) : null) : (roundAdvanceMap[comp][fullRound] || null);
+
+        roundSheetsMap[comp] = roundSheetsMap[comp] || {};
+        roundSheetsMap[comp][fullRound] = { public: fullRound, private: fullRound, date: date };
+
+        compEvents[comp] = compEvents[comp] || {};
+        compEvents[comp][eventName] = compEvents[comp][eventName] || [];
+        if (!compEvents[comp][eventName].includes(roundLabel)) compEvents[comp][eventName].push(roundLabel);
+
+        lastComp = comp;
+        lastSheetId = compSheet;
+        lastLocked = isLocked;
+      });
+
+      // Rebuild masterValues matrix (same shape as before)
+      const headerRow = ['Competition', ...Object.keys(compEvents)];
+      const perCompFullRounds = {};
+      Object.keys(compEvents).forEach(comp => {
+        perCompFullRounds[comp] = [];
+        Object.keys(compEvents[comp] || {}).forEach(ev => {
+          (compEvents[comp][ev] || []).forEach(rn => {
+            const full = `${ev} - ${rn}`;
+            perCompFullRounds[comp].push(full);
+          });
+        });
+      });
+
+      const maxRows = Math.max(0, ...Object.keys(perCompFullRounds).map(c => perCompFullRounds[c].length));
+      const roundRows = [];
+      for (let ri = 0; ri < maxRows; ri++) {
+        const row = [];
+        row.push('round');
+        Object.keys(perCompFullRounds).forEach(comp => {
+          row.push(perCompFullRounds[comp][ri] || '');
+        });
+        roundRows.push(row);
+      }
+
+      masterValues = [];
+      masterValues[0] = headerRow;
+      masterValues[1] = ['sheet ID', ...Object.keys(compEvents).map(c => compSheetMap[c] || '')];
+      masterValues[2] = ['isLocked?', ...Object.keys(compEvents).map(c => compLockMap[c] ? 'TRUE' : 'FALSE')];
+      for (let i = 0; i < roundRows.length; i++) {
+        masterValues[FIRST_ROUND_ROW + i] = roundRows[i];
+      }
     }
 
     const logo = document.getElementById('logo');
@@ -2088,7 +2093,6 @@
       logo.addEventListener('click', () => navigate('/'));
     }
 
-    // ---------- showView (replace existing) ----------
     function showView(id) {
       // header / common nodes
       const header = document.getElementById('main-header');
@@ -2097,28 +2101,24 @@
       const igIcon = document.getElementById('ig-icon');
       const btnOpen = document.getElementById('btn-open-sidebar');
 
-      // ensure leaderboard element exists (we keep it present; visibility controlled elsewhere)
+      // always ensure leaderboard table element exists and keep it displayed only on live-related views
       const leaderboard = document.getElementById('leaderboard');
       if (leaderboard) leaderboard.style.display = 'table';
 
       // style header for live/competition-related views
       const liveViews = new Set(['live', 'competitor', 'competitors', 'podiums']);
       if (liveViews.has(id)) {
-        if (header) {
-          header.style.backgroundColor = '#1976D2';
-          header.style.color = 'white';
-          header.classList.add('shrink');
-        }
+        header.style.backgroundColor = '#1976D2';
+        header.style.color = 'white';
+        header.classList.add('shrink');
         if (logo) logo.src = '/images/clublogo_whitetext.png';
         if (igIcon) igIcon.hidden = true;
       } else {
-        if (header) {
-          header.style.backgroundColor = 'white';
-          header.style.color = 'black';
-          header.classList.remove('shrink');
-        }
+        header.style.backgroundColor = 'white';
+        header.style.color = 'black';
         if (clubName) clubName.textContent = 'LSC Cubing Club';
         if (logo) logo.src = '/images/clublogo_blacktext.png';
+        header.classList.remove('shrink');
         if (igIcon) igIcon.hidden = false;
       }
 
@@ -2126,7 +2126,6 @@
       if (btnOpen) {
         const route = getRoute();
         if (route.isLive) {
-          // show menu button only when a competition is selected (so user can open sidebar)
           btnOpen.style.display = route.comp ? 'flex' : 'none';
         } else if (id === 'competitor' || id === 'competitors' || id === 'podiums') {
           btnOpen.style.display = 'flex';
@@ -2158,25 +2157,11 @@
       const compDetail = document.getElementById('competition-detail');
       const compLockedList = document.getElementById('competitions-locked-list');
       if (id === 'competitions') {
-        if (compDetail) compDetail.style.display = '';
+        if (compDetail) compDetail.style.display = ''; // keep whatever internal logic toggles tabs
         if (compLockedList) compLockedList.style.display = '';
       } else {
         if (compDetail) compDetail.style.display = 'none';
         if (compLockedList) compLockedList.style.display = '';
-      }
-
-      // Extra: when showing live view, hide or show the left competitions list depending on URL
-      if (id === 'live') {
-        const compsWrap = document.getElementById('competitions-list');
-        if (compsWrap) {
-          const route = getRoute();
-          // show competitions list only when at top-level /live (no comp slug)
-          compsWrap.style.display = route.comp ? 'none' : '';
-        }
-      } else {
-        // ensure competitions list visible when leaving live (so other pages that reuse it see it)
-        const compsWrap = document.getElementById('competitions-list');
-        if (compsWrap) compsWrap.style.display = '';
       }
     }
 
@@ -2238,7 +2223,14 @@
       }
     });
 
-
+    function getEventsForComp(comp) {
+      const compIdx = (masterValues[COMP_HEADER_ROW]||[]).indexOf(comp);
+      if (compIdx < 0) return [];
+      // events = rounds list
+      return masterValues.slice(FIRST_ROUND_ROW)
+        .map(r => r[compIdx])
+        .filter(Boolean);
+    }
 
     // Helper: produce prioritized candidate tab names for a given comp + round input.
     // roundIn may be a slugged segment (e.g., "3x3x3_Cube_-_First_Round") or an already human string.
@@ -2532,6 +2524,130 @@
           await new Promise(r => setTimeout(r, 80));
         }
       }
+    }
+
+
+    function renderLeaderboard(headers, rows) {
+      const theadEl = document.querySelector('#leaderboard thead');
+      const tbodyEl = document.querySelector('#leaderboard tbody');
+      theadEl.innerHTML = '';
+      tbodyEl.innerHTML = '';
+
+      document.getElementById('subtitle').textContent = currentRound;
+
+      const isLocked = !!compLockMap[currentComp];
+      const attemptCols = [];
+      headers.forEach((h,i) => { if (/^[1-5]$/.test(h)) attemptCols.push(i); });
+
+      let missingCount = 0;
+      for (const row of rows) {
+        if (attemptCols.every(i => !(row[headers[i]]||'').toString().trim())) missingCount++;
+      }
+
+      const displayRows = (isLocked && attemptCols.length)
+        ? rows.filter(row => attemptCols.some(i => (row[headers[i]]||'').toString().trim()))
+        : rows;
+
+      const fmt = (roundFormatMap[currentComp]||{})[currentRound] || 'ao5';
+      const finalColName = fmt === 'mo3' ? 'Mean' : (fmt === 'bo1'||fmt==='bo2'||fmt==='bo3') ? 'Best' : 'Average';
+
+      let highlightCount = (roundAdvanceMap[currentComp]?.[currentRound] || 0);
+      if (highlightCount < 1) highlightCount = currentRound.toLowerCase().includes('final') ? 3 : 0;
+      const isFMC = currentRound.toLowerCase().includes('fewest moves');
+
+      const alignMap = {};
+      headers.forEach(h => {
+        const k = h.toLowerCase();
+        alignMap[h] = (k === '#' || k === 'number') ? 'center' : (k === 'name' || k === 'class') ? 'left' : 'right';
+      });
+
+      // header row with data-col-role
+      const headerRow = document.createElement('tr');
+      headers.forEach(h => {
+        const th = document.createElement('th');
+        th.textContent = h;
+        th.style.textAlign = alignMap[h];
+        th.style.padding = '8px';
+        if (h === finalColName) th.style.fontWeight = 'bold';
+        // mark roles for mobile hide
+        const role = (/^[1-5]$/.test(h) ? h : (h.trim().toLowerCase() === 'class' ? 'class' : (h.trim() === '#' ? 'number' : h.trim().toLowerCase())));
+        th.setAttribute('data-col-role', role);
+        headerRow.appendChild(th);
+      });
+      theadEl.appendChild(headerRow);
+
+      const frag = document.createDocumentFragment();
+
+      displayRows.forEach((rowObj, rowIndex) => {
+        const tr = document.createElement('tr');
+
+        const noAttempts = attemptCols.every(i => !(rowObj[headers[i]]||'').toString().trim());
+
+        headers.forEach((h, colIdx) => {
+          const td = document.createElement('td');
+          let cell = (rowObj[h] ?? '').toString().trim();
+
+          if (numRx.test(cell)) {
+            const n = parseFloat(cell);
+            if (h === 'Average' || h === 'Mean') cell = n.toFixed(2);
+            else if (attRx.test(h) || h === 'Best') {
+              if (isFMC && (attRx.test(h) || h === 'Best')) cell = Math.round(n).toString();
+              else cell = (Math.floor(n * 100) / 100).toFixed(2);
+            }
+          }
+
+          if ((h === '#' || h.toLowerCase() === 'number') && noAttempts) cell = '';
+
+          if (h.trim().toLowerCase() === 'name') {
+            const slugName = slug(cell);
+            const a = document.createElement('a');
+            a.href = `/live/${slug(currentComp)}/competitors/${slugName}`;
+            a.textContent = cell;
+            a.style.textDecoration = 'none';
+            a.onmouseenter = () => a.style.textDecoration = 'underline';
+            a.onmouseleave = () => a.style.textDecoration = 'none';
+            td.appendChild(a);
+            td.style.color = '#1976D2';
+          } else {
+            td.textContent = cell;
+          }
+
+          td.style.textAlign = alignMap[h];
+          td.style.padding = '8px';
+
+          if (h === finalColName) td.style.fontWeight = 'bold';
+
+          if ((h === '#') && !noAttempts && rowIndex < highlightCount) {
+            const color = isLocked ? '#00e676' : (missingCount >= (highlightCount - rowIndex) ? '#fff59d' : '#00e676');
+            td.style.backgroundColor = color;
+          }
+
+          // data-col-role for mobile hiding
+          const role = (/^[1-5]$/.test(h) ? h : (h.trim().toLowerCase() === 'class' ? 'class' : (h.trim() === '#' ? 'number' : h.trim().toLowerCase())));
+          td.setAttribute('data-col-role', role);
+
+          // mark name for click delegation (desktop behavior unchanged)
+          if (h === 'Name') {
+            td.dataset.name = cell;
+            td.style.cursor = 'pointer';
+            td.style.color = '#1976D2';
+          }
+
+          tr.appendChild(td);
+        });
+
+        // mobile: attach click to open detail modal
+        if (isMobile()) {
+          tr.style.cursor = 'pointer';
+          tr.addEventListener('click', () => {
+            const html = buildMobileLeaderHtml(headers, rowObj, currentComp, currentRound);
+            showRowDetail(html);
+          });
+        }
+        frag.appendChild(tr);
+      });
+
+      tbodyEl.appendChild(frag);
     }
 
     async function renderPodiumsView(comp) {
@@ -3024,95 +3140,49 @@
       if (_sidebarOpen) closeSidebar(); else openSidebar();
     });
 
-    // Render sidebar contents using Supabase only
-    async function renderSidebar(compSlug) {
-      const compName = typeof unslug === 'function' ? unslug(compSlug) : (compSlug || '').replace(/_/g, ' ');
-      if (!compName) return;
-      // ensure live init
-      if (typeof initLiveOnce === 'function') {
-        try { await initLiveOnce(); } catch (e) { console.warn('initLiveOnce failed', e); }
-      }
+    // Render sidebar contents (awaits masterValues)
+    async function renderSidebar(comp) {
+      comp = unslug(comp);
 
+      if (!comp) return;
+      await initLiveOnce();
+
+      const compIdx = (masterValues[COMP_HEADER_ROW] || []).indexOf(comp);
       const eventsWrap = document.getElementById('sidebar-events-list');
       const compNameEl = document.getElementById('sidebar-comp-name');
-      if (!eventsWrap || !compNameEl) return;
-
-      compNameEl.textContent = compName;
-      eventsWrap.innerHTML = '';
-
-      // find competition record by exact name
-      let compRow = null;
-      try {
-        const { data: comps, error } = await supabaseClient
-          .from('competitions')
-          .select('id, name')
-          .eq('name', compName)
-          .limit(1);
-        if (error) throw error;
-        if (Array.isArray(comps) && comps.length) compRow = comps[0];
-      } catch (err) {
-        console.error('renderSidebar: fetch competition error', err);
-        eventsWrap.innerHTML = '<div style="color:#666;padding:8px">Failed to load rounds</div>';
-        return;
-      }
-
-      if (!compRow) {
-        eventsWrap.innerHTML = '<div style="color:#666;padding:8px">Competition not found</div>';
-        return;
-      }
-
-      // fetch rounds for this competition id
-      let rounds = [];
-      try {
-        const { data: rdata, error } = await supabaseClient
-          .from('rounds')
-          .select('id, event_id, round_code')
-          .eq('comp_id', compRow.id)
-          .order('id', { ascending: true });
-        if (error) throw error;
-        rounds = Array.isArray(rdata) ? rdata : [];
-      } catch (err) {
-        console.error('renderSidebar: fetch rounds error', err);
-        eventsWrap.innerHTML = '<div style="color:#666;padding:8px">Failed to load rounds</div>';
-        return;
-      }
-
-      if (!rounds.length) {
+      compNameEl.textContent = comp;
+      if (compIdx < 0 && !(roundSheetsMap && roundSheetsMap[comp])) {
         eventsWrap.innerHTML = '<div style="color:#666;padding:8px">No rounds</div>';
         return;
       }
 
-      // group rounds by event name (use EVENT_CODE_TO_NAME)
+      // Get canonical round entries for this comp from roundSheetsMap populated by fetchMeta
+      const roundsForComp = Object.keys(roundSheetsMap[comp] || {}).filter(Boolean);
+
+      if (!roundsForComp.length) {
+        eventsWrap.innerHTML = '<div style="color:#666;padding:8px">No rounds</div>';
+        return;
+      }
+
+      // Group rounds by event (split on " - ")
       const byEvent = {};
-      rounds.forEach(r => {
-        const eventCode = String(r.event_id);
-        const eventName = EVENT_CODE_TO_NAME[eventCode] || eventCode;
+      roundsForComp.forEach(full => {
+        const parts = String(full).split(/\s*-\s*/);
+        const eventName = parts.length >= 2 ? parts[0] : full;
+        const roundLabel = parts.length >= 2 ? parts.slice(1).join(' - ') : full;
         byEvent[eventName] = byEvent[eventName] || [];
-        byEvent[eventName].push({
-          id: r.id,
-          event_id: eventCode,
-          round_code: String(r.round_code)
-        });
+        if (!byEvent[eventName].includes(roundLabel)) byEvent[eventName].push(roundLabel);
       });
 
-      // order events: WCA_EVENTS first, then alphabetical
+      eventsWrap.innerHTML = '';
+
+      // Render events in a consistent order: WCA_EVENTS first if present, then remaining alphabetical
       const remainingEvents = Object.keys(byEvent).filter(e => !WCA_EVENTS.includes(e)).sort();
       const orderedEvents = WCA_EVENTS.filter(e => byEvent[e]).concat(remainingEvents);
 
-      // helper to map round_code to friendly label
-      function roundLabelFromCode(code) {
-        const c = String(code).toLowerCase();
-        if (c === 'f') return 'Final';
-        if (c === '3') return 'Third Round';
-        if (c === '2') return 'Second Round';
-        if (c === '1') return 'First Round';
-        return `R${code}`;
-      }
-
-      // render UI
-      eventsWrap.innerHTML = '';
       orderedEvents.forEach(eventName => {
-        const offeredRounds = byEvent[eventName] || [];
+        const offeredRounds = (byEvent[eventName] || []).slice();
+
         if (!offeredRounds.length) return;
 
         const container = document.createElement('div');
@@ -3125,7 +3195,6 @@
         header.style.cursor = 'pointer';
         header.style.padding = '6px';
         header.style.borderRadius = '4px';
-        header.style.userSelect = 'none';
         header.textContent = eventName;
 
         const chevron = document.createElement('span');
@@ -3137,32 +3206,17 @@
         roundsList.style.marginTop = '6px';
         roundsList.style.marginLeft = '8px';
 
-        offeredRounds.forEach(rinfo => {
+        offeredRounds.forEach(roundLabel => {
           const rBtn = document.createElement('div');
-          rBtn.textContent = roundLabelFromCode(rinfo.round_code);
+          rBtn.textContent = roundLabel;
           rBtn.style.padding = '6px 8px';
           rBtn.style.cursor = 'pointer';
           rBtn.style.borderRadius = '4px';
-          rBtn.style.whiteSpace = 'nowrap';
           rBtn.onclick = (ev) => {
             ev.stopPropagation();
-            // canonical path uses event code (not friendly name)
-            const code = rinfo.event_id;
-            const path = `/live/${slug(compName)}/${code}/${String(rinfo.round_code)}`;
-            // push state and trigger route handler if present
-            try {
-              history.pushState({}, '', path);
-              if (typeof handleLiveRoute === 'function') {
-                handleLiveRoute().catch(e => console.error(e));
-              } else {
-                // fallback: set currentRound and call loadLeaderboard
-                currentRound = rinfo.id;
-                currentRoundMeta = { event_id: code, round_code: rinfo.round_code };
-                if (typeof loadLeaderboard === 'function') loadLeaderboard().catch(e => console.error(e));
-              }
-            } catch (e) {
-              console.error('renderSidebar navigation error', e);
-            }
+            const path = buildLiveRoundPath(comp, eventName, roundLabel);
+            navigate(path);
+            closeSidebar();
           };
           roundsList.appendChild(rBtn);
         });
@@ -3179,8 +3233,8 @@
         eventsWrap.appendChild(container);
       });
 
-      // wire top buttons if function exists
-      if (typeof wireSidebarButtons === 'function') wireSidebarButtons(compName);
+      // wire any top buttons that depend on comp context
+      wireSidebarButtons(comp);
     }
 
     function wireSidebarButtons(comp) {
@@ -3213,32 +3267,11 @@
       const wrap = document.getElementById('competitions-list');
       if (!wrap) return;
 
-      // Determine supabase client (support different initialization names)
-      const db = (typeof supabaseClient !== 'undefined' && supabaseClient)
-        ? supabaseClient
-        : (typeof supabase !== 'undefined' ? supabase : window.supabase);
-
-      // Fetch non-locked competitions from DB
-      let compsData = [];
-      try {
-        const { data, error } = await db
-          .from('competitions')
-          .select('id, name, date, venue, locked')
-          .eq('locked', false)
-          .order('date', { ascending: false });
-
-        if (error) throw error;
-        compsData = Array.isArray(data) ? data : [];
-      } catch (err) {
-        console.error('renderCompetitionsList: failed to fetch competitions', err);
-        // fallback to previous masterValues-based list if available
-        const rawHeader = Array.isArray(masterValues[COMP_HEADER_ROW]) ? masterValues[COMP_HEADER_ROW] : [];
-        const header = rawHeader.filter(name => {
-          return compLockMap && !compLockMap[name];
-        });
-        const comps = header.slice(1).map(c => (c || '').toString().trim()).filter(Boolean);
-        compsData = comps.map(name => ({ id: null, name }));
-      }
+      const rawHeader = Array.isArray(masterValues[COMP_HEADER_ROW]) ? masterValues[COMP_HEADER_ROW] : [];
+      const header = rawHeader.filter(name => {
+        return compLockMap && !compLockMap[name];
+      });
+      const comps = header.slice(1).map(c => (c || '').toString().trim()).filter(Boolean);
 
       // Clear wrapper and center a column in the page
       wrap.innerHTML = '';
@@ -3269,7 +3302,7 @@
       headerRow.appendChild(h);
       column.appendChild(headerRow);
 
-      // Search control
+      // Search control (keeps search)
       const controls = document.createElement('div');
       controls.style.display = 'flex';
       controls.style.gap = '8px';
@@ -3290,7 +3323,7 @@
       controls.appendChild(search);
       column.appendChild(controls);
 
-      // List container
+      // List container (single-column list centered in column)
       const list = document.createElement('div');
       list.id = 'competitions-list-inner';
       list.style.display = 'grid';
@@ -3298,9 +3331,8 @@
       list.style.gap = '10px';
       column.appendChild(list);
 
-      // Card creator
-      function makeCard(comp) {
-        const compName = comp.name || '';
+      // Card creator (compact, full-width inside column)
+      function makeCard(compName) {
         const card = document.createElement('div');
         card.className = 'comp-card';
         card.style.background = '#fff';
@@ -3333,38 +3365,10 @@
 
         left.appendChild(title);
 
-        // optional meta line (date / venue)
-        const meta = document.createElement('div');
-        meta.style.color = '#666';
-        meta.style.fontSize = '13px';
-        const dateStr = comp.date ? new Date(comp.date).toLocaleDateString() : '';
-        meta.textContent = `${dateStr}${comp.venue ? ' · ' + comp.venue : ''}`;
-        left.appendChild(meta);
-
         card.appendChild(left);
 
-        const go = () => {
-          // navigate to live view for this competition
-          if (typeof navigate === 'function') {
-            navigate(`/live/${slug(compName)}`);
-          } else {
-            // fallback: set globals and show live view
-            currentComp = comp.id;
-            document.getElementById('sidebar-comp-name').textContent = compName;
-            if (typeof getEventsForComp === 'function') {
-              getEventsForComp(comp.id).catch(e => console.error(e));
-            }
-            if (typeof showView === 'function') {
-              showView('view-live');
-            } else {
-              const v = document.getElementById('view-live');
-              if (v) v.hidden = false;
-            }
-          }
-        };
-      
-        card.onclick = (ev) => { ev.stopPropagation(); go(); };
-        card.onkeypress = (ev) => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); go(); } };
+        card.onclick = (ev) => { ev.stopPropagation(); navigate(`/live/${slug(compName)}`); };
+        card.onkeypress = (ev) => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); navigate(`/live/${slug(compName)}`); } };
 
         return card;
       }
@@ -3381,30 +3385,20 @@
           list.appendChild(empty);
           return;
         }
-        const sorted = listItems.slice().sort((a,b) => {
-          const na = (a.name || '').toLowerCase();
-          const nb = (b.name || '').toLowerCase();
-          return na.localeCompare(nb);
-        });
-        sorted.forEach(comp => list.appendChild(makeCard(comp)));
+        const sorted = listItems.slice().sort((a,b) => a.localeCompare(b));
+        sorted.forEach(name => list.appendChild(makeCard(name)));
 
         if (typeof handleMobileChange === 'function') handleMobileChange(isMobile());
       }
 
-      // Wire search (debounced)
+      // Search wiring (debounced)
       let _searchTimer = null;
-      const comps = compsData.slice(); // array of {id,name,date,venue,locked}
       search.addEventListener('input', () => {
         clearTimeout(_searchTimer);
         _searchTimer = setTimeout(() => {
           const q = search.value.trim().toLowerCase();
           if (!q) return renderGrid(comps);
-          renderGrid(comps.filter(c => {
-            const name = (c.name || '').toLowerCase();
-            const venue = (c.venue || '').toLowerCase();
-            const dateStr = c.date ? new Date(c.date).toLocaleDateString().toLowerCase() : '';
-            return name.includes(q) || venue.includes(q) || dateStr.includes(q);
-          }));
+          renderGrid(comps.filter(c => c.toLowerCase().includes(q)));
         }, 120);
       });
 
@@ -4062,6 +4056,11 @@
       return (roundFormatMap[comp] && roundFormatMap[comp][round]) || 'ao5';
     }
 
+    function getRoundSheetNames(comp, round) {
+      const entry = roundSheetsMap[comp] && roundSheetsMap[comp][round];
+      return entry || { public: round, private: round };
+    }
+
     async function renderCompetitorsView(comp) {
       const compName = unslug(comp || currentComp);
       currentComp = compName;
@@ -4077,26 +4076,29 @@
       const compIdx = (masterValues[COMP_HEADER_ROW] || []).indexOf(compName);
       if (compIdx < 0) { listWrap.innerHTML = 'No data'; return; }
 
-      const cached = readCompetitorsCache(compName);
-      let names;
-      if (Array.isArray(cached) && cached.length) {
-        names = cached;
-      } else {
-        const offered = masterValues.slice(FIRST_ROUND_ROW).map(r => r[compIdx]).filter(Boolean);
-        const nameSet = new Set();
+      // Build set of competitor names by fetching each round via getRoundData
+      const offered = masterValues.slice(FIRST_ROUND_ROW).map(r => r[compIdx]).filter(Boolean);
+      const nameSet = new Set();
 
-        await Promise.all(offered.map(async roundName => {
-          const data = await getRoundData(compName, roundName);
-          if (!data || !Array.isArray(data.rows)) return;
-          data.rows.forEach(row => {
-            const n = (row['Name'] || row['name'] || '').toString().trim();
-            if (n) nameSet.add(n);
-          });
-        }));
+      await Promise.all(offered.map(async roundName => {
+        const data = await getRoundData(compName, roundName);
+        if (!data || !Array.isArray(data.rows)) return;
+        // rows may be arrays (if headers are array) or objects; normalize
+        const headers = Array.isArray(data.headers) ? data.headers.map(h => (h||'').toString().trim()) : [];
+        data.rows.forEach(row => {
+          let n = '';
+          if (Array.isArray(row)) {
+            const nameIdx = headers.findIndex(h => /name/i.test(h));
+            n = nameIdx >= 0 ? (row[nameIdx] || '') : (row[1] || '');
+          } else if (row && typeof row === 'object') {
+            n = (row['Name'] || row['name'] || '') + '';
+          }
+          n = (n || '').toString().trim();
+          if (n) nameSet.add(n);
+        });
+      }));
 
-        names = Array.from(nameSet).sort((a,b) => a.localeCompare(b));
-        writeCompetitorsCache(compName, names);
-      }
+      const names = Array.from(nameSet).sort((a,b) => a.localeCompare(b));
 
       function renderList(q='') {
         const ql = q.trim().toLowerCase();
@@ -4122,424 +4124,310 @@
       renderList('');
     }
 
-    // Replace or add these two functions in your index.html script.
-    // They use the existing `supabase` client and the global variables
-    // `currentComp`, `currentRound`, `roundFormatMap`, `roundAdvanceMap`,
-    // `renderSolvesCell`, `csToDisplay`, and `isFewestMovesEvent`.
+    async function loadLeaderboard(silent = false) {
+      // normalize silent parameter
+      if (typeof silent === 'object' && silent !== null) silent = !!silent.silent;
+      silent = !!silent;
 
-    // Fetch competitions and rounds metadata from Supabase and populate UI.
-    async function fetchMeta() {
-      try {
-        // Clear previous state
-        document.getElementById('competitions-list').innerHTML = '';
-        document.getElementById('sidebar-events-list').innerHTML = '';
-        roundFormatMap = {};
-        roundAdvanceMap = {};
+      if (!currentComp || !currentRound) return;
 
-        // Fetch unlocked competitions (show live/unlocked ones first)
-        const { data: comps, error: compErr } = await supabaseClient
-          .from('competitions')
-          .select('id, name, date, venue, locked')
-          .order('date', { ascending: true });
+      function dbg(...args) { try { console.debug('[LSC loadLeaderboard]', ...args); } catch (e) {} }
 
-        if (compErr) throw compErr;
-        if (!comps || comps.length === 0) {
-          document.getElementById('competitions-list').textContent = 'No competitions found.';
-          return;
-        }
-
-        // If no currentComp set, pick the first competition
-        if (!currentComp) {
-          currentComp = comps[0].id;
-        }
-
-      } catch (err) {
-        console.error('fetchMeta error', err);
-        document.getElementById('competitions-list').textContent = 'Failed to load competitions.';
+      // loading UI
+      let loadingMsg = document.getElementById('loading-message');
+      if (!loadingMsg) {
+        const els = document.querySelectorAll('#loading-message');
+        loadingMsg = els && els[0];
       }
-    }
-
-    // Fetch rounds for a competition and render round cards + set currentRound
-    async function getEventsForComp(compId) {
-      try {
-        const { data: rounds, error } = await supabaseClient
-          .from('rounds')
-          .select('id, event_id, round_code, format, advance_to_next')
-          .eq('comp_id', compId)
-          .order('id', { ascending: true });
-
-        if (error) throw error;
-
-        // Save metadata maps
-        rounds.forEach(r => {
-          roundFormatMap[r.id] = r.format;
-          roundAdvanceMap[r.id] = r.advance_to_next;
-        });
-
-        // Render sidebar events list (simple list of rounds)
-        const sidebar = document.getElementById('sidebar-events-list');
-        sidebar.innerHTML = '';
-        const roundsWrap = document.getElementById('live-round-cards');
-        if (roundsWrap) roundsWrap.innerHTML = '';
-
-        rounds.forEach(r => {
-          const ev = document.createElement('div');
-          ev.className = 'ev';
-          ev.style.cursor = 'pointer';
-          ev.style.padding = '8px';
-          ev.style.borderRadius = '6px';
-          ev.style.border = '1px solid transparent';
-          ev.onclick = async () => {
-            currentRound = r.id;
-            currentRoundMeta = r;
-            // show summary area
-            document.getElementById('live-competition-summary').style.display = 'block';
-            document.getElementById('live-comp-title').textContent = `${r.event_id} — Round ${r.round_code}`;
-            document.getElementById('live-comp-meta').textContent = `Format: ${r.format} · Advance: ${r.advance_to_next}`;
-            await renderLeaderboard(); // load results for this round
-          };
-
-          const label = document.createElement('div');
-          label.className = 'label';
-          label.textContent = `${r.event_id} R${r.round_code} (${r.format})`;
-          ev.appendChild(label);
-          sidebar.appendChild(ev);
-        });
-
-        // If no currentRound set, pick the first round
-        if (!currentRound && rounds.length) {
-          currentRound = rounds[0].id;
-          currentRoundMeta = rounds[0];
-          document.getElementById('live-competition-summary').style.display = 'block';
-          document.getElementById('live-comp-title').textContent = `${rounds[0].event_id} — Round ${rounds[0].round_code}`;
-          document.getElementById('live-comp-meta').textContent = `Format: ${rounds[0].format} · Advance: ${rounds[0].advance_to_next}`;
-        }
-
-        // Load leaderboard for the selected/current round
-        if (currentRound) {
-          await renderLeaderboard();
-        }
-
-      } catch (err) {
-        console.error('getEventsForComp error', err);
-        document.getElementById('sidebar-events-list').textContent = 'Failed to load rounds.';
+      if (!silent && loadingMsg) {
+        loadingMsg.textContent = 'Loading…';
+        loadingMsg.style.display = 'block';
       }
-    }
 
-    // Load leaderboard for currentRound from Supabase, compute best/average and ranking,
-    // then render the leaderboard table. This function computes ao5/mo3/bo* in JS.
-    async function renderLeaderboard() {
-      try {
-        if (!currentRound) {
-          document.getElementById('leaderboard').querySelector('tbody').innerHTML = '';
-          document.getElementById('leaderboard').querySelector('thead').innerHTML = '';
-          return;
+      // cancel prior request
+      try { if (currentFetchAbort) currentFetchAbort.abort(); } catch (e) {}
+      currentFetchAbort = new AbortController();
+      const signal = currentFetchAbort.signal;
+
+      const isLocked = !!compLockMap[currentComp];
+      const compParam = encodeURIComponent(currentComp);
+
+      // candidates to try
+      const candidates = (typeof getCanonicalTabCandidates === 'function')
+        ? getCanonicalTabCandidates(currentComp, currentRound)
+        : [currentRound];
+
+      dbg('candidates', candidates);
+
+      // helper keys
+      const makeKeys = (comp, round) => {
+        const encComp = encodeURIComponent(String(comp || ''));
+        const encRound = encodeURIComponent(String(round || ''));
+        return [`${encComp}|${encRound}`, `${comp}/${round}`];
+      };
+
+      // 1) Try /api/read for each candidate
+      for (const cand of candidates) {
+        const roundParam = encodeURIComponent(cand);
+        const url = `${READ_ENDPOINT}?comp=${compParam}&round=${roundParam}&public=true&format=json`;
+        dbg('trying /api/read', url);
+        try {
+          const res = await fetch(url, { signal });
+          if (!res.ok) { dbg('read status', res.status, cand); continue; }
+          let json;
+          try { json = await res.json(); } catch (e) { dbg('json parse fail', cand, e); continue; }
+
+          let headers = json && json.headers;
+          let rows = json && json.rows;
+          if ((!headers || !Array.isArray(rows)) && Array.isArray(json && json.values)) {
+            headers = json.values[0] || [];
+            rows = json.values.slice(1) || [];
+          }
+
+          if (Array.isArray(headers) && Array.isArray(rows) && rows.length) {
+            const [encKey, slashKey] = makeKeys(currentComp, cand);
+
+            
+
+            const [encKeyUI, slashKeyUI] = makeKeys(currentComp, currentRound || '');
+
+            
+            
+            renderLeaderboard(headers, rows);
+            if (loadingMsg) loadingMsg.style.display = 'none';
+            dbg('rendered from /api/read', cand);
+            return;
+          } else {
+            dbg('/api/read returned no usable rows for', cand);
+          }
+        } catch (err) {
+          if (err && err.name === 'AbortError') { dbg('fetch aborted /api/read'); break; }
+          dbg('/api/read error for', cand, err);
+          // try next candidate
         }
+      }
 
-        // Fetch round metadata (format) if not already present
-        let format = roundFormatMap[currentRound] || (currentRoundMeta && currentRoundMeta.format) || 'ao5';
+      // 2) If /api/read didn't return usable rows, try public Sheets API batchGet directly for each candidate
+      // Use the spreadsheet id from compSheetMap for this competition (fallback to MASTER_SHEET_ID)
+      const sheetIdForComp = compSheetMap[currentComp] || MASTER_SHEET_ID;
+      const sheetBase = `https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(sheetIdForComp)}/values:batchGet`;
 
-        // Fetch results rows for this round
-        const { data: rows, error } = await supabaseClient
-          .from('round_results')
-          .select('id, competitor_name, competitor_id, attempt1, attempt2, attempt3, attempt4, attempt5')
-          .eq('round_id', currentRound);
-
-        if (error) throw error;
-
-        // Helper: convert stored DB values (centiseconds integer, -1 DNF, -2 DNS, null/0 missing)
-        function normalizeAttempt(v) {
-          if (v === null || v === undefined || v === 0) return null;
-          return Number(v); // centiseconds or -1/-2
-        }
-
-        // Compute best/average for a single row depending on format
-        function computeForRow(attempts, fmt) {
-          const a = attempts.map(normalizeAttempt);
-          // treat special values for comparisons
-          const finiteVals = a.filter(v => v !== null && v !== -1 && v !== -2 && Number.isFinite(v));
-          // Best: smallest centiseconds among finite values; if none, null
-          const best = finiteVals.length ? Math.min(...finiteVals) : null;
-
-          // Ao5: need 5 attempts (non-null) to compute average (drop best & worst)
-          if (fmt === 'ao5') {
-            const nonNullCount = a.filter(v => v !== null).length;
-            if (nonNullCount < 5) return { best, average: null, displayValue: best };
-            // For ao5, DNF/DNS are treated as very large when computing average
-            const normalized = a.map(v => {
-              if (v === null) return null;
-              if (v === -1 || v === -2) return Number.POSITIVE_INFINITY;
-              return v;
+      for (const cand of candidates) {
+        // The meta tab naming convention uses the literal "public" suffix: "{event} - {round}public"
+        const tabName = `${cand}public`;
+        // guard against single-quote in tab name: escape single quotes inside the single-quoted range string
+        const safeTab = tabName.replace(/'/g, "\\'");
+        const range = `'${safeTab}'!A:Z`;
+        const url = `${sheetBase}?ranges=${encodeURIComponent(range)}&majorDimension=ROWS&key=${encodeURIComponent(API_KEY)}`;
+        dbg('trying Sheets API (sheetId,tab)', sheetIdForComp, tabName, url);
+        try {
+          const res = await fetch(url, { signal });
+          if (!res.ok) { dbg('sheets.status', res.status, cand, sheetIdForComp); continue; }
+          const body = await res.json();
+          const vr = Array.isArray(body.valueRanges) && body.valueRanges[0];
+          const vals = vr && Array.isArray(vr.values) ? vr.values : null;
+          if (Array.isArray(vals) && vals.length >= 1) {
+            const headers = vals[0] || [];
+            const rows = vals.slice(1).map(r => {
+              const obj = {};
+              headers.forEach((h, idx) => { obj[h] = (r[idx] !== undefined ? r[idx] : ''); });
+              return obj;
             });
-            const sorted = normalized.slice().sort((x,y) => (x===null?Infinity:x) - (y===null?Infinity:y));
-            // drop first and last (best/worst)
-            const middle = sorted.slice(1,4);
-            const sum = middle.reduce((s, x) => s + (x === Number.POSITIVE_INFINITY ? 0 : x), 0);
-            // if any of middle are POSITIVE_INFINITY, average is POSITIVE_INFINITY -> treat as null
-            if (middle.some(x => x === Number.POSITIVE_INFINITY)) {
-              return { best, average: null, displayValue: null };
+            if (Array.isArray(headers) && Array.isArray(rows) && rows.length) {
+              const [encKey, slashKey] = makeKeys(currentComp, cand);
+
+              
+
+              const [encKeyUI, slashKeyUI] = makeKeys(currentComp, currentRound || '');
+
+
+              
+              renderLeaderboard(headers, rows);
+              if (loadingMsg) loadingMsg.style.display = 'none';
+              dbg('rendered from Sheets API (comp sheet)', cand, sheetIdForComp, tabName);
+              return;
             }
-            const avg = Math.round(sum / 3);
-            return { best, average: avg, displayValue: avg };
+          } else {
+            dbg('Sheets API returned no values for', cand, sheetIdForComp, body);
           }
-
-          // mo3: need 3 attempts
-          if (fmt === 'mo3' || fmt === 'mean3' || fmt === 'mof3') {
-            const nonNullCount = a.filter(v => v !== null).length;
-            if (nonNullCount < 3) return { best, average: null, displayValue: best };
-            // If any DNF (-1) present, average is null (or treated per rules) — here we treat DNF as POS_INF
-            const normalized = a.map(v => {
-              if (v === null) return null;
-              if (v === -1 || v === -2) return Number.POSITIVE_INFINITY;
-              return v;
-            });
-            const three = normalized.slice(0,3);
-            if (three.some(x => x === Number.POSITIVE_INFINITY)) return { best, average: null, displayValue: null };
-            const avg = Math.round(three.reduce((s,x)=>s+x,0) / 3);
-            return { best, average: avg, displayValue: avg };
-          }
-
-          // bo3/bo2/bo1: best is the primary metric (lowest)
-          if (fmt === 'bo3' || fmt === 'bo2' || fmt === 'bo1') {
-            return { best, average: null, displayValue: best };
-          }
-
-          // default fallback
-          return { best, average: null, displayValue: best };
+        } catch (err) {
+          if (err && err.name === 'AbortError') { dbg('fetch aborted sheets'); break; }
+          dbg('Sheets API fetch error', cand, sheetIdForComp, err);
         }
+      }
 
-        // Build computed rows
-        const computed = (rows || []).map(r => {
-          const attempts = [
-            r.attempt1 === undefined ? null : r.attempt1,
-            r.attempt2 === undefined ? null : r.attempt2,
-            r.attempt3 === undefined ? null : r.attempt3,
-            r.attempt4 === undefined ? null : r.attempt4,
-            r.attempt5 === undefined ? null : r.attempt5
-          ];
-          const comp = computeForRow(attempts, format);
-          return {
-            id: r.id,
-            name: r.competitor_name,
-            competitor_id: r.competitor_id,
-            attempts,
-            best: comp.best,
-            average: comp.average,
-            displayValue: comp.displayValue
-          };
-        });
-
-        // Determine ranking key: for ao5/mo3 use average (if available), otherwise best; for bo* use best
-        function rankingKey(row) {
-          if (format === 'ao5' || format === 'mo3') {
-            // prefer average; if null, fallback to best (so partial results still show)
-            return row.average !== null && row.average !== undefined ? row.average : (row.best !== null ? row.best : Number.POSITIVE_INFINITY);
-          }
-          // bo* and others: use best
-          return row.best !== null ? row.best : Number.POSITIVE_INFINITY;
+      // 3) try getRoundData fallback (it itself tries candidates)
+      try {
+        dbg('trying getRoundData fallback for', currentComp, currentRound);
+        const fallback = await getRoundData(currentComp, currentRound);
+        if (fallback && Array.isArray(fallback.headers) && Array.isArray(fallback.rows) && fallback.rows.length) {
+          renderLeaderboard(fallback.headers, fallback.rows);
+          if (loadingMsg) loadingMsg.style.display = 'none';
+          dbg('rendered fallback via getRoundData');
+          return;
+        } else {
+          dbg('getRoundData returned no usable data');
         }
-
-        // Sort rows ascending by rankingKey; handle ties by name
-        computed.sort((a,b) => {
-          const ka = rankingKey(a);
-          const kb = rankingKey(b);
-          if (ka === kb) {
-            // tie-breaker: best then name
-            const ba = a.best === null ? Number.POSITIVE_INFINITY : a.best;
-            const bb = b.best === null ? Number.POSITIVE_INFINITY : b.best;
-            if (ba !== bb) return ba - bb;
-            return a.name.localeCompare(b.name);
-          }
-          return ka - kb;
-        });
-
-        // Render table header
-        const thead = document.getElementById('leaderboard').querySelector('thead');
-        const tbody = document.getElementById('leaderboard').querySelector('tbody');
-        thead.innerHTML = '';
-        tbody.innerHTML = '';
-
-        const headerRow = document.createElement('tr');
-        ['#', 'Name', 'Attempts', (format === 'ao5' || format === 'mo3') ? 'Average' : 'Best'].forEach(h => {
-          const th = document.createElement('th');
-          th.textContent = h;
-          headerRow.appendChild(th);
-        });
-        thead.appendChild(headerRow);
-
-        // Render each competitor row
-        computed.forEach((row, idx) => {
-          const tr = document.createElement('tr');
-
-          // Rank (1-based)
-          const tdRank = document.createElement('td');
-          tdRank.style.textAlign = 'center';
-          tdRank.textContent = (idx + 1).toString();
-          tr.appendChild(tdRank);
-
-          // Name (clickable to open competitor results view)
-          const tdName = document.createElement('td');
-          tdName.style.fontWeight = '600';
-          tdName.style.cursor = 'pointer';
-          tdName.textContent = row.name;
-          tdName.onclick = () => {
-            // show competitor results view
-            renderCompetitorResultsView(row.name);
-          };
-          tr.appendChild(tdName);
-
-          // Attempts cell (use existing renderSolvesCell helper)
-          const tdAttempts = document.createElement('td');
-          renderSolvesCell(tdAttempts, row.attempts, null, null, currentRoundMeta ? currentRoundMeta.event_id : '');
-          tr.appendChild(tdAttempts);
-
-          // Best/Average display
-          const tdVal = document.createElement('td');
-          tdVal.style.textAlign = 'center';
-          const display = (format === 'ao5' || format === 'mo3') ? row.average : row.best;
-          tdVal.textContent = display === null || display === undefined ? '' : csToDisplay(display);
-          tr.appendChild(tdVal);
-
-          tbody.appendChild(tr);
-        });
-
-      } catch (err) {
-        console.error('renderLeaderboard error', err);
-        const tbody = document.getElementById('leaderboard').querySelector('tbody');
-        if (tbody) tbody.innerHTML = '<tr><td colspan="4">Failed to load leaderboard.</td></tr>';
+      } catch (e) {
+        dbg('getRoundData error', e);
       }
     }
 
     // ===== Private editor: load CSV for inputs (reuse parser) =====
+    // robust CSV parser -> returns { headers:[], rows:[[]] }
     function parseCSV(text) {
+      // simple RFC4180 parser (handles quoted fields, CRLF)
       const rows = [];
+      let cur = '';
       let row = [];
-      let value = '';
       let inQuotes = false;
-
       for (let i = 0; i < text.length; i++) {
-        const c = text[i];
+        const ch = text[i];
+        const next = text[i+1];
         if (inQuotes) {
-          if (c === '"') {
-            if (text[i + 1] === '"') { value += '"'; i++; }
-            else { inQuotes = false; }
-          } else { value += c; }
+          if (ch === '"' && next === '"') { cur += '"'; i++; continue; }
+          if (ch === '"') { inQuotes = false; continue; }
+          cur += ch;
         } else {
-          if (c === '"') inQuotes = true;
-          else if (c === ',') { row.push(value); value = ''; }
-          else if (c === '\n' || c === '\r') {
-            if (c === '\r' && text[i + 1] === '\n') i++;
-            row.push(value); value = '';
-            rows.push(row); row = [];
-          } else { value += c; }
+          if (ch === '"') { inQuotes = true; continue; }
+          if (ch === ',' ) { row.push(cur); cur = ''; continue; }
+          if (ch === '\r') continue;
+          if (ch === '\n') { row.push(cur); rows.push(row); row = []; cur = ''; continue; }
+          cur += ch;
         }
       }
-      if (value.length > 0 || row.length > 0) { row.push(value); rows.push(row); }
-      return rows.filter(r => r.length > 0);
+      // push last
+      if (cur !== '' || row.length) { row.push(cur); rows.push(row); }
+      const headers = rows.length ? rows[0].map(h => (h||'').toString().trim()) : [];
+      const dataRows = rows.slice(1);
+      return { headers, rows: dataRows };
     }
 
-    function loadEditableSheet() {
-      document.getElementById('leaderboard').style.display = 'none';
-      if (!currentComp || !currentRound) return;
+    async function loadEditableSheet(compName, sheetName) {
+      // sheetName is the human round name or sheet tab name
+      currentSheetName = sheetName || '';
+      const panel = document.getElementById('editor-panel');
+      const editTable = document.getElementById('edit-table');
+      panel.style.display = 'block';
+      document.getElementById('editing-sheet-name').textContent = currentSheetName;
 
-      const privateUrl = `${READ_ENDPOINT}?comp=${encodeURIComponent(currentComp)}&round=${encodeURIComponent(currentRound)}&public=false&format=csv`;
+      // fetch via Netlify function
+      const url = `/.netlify/functions/sheets-read?comp=${encodeURIComponent(compName)}&round=${encodeURIComponent(sheetName)}`;
+      const res = await fetch(url);
+      if (!res.ok) {
+        editTable.querySelector('thead').innerHTML = '';
+        editTable.querySelector('tbody').innerHTML = '';
+        editTable.insertAdjacentHTML('beforeend', '<tbody><tr><td style="padding:8px;color:#900">Failed to load sheet</td></tr></tbody>');
+        return;
+      }
+      const json = await res.json();
+      let headers = json.headers;
+      let rows = json.rows;
+      if ((!headers || !Array.isArray(rows)) && Array.isArray(json.values)) {
+        headers = json.values[0] || [];
+        rows = json.values.slice(1) || [];
+      }
+      headers = headers || [];
+      rows = rows || [];
 
-      fetch(privateUrl)
-        .then(res => res.text())
-        .then(text => {
-          const rows = parseCSV(text.trim());
-          const headers = rows[0] || [];
-          const thead = document.querySelector('#edit-table thead');
-          const tbody = document.querySelector('#edit-table tbody');
+      // Build table header
+      const thead = editTable.querySelector('thead');
+      const tbody = editTable.querySelector('tbody');
+      thead.innerHTML = '';
+      tbody.innerHTML = '';
 
-          thead.innerHTML = '';
-          tbody.innerHTML = '';
+      const trh = document.createElement('tr');
+      headers.forEach(h => {
+        const th = document.createElement('th');
+        th.style.padding = '6px';
+        th.textContent = h || '';
+        trh.appendChild(th);
+      });
+      thead.appendChild(trh);
 
-          // Show columns with indices 2 through 10
-          const visibleIndices = Array.from({ length: 9 }, (_, i) => i + 2); // [2..10]
-          const editableIndices = visibleIndices.filter(i => i >= 6);       // [6..10]
-
-          const headerRow = document.createElement('tr');
-          visibleIndices.forEach(i => {
-            const th = document.createElement('th');
-            th.textContent = headers[i] ?? `Col ${i + 1}`;
-            headerRow.appendChild(th);
-          });
-          thead.appendChild(headerRow);
-
-          rows.slice(1).forEach(row => {
-            const tr = document.createElement('tr');
-            visibleIndices.forEach(i => {
-              const td = document.createElement('td');
-              const value = (row[i] ?? '').trim();
-              if (editableIndices.includes(i)) {
-                const input = document.createElement('input');
-                input.value = value;
-                input.setAttribute('data-col-index', i.toString());
-                td.appendChild(input);
-              } else {
-                td.textContent = value;
-              }
-              tr.appendChild(td);
-            });
-            tbody.appendChild(tr);
-          });
-        })
-        .catch(err => {
-          document.getElementById('submit-status').textContent = "Error loading private sheet: " + err.message;
-          document.getElementById('submit-status').style.display = 'block';
-          setTimeout(() => {
-            document.getElementById('submit-status').style.display = 'none';
-          }, 3000);
+      // Build rows with inputs
+      rows.forEach((r, ri) => {
+        const tr = document.createElement('tr');
+        const cells = Array.isArray(r) ? r : headers.map(h => r[h] || '');
+        cells.forEach((c, ci) => {
+          const td = document.createElement('td');
+          td.style.padding = '6px';
+          const input = document.createElement('input');
+          input.value = (c === null || c === undefined) ? '' : String(c);
+          input.dataset.row = ri;
+          input.dataset.col = ci;
+          input.style.width = '100%';
+          td.appendChild(input);
+          tr.appendChild(td);
         });
+        tbody.appendChild(tr);
+      });
+
+      // store a snapshot for submitEdits to compute ranges
+      panel._editable = { compName, sheetName, headers, rowsCount: rows.length };
     }
 
     async function submitEdits() {
-      const table = document.querySelector('#edit-table');
-      const rows  = Array.from(table.rows).slice(1);
-      const data = rows.map(row => {
-        return Array.from(row.cells)
-          .map(cell => {
-            const input = cell.querySelector('input');
-            if (input) {
-              return {
-                colIndex: parseInt(input.getAttribute('data-col-index'), 10),
-                value: input.value
-              };
-            }
-            return null;
-          })
-          .filter(cell => cell !== null);
+      const panel = document.getElementById('editor-panel');
+      if (!panel || !panel._editable) return;
+      const { compName, sheetName, headers } = panel._editable;
+      const editTable = document.getElementById('edit-table');
+      const tbody = editTable.querySelector('tbody');
+      const rows = Array.from(tbody.rows).map(tr => {
+        return Array.from(tr.cells).map(td => {
+          const inp = td.querySelector('input');
+          return inp ? inp.value : td.textContent || '';
+        });
       });
 
-      const payload = { comp: currentComp, round: currentRound, data };
+      // Build values with header row first
+      const values = [ headers, ...rows ];
 
-      fetch(WRITE_ENDPOINT, {
+      // Determine range: write to sheetName!A1:{lastCol}{lastRow}
+      const lastColIndex = Math.max(0, headers.length - 1);
+      const lastColLetter = (colIndex => {
+        // convert 0-based index to A..Z..AA
+        let s = '';
+        let n = colIndex + 1;
+        while (n > 0) {
+          const rem = (n - 1) % 26;
+          s = String.fromCharCode(65 + rem) + s;
+          n = Math.floor((n - 1) / 26);
+        }
+        return s;
+      })(lastColIndex);
+      const lastRow = values.length;
+      const range = `${sheetName}!A1:${lastColLetter}${lastRow}`;
+
+      // POST to Netlify write function
+      const payload = {
+        spreadsheetId: process.env && process.env.GOOGLE_SHEETS_SPREADSHEET_ID ? process.env.GOOGLE_SHEETS_SPREADSHEET_ID : undefined,
+        range,
+        values
+      };
+
+      // If you want to pass spreadsheetId from client, include it; otherwise Netlify uses env var
+      const res = await fetch('/.netlify/functions/sheets-write', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
-      })
-      .then(res => res.json())
-      .then(msg => {
-        const text = msg.status
-          ? `Submitted: ${msg.status} (${msg.rows || 0} rows)`
-          : `Error: ${JSON.stringify(msg)}`;
-        document.getElementById('submit-status').textContent = text;
-        document.getElementById('submit-status').style.color = msg.status ? 'green' : 'red';
-      })
-      .catch(err => {
-        document.getElementById('submit-status').textContent = `Fetch error: ${err.message}`;
-        document.getElementById('submit-status').style.color = 'red';
       });
 
-      document.getElementById('editor-panel').style.display = 'none';
-      document.getElementById('submit-status').style.display = 'block';
-      renderLeaderboard();
-
-      document.getElementById('leaderboard').style.display = 'table';
-      setTimeout(() => {
-        document.getElementById('submit-status').style.display = 'none';
-      }, 3000);
+      if (!res.ok) {
+        const txt = await res.text();
+        document.getElementById('submit-status').textContent = 'Save failed';
+        console.error('submitEdits failed', txt);
+        return;
+      }
+      const json = await res.json();
+      document.getElementById('submit-status').textContent = 'Saved';
+      // hide editor or reload sheet
+      setTimeout(() => { document.getElementById('submit-status').textContent = ''; }, 1500);
+      // Optionally reload meta and leaderboard
+      await fetchMeta();
+      if (typeof loadLeaderboard === 'function') {
+        try { await loadLeaderboard({ silent: true }); } catch (e) {}
+      }
     }
 
     function cancelEdit() {
@@ -4556,7 +4444,7 @@
         currentComp && currentRound &&
         !compLockMap[currentComp]
       ) {
-        renderLeaderboard({ silent: true });
+        loadLeaderboard({ silent: true });
       }
     }, 15000);
 
