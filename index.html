@@ -310,7 +310,7 @@
       <div class="section">
         <h2 style="color:#1976D2;">Live Results</h2>
         <p>Find out about competition results. At a competition now and want to see the results? Check out LSC Cubing Club Live!</p>
-        <a href="https://live.lsccubingclub.netlify.app" class="btn-direct" style="
+        <a href="https://lsccubingclub-live.netlify.app" class="btn-direct" style="
           display:inline-block;
           padding:12px 24px;
           background:#1976D2;
@@ -324,7 +324,7 @@
 
       <div class="section" style="margin-top:40px;">
         <h2 style="color:#1976D2;">Competitions</h2>
-        <p>Browse past competitions and full results.</p>
+        <p>Browse past LSC competitions and full results.</p>
         <a href="/competitions" class="btn-direct" style="
           display:inline-block;
           padding:12px 24px;
@@ -365,20 +365,12 @@
           margin-top:12px;
         ">View rankings</a>
       </div>
-
-
-      <!-- About Us -->
-      <div class="section" style="margin-top:40px;">
-        <h2 style="color:#1976D2;">About Us</h2>
-        <p>
-            The LSC Cubing Club is a passionate community of speedcubers in La Salle College. We host regular competitions, workshops, and meetups to promote the art and science of cubing. Whether you're a beginner or a seasoned solver, you'll find a place here to grow, compete, and connect.
-        </p>
-      </div>
     </section>
 
     <!-- Footer -->
     <footer style="text-align:center; padding:20px; font-size:0.9em; color:#666;">
-      created by lai
+      Created by Lai<br>
+      Last updated: 07 Dec 2025
     </footer>
   </main>
 
@@ -1451,8 +1443,6 @@
         document.getElementById('comp-results').style.display = '';
         await renderResults();
       }
-
-
     }
 
     // Router integration
@@ -1644,9 +1634,6 @@
       });
     }
 
-
-    // ------------------ Mobile helpers (formatting + rounding) ------------------
-    // small HTML escape helper
     function escapeHtml(s) {
       if (s == null) return '';
       return String(s)
@@ -1666,6 +1653,70 @@
       const box = document.createElement('div'); box.id = 'row-detail-box';
       box.style.maxWidth = '92%'; box.style.width = '420px'; box.style.padding = '16px';
       ov.appendChild(box); document.body.appendChild(ov);
+    }
+
+
+    function formatMultiBlind(encoded) {
+      if (encoded === null || encoded === undefined) return null;
+      const n = Number(encoded);
+      if (!Number.isFinite(n)) return null;
+
+      if (n === -1) return 'DNF';
+      if (n === -2) return 'DNS';
+
+      const abs = Math.abs(Math.trunc(n));
+      // ensure 9 digits: AB (2) + TTTTT (5) + CD (2)
+      const s = String(abs).padStart(9, '0');
+      const AB = parseInt(s.slice(0, 2), 10);
+      const timeSeconds = parseInt(s.slice(2, 7), 10);
+      const unsolved = parseInt(s.slice(7, 9), 10);
+
+      if (!Number.isFinite(AB) || !Number.isFinite(timeSeconds) || !Number.isFinite(unsolved)) return null;
+
+      // solved - unsolved = 99 - AB  => solved = (99 - AB) + unsolved
+      const solvedMinusUnsolved = 99 - AB;
+      const solved = solvedMinusUnsolved + unsolved;
+      const attempted = solved + unsolved;
+
+      if (!Number.isFinite(solved) || !Number.isFinite(attempted)) return null;
+      if (solved < 0 || attempted < 0) return null;
+      if (solved > 99 || attempted > 99) return null;
+
+      // format time as M:SS (minutes:seconds)
+      const mins = Math.floor(timeSeconds / 60);
+      const secs = timeSeconds % 60;
+      const timeStr = `${mins}:${String(secs).padStart(2, '0')}`;
+
+      return `${solved}/${attempted} ${timeStr}`;
+    }
+
+    function formatValueForDisplay(ev, raw, kind) {
+      if (raw === null || raw === undefined || raw === '') return '';
+      if (raw === -1) return 'DNF';
+      if (raw === -2) return 'DNS';
+      if (ev === '333fm') {
+        if (kind === 'average') {
+          return (Number(raw) / 100).toFixed(2);
+        }
+        return String(Math.round(Number(raw)));
+      }
+      if (ev === '333mbf') {
+        const mbf = formatMultiBlind(raw);
+        return mbf === null ? '' : mbf;
+      }
+      const n = Number(raw);
+      if (!Number.isFinite(n)) return String(raw);
+      const seconds = n / 100.0;
+      if (seconds >= 60) {
+        const mins = Math.floor(seconds / 60);
+        const secs = seconds - mins * 60;
+        const secsWhole = Math.floor(secs);
+        const secsFrac = Math.round((secs - secsWhole) * 100);
+        const secsStr = `${String(secsWhole).padStart(2,'0')}.${String(secsFrac).padStart(2,'0')}`;
+        return `${mins}:${secsStr}`;
+      } else {
+        return seconds.toFixed(2);
+      }
     }
 
     async function renderRankingsView(eventId = '', category = 'single') {
@@ -1710,29 +1761,6 @@
       let resultsJson = {}, personsJson = {};
       try { resultsJson = await (await fetch('/data/rankings_by_results.json')).json(); } catch(e){ resultsJson = {}; }
       try { personsJson = await (await fetch('/data/rankings_by_person.json')).json(); } catch(e){ personsJson = {}; }
-
-      // value formatting helpers (kept minimal and consistent)
-      function formatValueForDisplay(ev, raw, kind) {
-        if (raw === null || raw === undefined || raw === '') return '';
-        if (raw === -1) return 'DNF';
-        if (raw === -2) return 'DNS';
-        if (ev === '333fm') {
-          if (kind === 'average') return (Number(raw) / 100).toFixed(2);
-          return String(Math.round(Number(raw)));
-        }
-        const n = Number(raw);
-        if (!Number.isFinite(n)) return String(raw);
-        const seconds = n / 100.0;
-        if (seconds >= 60) {
-          const mins = Math.floor(seconds / 60);
-          const secs = seconds - mins * 60;
-          const secsWhole = Math.floor(secs);
-          const secsFrac = Math.round((secs - secsWhole) * 100);
-          return `${mins}:${String(secsWhole).padStart(2,'0')}.${String(secsFrac).padStart(2,'0')}`;
-        } else {
-          return seconds.toFixed(2);
-        }
-      }
 
       function attemptLabel(ev, a, kind) {
         if (a === null || a === undefined) return '';
@@ -2018,7 +2046,7 @@
           const rankNum = idx + 1;
           const rawName = rowObj.person_name || '';
           const personSlug = slugNameForPerson(rawName);
-          const nameLink = `<a href="/persons/${encodeURIComponent(personSlug)}" style="color:#1976D2;text-decoration:none">${escapeHtml(rawName)}</a>`;
+          const nameLink = `<div style="color:#1976D2;text-decoration:none">${escapeHtml(rawName)}</div>`;
           const competitionDisplay = rowObj.competition_id;
           const resultDisplay = formatValueForDisplay(state.event, rowObj.value, state.type === 'average' ? 'average' : 'single');
 
@@ -2138,31 +2166,6 @@
         return;
       }
 
-      function formatValueForDisplay(ev, raw, kind) {
-        if (raw === null || raw === undefined || raw === '') return '';
-        if (raw === -1) return 'DNF';
-        if (raw === -2) return 'DNS';
-        if (ev === '333fm') {
-          if (kind === 'average') {
-            return (Number(raw) / 100).toFixed(2);
-          }
-          return String(Math.round(Number(raw)));
-        }
-        const n = Number(raw);
-        if (!Number.isFinite(n)) return String(raw);
-        const seconds = n / 100.0;
-        if (seconds >= 60) {
-          const mins = Math.floor(seconds / 60);
-          const secs = seconds - mins * 60;
-          const secsWhole = Math.floor(secs);
-          const secsFrac = Math.round((secs - secsWhole) * 100);
-          const secsStr = `${String(secsWhole).padStart(2,'0')}.${String(secsFrac).padStart(2,'0')}`;
-          return `${mins}:${secsStr}`;
-        } else {
-          return seconds.toFixed(2);
-        }
-      }
-
       function attemptLabel(ev, a, kind) {
         if (a === null || a === undefined) return '';
         if (a === 0) return '';
@@ -2185,7 +2188,7 @@
         const rawName = obj.person_name || '';
         const nameText = escapeHtml(rawName);
         const personSlug = slugNameForPerson(rawName);
-        const nameLink = `<a href="/persons/${encodeURIComponent(personSlug)}" style="color:#1976D2;text-decoration:none">${nameText}</a>`;
+        const nameLink = `<div style="color:#1976D2;text-decoration:none">${nameText}</div>`;
 
         // Choose the per-result tag to show: average rows -> regional_average_record, single rows -> regional_single_record
         let badgeTag = '';

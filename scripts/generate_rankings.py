@@ -245,25 +245,20 @@ def normalize_attempts(attempts):
     # keep as-is length (do not force pad here) — rendering adapts to round length
     return out
 
-def sort_entries(entries, event_id):
-    # For 333mbf higher is better
-    reverse = (event_id == "333mbf")
-    # sort by numeric value (descending for 333mbf), then by person_name for determinism
-    return sorted(entries, key=lambda x: ((-x["value"]) if reverse else x["value"], x.get("person_name") or ""))
+def sort_entries(entries):
+    return sorted(entries, key=lambda x: (x["value"], x.get("person_name", "")))
 
 def build_rankings_by_results(by_event):
     out = {}
     for ev, entries in by_event.items():
         singles = [e for e in entries if e["type"] == "single"]
         avgs = [e for e in entries if e["type"] == "average"]
-        singles_sorted = sort_entries(singles, ev)
-        avgs_sorted = sort_entries(avgs, ev)
+        singles_sorted = sort_entries(singles)
+        avgs_sorted = sort_entries(avgs)
         out[ev] = {"single": singles_sorted, "average": avgs_sorted}
     return out
 
 def better_for_event(ev, candidate_value, current_value):
-    if ev == "333mbf":
-        return candidate_value > current_value
     return candidate_value < current_value
 
 def build_rankings_by_person(rankings_by_results):
@@ -287,8 +282,8 @@ def build_rankings_by_person(rankings_by_results):
                 per_person_avg[key] = e
         single_list = list(per_person_single.values())
         avg_list = list(per_person_avg.values())
-        single_sorted = sort_entries(single_list, ev)
-        avg_sorted = sort_entries(avg_list, ev)
+        single_sorted = sort_entries(single_list)
+        avg_sorted = sort_entries(avg_list)
         by_person[ev] = {"single": single_sorted, "average": avg_sorted}
     return by_person
 
@@ -300,10 +295,7 @@ def build_records(rankings_by_results):
             entries = data[cat]
             if not entries:
                 continue
-            if ev == "333mbf":
-                best_val = max(e["value"] for e in entries)
-            else:
-                best_val = min(e["value"] for e in entries)
+            best_val = min(e["value"] for e in entries)
             tops = [e for e in entries if e["value"] == best_val]
             recs[ev][cat] = tops
     return recs
