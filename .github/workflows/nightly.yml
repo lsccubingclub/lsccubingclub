@@ -1,7 +1,7 @@
 name: nightly-data
 on:
   schedule:
-    - cron: '0 22 * * *' # daily at 22:00 UTC, change as needed
+    - cron: '0 22 * * 0,2,4' # every Mon, Wed, Fri at 6:00 HKT (22:00 UTC previous day)
   workflow_dispatch:
 
 permissions:
