@@ -8,6 +8,17 @@
     sizes="45x45"
     href="/images/favicon.png"
   />
+    <!-- PNG favicon for modern browsers -->
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+
+  <!-- Apple Touch Icon (for iPhone/iPad home screen) -->
+  <link rel="apple-touch-icon" href="/images/favicon.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.png">
+
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
   <style>
@@ -56,18 +67,13 @@
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
       transition: all 0.3s ease;
       box-sizing: border-box;
-      padding: 20px 40px;
+      padding: 10px 30px;
       margin: 0;
       z-index: 1000;
     }
-    
-    #main-header.shrink {
-      padding: 10px 30px;
-      font-size: 0.6em;
-    }
 
     #main-header #club-name {
-      font-size: 36px;
+      font-size: 28px;
       transition: all 0.3s ease;
     }
 
@@ -370,7 +376,7 @@
     <!-- Footer -->
     <footer style="text-align:center; padding:20px; font-size:0.9em; color:#666;">
       Created by Lai<br>
-      Last updated: 07 Dec 2025
+      Last updated: 08 Dec 2025
     </footer>
   </main>
 
@@ -535,6 +541,16 @@
         .catch(()=> ({}));
       return __wcaCompTitleCachePromise;
     }
+
+    function isMobileView() {
+      const ua = navigator.userAgent.toLowerCase();
+      const isPhone = /iphone|android.*mobile/.test(ua);
+      const isTablet = /ipad|android(?!.*mobile)/.test(ua);
+      const isPortrait = window.matchMedia("(orientation: portrait)").matches;
+      return (((isPhone || isTablet) && isPortrait) || (window.innerWidth <= 640));
+    }
+
+
 
     function csToDisplay(cs) {
       if (cs === null || cs === undefined || cs === 0) return '';
