@@ -3122,6 +3122,26 @@
         "worst_index": 3
       },
       {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
+        "competition_id": "TurninginCorning2025",
+        "round_name": null,
+        "value": 929,
+        "type": "single",
+        "attempt_index": 2,
+        "attempts": [
+          951,
+          1039,
+          929,
+          992,
+          1187
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 2,
+        "worst_index": 4
+      },
+      {
         "person_name": "Lai Pak Kiu",
         "wcaid": "2024KIUL01",
         "competition_id": "HKRCU 20th Anniversary 2025",
@@ -3620,6 +3640,26 @@
         "regional_average_record": null,
         "best_index": 0,
         "worst_index": 1
+      },
+      {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
+        "competition_id": "TurninginCorning2025",
+        "round_name": null,
+        "value": 951,
+        "type": "single",
+        "attempt_index": 0,
+        "attempts": [
+          951,
+          1039,
+          929,
+          992,
+          1187
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 2,
+        "worst_index": 4
       },
       {
         "person_name": "Liu Shing Chak",
@@ -4442,6 +4482,26 @@
         "worst_index": 2
       },
       {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
+        "competition_id": "TurninginCorning2025",
+        "round_name": null,
+        "value": 992,
+        "type": "single",
+        "attempt_index": 3,
+        "attempts": [
+          951,
+          1039,
+          929,
+          992,
+          1187
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 2,
+        "worst_index": 4
+      },
+      {
         "person_name": "Lai Pak Kiu",
         "wcaid": "2024KIUL01",
         "competition_id": "LSC Cube Day 2024",
@@ -4884,6 +4944,26 @@
       {
         "person_name": "Alvin Cheng Hiu Yeung",
         "wcaid": "2019YEUN01",
+        "competition_id": "TurninginCorning2025",
+        "round_name": null,
+        "value": 1016,
+        "type": "single",
+        "attempt_index": 0,
+        "attempts": [
+          1016,
+          1124,
+          1122,
+          1145,
+          1199
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 0,
+        "worst_index": 4
+      },
+      {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
         "competition_id": "Washtenaw Slow Fall 2025",
         "round_name": null,
         "value": 1017,
@@ -4959,6 +5039,26 @@
         "regional_single_record": null,
         "regional_average_record": null,
         "best_index": 2,
+        "worst_index": 4
+      },
+      {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
+        "competition_id": "ElmiraMiracle2025",
+        "round_name": null,
+        "value": 1022,
+        "type": "single",
+        "attempt_index": 1,
+        "attempts": [
+          1278,
+          1022,
+          1080,
+          1027,
+          1409
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 1,
         "worst_index": 4
       },
       {
@@ -5040,6 +5140,26 @@
         "regional_average_record": null,
         "best_index": 2,
         "worst_index": 3
+      },
+      {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
+        "competition_id": "ElmiraMiracle2025",
+        "round_name": null,
+        "value": 1027,
+        "type": "single",
+        "attempt_index": 3,
+        "attempts": [
+          1278,
+          1022,
+          1080,
+          1027,
+          1409
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 1,
+        "worst_index": 4
       },
       {
         "person_name": "Kwok Pak Hei",
@@ -5295,6 +5415,26 @@
           1037,
           1215,
           1357
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 2,
+        "worst_index": 4
+      },
+      {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
+        "competition_id": "TurninginCorning2025",
+        "round_name": null,
+        "value": 1039,
+        "type": "single",
+        "attempt_index": 1,
+        "attempts": [
+          951,
+          1039,
+          929,
+          992,
+          1187
         ],
         "regional_single_record": null,
         "regional_average_record": null,
@@ -6342,6 +6482,26 @@
         "worst_index": 2
       },
       {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
+        "competition_id": "ElmiraMiracle2025",
+        "round_name": null,
+        "value": 1080,
+        "type": "single",
+        "attempt_index": 2,
+        "attempts": [
+          1278,
+          1022,
+          1080,
+          1027,
+          1409
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 1,
+        "worst_index": 4
+      },
+      {
         "person_name": "Liu Shing Chak",
         "wcaid": "2024CHAK03",
         "competition_id": "Hong Kong Championship 2025",
@@ -7162,6 +7322,26 @@
         "worst_index": 3
       },
       {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
+        "competition_id": "TurninginCorning2025",
+        "round_name": null,
+        "value": 1122,
+        "type": "single",
+        "attempt_index": 2,
+        "attempts": [
+          1016,
+          1124,
+          1122,
+          1145,
+          1199
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 0,
+        "worst_index": 4
+      },
+      {
         "person_name": "Kwok Pak Hei",
         "wcaid": "2017HEIK03",
         "competition_id": "Hong Kong Championship 2023",
@@ -7180,6 +7360,26 @@
         "regional_average_record": null,
         "best_index": 4,
         "worst_index": 3
+      },
+      {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
+        "competition_id": "TurninginCorning2025",
+        "round_name": null,
+        "value": 1124,
+        "type": "single",
+        "attempt_index": 1,
+        "attempts": [
+          1016,
+          1124,
+          1122,
+          1145,
+          1199
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 0,
+        "worst_index": 4
       },
       {
         "person_name": "Ip Pak Tou Zachary",
@@ -7820,6 +8020,26 @@
         "regional_average_record": null,
         "best_index": 4,
         "worst_index": 3
+      },
+      {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
+        "competition_id": "TurninginCorning2025",
+        "round_name": null,
+        "value": 1145,
+        "type": "single",
+        "attempt_index": 3,
+        "attempts": [
+          1016,
+          1124,
+          1122,
+          1145,
+          1199
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 0,
+        "worst_index": 4
       },
       {
         "person_name": "Ip Pak Tou Zachary",
@@ -8582,6 +8802,26 @@
         "worst_index": 4
       },
       {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
+        "competition_id": "TurninginCorning2025",
+        "round_name": null,
+        "value": 1187,
+        "type": "single",
+        "attempt_index": 4,
+        "attempts": [
+          951,
+          1039,
+          929,
+          992,
+          1187
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 2,
+        "worst_index": 4
+      },
+      {
         "person_name": "Ip Pak Tou Zachary",
         "wcaid": "2023TOUZ01",
         "competition_id": "LSC Cube Day 2024",
@@ -8940,6 +9180,26 @@
         "regional_average_record": null,
         "best_index": 0,
         "worst_index": 2
+      },
+      {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
+        "competition_id": "TurninginCorning2025",
+        "round_name": null,
+        "value": 1199,
+        "type": "single",
+        "attempt_index": 4,
+        "attempts": [
+          1016,
+          1124,
+          1122,
+          1145,
+          1199
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 0,
+        "worst_index": 4
       },
       {
         "person_name": "Liu Yik Yung",
@@ -10662,6 +10922,26 @@
         "worst_index": 1
       },
       {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
+        "competition_id": "ElmiraMiracle2025",
+        "round_name": null,
+        "value": 1278,
+        "type": "single",
+        "attempt_index": 0,
+        "attempts": [
+          1278,
+          1022,
+          1080,
+          1027,
+          1409
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 1,
+        "worst_index": 4
+      },
+      {
         "person_name": "Ip Pak Tou Zachary",
         "wcaid": "2023TOUZ01",
         "competition_id": "Hong Kong Cube Day 2023",
@@ -12360,6 +12640,26 @@
         "regional_average_record": null,
         "best_index": 2,
         "worst_index": 3
+      },
+      {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
+        "competition_id": "ElmiraMiracle2025",
+        "round_name": null,
+        "value": 1409,
+        "type": "single",
+        "attempt_index": 4,
+        "attempts": [
+          1278,
+          1022,
+          1080,
+          1027,
+          1409
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 1,
+        "worst_index": 4
       },
       {
         "person_name": "Yiu Cheuk Fung",
@@ -19481,6 +19781,25 @@
         "worst_index": 2
       },
       {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
+        "competition_id": "TurninginCorning2025",
+        "round_name": null,
+        "value": 994,
+        "type": "average",
+        "attempts": [
+          951,
+          1039,
+          929,
+          992,
+          1187
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 2,
+        "worst_index": 4
+      },
+      {
         "person_name": "Tsiang Wei Yan",
         "wcaid": "2023YANT01",
         "competition_id": "Hong Kong Cube Day 2024",
@@ -20013,6 +20332,25 @@
         "worst_index": 2
       },
       {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
+        "competition_id": "ElmiraMiracle2025",
+        "round_name": null,
+        "value": 1128,
+        "type": "average",
+        "attempts": [
+          1278,
+          1022,
+          1080,
+          1027,
+          1409
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 1,
+        "worst_index": 4
+      },
+      {
         "person_name": "Liu Yik Yung",
         "wcaid": "2023YUNG02",
         "competition_id": "Beijing Summer 2025",
@@ -20029,6 +20367,25 @@
         "regional_single_record": null,
         "regional_average_record": null,
         "best_index": 3,
+        "worst_index": 4
+      },
+      {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
+        "competition_id": "TurninginCorning2025",
+        "round_name": null,
+        "value": 1130,
+        "type": "average",
+        "attempts": [
+          1016,
+          1124,
+          1122,
+          1145,
+          1199
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 0,
         "worst_index": 4
       },
       {
@@ -22340,6 +22697,26 @@
       {
         "person_name": "Alvin Cheng Hiu Yeung",
         "wcaid": "2019YEUN01",
+        "competition_id": "TurninginCorning2025",
+        "round_name": null,
+        "value": 2321,
+        "type": "single",
+        "attempt_index": 0,
+        "attempts": [
+          2321,
+          -1,
+          -1,
+          0,
+          0
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 0,
+        "worst_index": 2
+      },
+      {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
         "competition_id": "Rubik's WCA World Championship 2025",
         "round_name": null,
         "value": 2455,
@@ -22376,6 +22753,26 @@
         "regional_average_record": null,
         "best_index": 1,
         "worst_index": 0
+      },
+      {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
+        "competition_id": "ElmiraMiracle2025",
+        "round_name": null,
+        "value": 2532,
+        "type": "single",
+        "attempt_index": 1,
+        "attempts": [
+          -1,
+          2532,
+          -1,
+          0,
+          0
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 1,
+        "worst_index": 2
       },
       {
         "person_name": "Alvin Cheng Hiu Yeung",
@@ -36180,6 +36577,26 @@
       {
         "person_name": "Alvin Cheng Hiu Yeung",
         "wcaid": "2019YEUN01",
+        "competition_id": "ElmiraMiracle2025",
+        "round_name": null,
+        "value": 327,
+        "type": "single",
+        "attempt_index": 1,
+        "attempts": [
+          433,
+          327,
+          431,
+          559,
+          469
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 1,
+        "worst_index": 3
+      },
+      {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
         "competition_id": "Greater Toronto 2025",
         "round_name": null,
         "value": 337,
@@ -36560,6 +36977,26 @@
       {
         "person_name": "Alvin Cheng Hiu Yeung",
         "wcaid": "2019YEUN01",
+        "competition_id": "ElmiraMiracle2025",
+        "round_name": null,
+        "value": 431,
+        "type": "single",
+        "attempt_index": 2,
+        "attempts": [
+          433,
+          327,
+          431,
+          559,
+          469
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 1,
+        "worst_index": 3
+      },
+      {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
         "competition_id": "Greater Toronto 2025",
         "round_name": null,
         "value": 433,
@@ -36595,6 +37032,26 @@
         "regional_single_record": null,
         "regional_average_record": null,
         "best_index": 0,
+        "worst_index": 3
+      },
+      {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
+        "competition_id": "ElmiraMiracle2025",
+        "round_name": null,
+        "value": 433,
+        "type": "single",
+        "attempt_index": 0,
+        "attempts": [
+          433,
+          327,
+          431,
+          559,
+          469
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 1,
         "worst_index": 3
       },
       {
@@ -36796,6 +37253,26 @@
         "regional_average_record": null,
         "best_index": 1,
         "worst_index": 2
+      },
+      {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
+        "competition_id": "ElmiraMiracle2025",
+        "round_name": null,
+        "value": 469,
+        "type": "single",
+        "attempt_index": 4,
+        "attempts": [
+          433,
+          327,
+          431,
+          559,
+          469
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 1,
+        "worst_index": 3
       },
       {
         "person_name": "Alvin Cheng Hiu Yeung",
@@ -37196,6 +37673,26 @@
         "regional_average_record": null,
         "best_index": 1,
         "worst_index": 2
+      },
+      {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
+        "competition_id": "ElmiraMiracle2025",
+        "round_name": null,
+        "value": 559,
+        "type": "single",
+        "attempt_index": 3,
+        "attempts": [
+          433,
+          327,
+          431,
+          559,
+          469
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 1,
+        "worst_index": 3
       },
       {
         "person_name": "Liu Shing Chak",
@@ -40993,6 +41490,25 @@
         "regional_single_record": null,
         "regional_average_record": null,
         "best_index": 0,
+        "worst_index": 3
+      },
+      {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
+        "competition_id": "ElmiraMiracle2025",
+        "round_name": null,
+        "value": 444,
+        "type": "average",
+        "attempts": [
+          433,
+          327,
+          431,
+          559,
+          469
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 1,
         "worst_index": 3
       },
       {
@@ -48582,6 +49098,26 @@
         "worst_index": 3
       },
       {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
+        "competition_id": "ElmiraMiracle2025",
+        "round_name": null,
+        "value": 528,
+        "type": "single",
+        "attempt_index": 3,
+        "attempts": [
+          -1,
+          600,
+          690,
+          528,
+          646
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 3,
+        "worst_index": 0
+      },
+      {
         "person_name": "Matthew Advani",
         "wcaid": "2023ADVA01",
         "competition_id": "Hong Kong Championship 2025",
@@ -49024,6 +49560,26 @@
       {
         "person_name": "Alvin Cheng Hiu Yeung",
         "wcaid": "2019YEUN01",
+        "competition_id": "ElmiraMiracle2025",
+        "round_name": null,
+        "value": 600,
+        "type": "single",
+        "attempt_index": 1,
+        "attempts": [
+          -1,
+          600,
+          690,
+          528,
+          646
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 3,
+        "worst_index": 0
+      },
+      {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
         "competition_id": "Pickering Favourites Fall 2025",
         "round_name": null,
         "value": 602,
@@ -49382,6 +49938,26 @@
         "worst_index": 3
       },
       {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
+        "competition_id": "ElmiraMiracle2025",
+        "round_name": null,
+        "value": 646,
+        "type": "single",
+        "attempt_index": 4,
+        "attempts": [
+          -1,
+          600,
+          690,
+          528,
+          646
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 3,
+        "worst_index": 0
+      },
+      {
         "person_name": "Liu Shing Chak",
         "wcaid": "2024CHAK03",
         "competition_id": "Hong Kong Championship 2024",
@@ -49540,6 +50116,26 @@
         "regional_average_record": null,
         "best_index": 0,
         "worst_index": 4
+      },
+      {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
+        "competition_id": "ElmiraMiracle2025",
+        "round_name": null,
+        "value": 690,
+        "type": "single",
+        "attempt_index": 2,
+        "attempts": [
+          -1,
+          600,
+          690,
+          528,
+          646
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 3,
+        "worst_index": 0
       },
       {
         "person_name": "Liu Shing Chak",
@@ -51427,6 +52023,25 @@
         "regional_average_record": null,
         "best_index": 1,
         "worst_index": 3
+      },
+      {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
+        "competition_id": "ElmiraMiracle2025",
+        "round_name": null,
+        "value": 645,
+        "type": "average",
+        "attempts": [
+          -1,
+          600,
+          690,
+          528,
+          646
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 3,
+        "worst_index": 0
       },
       {
         "person_name": "Alvin Cheng Hiu Yeung",
@@ -57956,6 +58571,46 @@
         "worst_index": 4
       },
       {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
+        "competition_id": "TurninginCorning2025",
+        "round_name": null,
+        "value": 3644,
+        "type": "single",
+        "attempt_index": 2,
+        "attempts": [
+          3833,
+          3831,
+          3644,
+          3648,
+          5602
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 2,
+        "worst_index": 4
+      },
+      {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
+        "competition_id": "TurninginCorning2025",
+        "round_name": null,
+        "value": 3648,
+        "type": "single",
+        "attempt_index": 3,
+        "attempts": [
+          3833,
+          3831,
+          3644,
+          3648,
+          5602
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 2,
+        "worst_index": 4
+      },
+      {
         "person_name": "Lai Pak Kiu",
         "wcaid": "2024KIUL01",
         "competition_id": "Jiangmen Open 2025",
@@ -58056,6 +58711,26 @@
         "worst_index": 2
       },
       {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
+        "competition_id": "ElmiraMiracle2025",
+        "round_name": null,
+        "value": 3753,
+        "type": "single",
+        "attempt_index": 0,
+        "attempts": [
+          3753,
+          3957,
+          4223,
+          4494,
+          4282
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 0,
+        "worst_index": 3
+      },
+      {
         "person_name": "Lai Pak Kiu",
         "wcaid": "2024KIUL01",
         "competition_id": "Hong Kong Championship 2024",
@@ -58154,6 +58829,46 @@
         "regional_average_record": null,
         "best_index": 1,
         "worst_index": 0
+      },
+      {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
+        "competition_id": "TurninginCorning2025",
+        "round_name": null,
+        "value": 3831,
+        "type": "single",
+        "attempt_index": 1,
+        "attempts": [
+          3833,
+          3831,
+          3644,
+          3648,
+          5602
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 2,
+        "worst_index": 4
+      },
+      {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
+        "competition_id": "TurninginCorning2025",
+        "round_name": null,
+        "value": 3833,
+        "type": "single",
+        "attempt_index": 0,
+        "attempts": [
+          3833,
+          3831,
+          3644,
+          3648,
+          5602
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 2,
+        "worst_index": 4
       },
       {
         "person_name": "Alvin Cheng Hiu Yeung",
@@ -58314,6 +59029,26 @@
         "regional_average_record": null,
         "best_index": 3,
         "worst_index": 2
+      },
+      {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
+        "competition_id": "ElmiraMiracle2025",
+        "round_name": null,
+        "value": 3957,
+        "type": "single",
+        "attempt_index": 1,
+        "attempts": [
+          3753,
+          3957,
+          4223,
+          4494,
+          4282
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 0,
+        "worst_index": 3
       },
       {
         "person_name": "Lai Pak Kiu",
@@ -58638,6 +59373,26 @@
       {
         "person_name": "Alvin Cheng Hiu Yeung",
         "wcaid": "2019YEUN01",
+        "competition_id": "ElmiraMiracle2025",
+        "round_name": null,
+        "value": 4223,
+        "type": "single",
+        "attempt_index": 2,
+        "attempts": [
+          3753,
+          3957,
+          4223,
+          4494,
+          4282
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 0,
+        "worst_index": 3
+      },
+      {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
         "competition_id": "Gros Jouets à Montréal 2025",
         "round_name": null,
         "value": 4231,
@@ -58773,6 +59528,26 @@
         "regional_single_record": null,
         "regional_average_record": null,
         "best_index": 2,
+        "worst_index": 3
+      },
+      {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
+        "competition_id": "ElmiraMiracle2025",
+        "round_name": null,
+        "value": 4282,
+        "type": "single",
+        "attempt_index": 4,
+        "attempts": [
+          3753,
+          3957,
+          4223,
+          4494,
+          4282
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 0,
         "worst_index": 3
       },
       {
@@ -59073,6 +59848,26 @@
         "regional_single_record": null,
         "regional_average_record": null,
         "best_index": 2,
+        "worst_index": 3
+      },
+      {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
+        "competition_id": "ElmiraMiracle2025",
+        "round_name": null,
+        "value": 4494,
+        "type": "single",
+        "attempt_index": 3,
+        "attempts": [
+          3753,
+          3957,
+          4223,
+          4494,
+          4282
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 0,
         "worst_index": 3
       },
       {
@@ -60616,6 +61411,26 @@
         "worst_index": 2
       },
       {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
+        "competition_id": "TurninginCorning2025",
+        "round_name": null,
+        "value": 5602,
+        "type": "single",
+        "attempt_index": 4,
+        "attempts": [
+          3833,
+          3831,
+          3644,
+          3648,
+          5602
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 2,
+        "worst_index": 4
+      },
+      {
         "person_name": "Tsiang Wei Yan",
         "wcaid": "2023YANT01",
         "competition_id": "Hong Kong Cube Day 2024",
@@ -61432,6 +62247,25 @@
       {
         "person_name": "Alvin Cheng Hiu Yeung",
         "wcaid": "2019YEUN01",
+        "competition_id": "TurninginCorning2025",
+        "round_name": null,
+        "value": 3771,
+        "type": "average",
+        "attempts": [
+          3833,
+          3831,
+          3644,
+          3648,
+          5602
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 2,
+        "worst_index": 4
+      },
+      {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
         "competition_id": "Gros Jouets à Montréal 2025",
         "round_name": null,
         "value": 3990,
@@ -61504,6 +62338,25 @@
         "regional_average_record": null,
         "best_index": 0,
         "worst_index": 1
+      },
+      {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
+        "competition_id": "ElmiraMiracle2025",
+        "round_name": null,
+        "value": 4154,
+        "type": "average",
+        "attempts": [
+          3753,
+          3957,
+          4223,
+          4494,
+          4282
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 0,
+        "worst_index": 3
       },
       {
         "person_name": "Alvin Cheng Hiu Yeung",
@@ -63726,6 +64579,26 @@
         "worst_index": 3
       },
       {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
+        "competition_id": "ElmiraMiracle2025",
+        "round_name": null,
+        "value": 1824,
+        "type": "single",
+        "attempt_index": 2,
+        "attempts": [
+          2349,
+          1860,
+          1824,
+          2469,
+          2117
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 2,
+        "worst_index": 3
+      },
+      {
         "person_name": "Ip Pak Tou Zachary",
         "wcaid": "2023TOUZ01",
         "competition_id": "Hong Kong Cube Day 2024",
@@ -63859,6 +64732,26 @@
           1854,
           2885,
           2078
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 2,
+        "worst_index": 3
+      },
+      {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
+        "competition_id": "ElmiraMiracle2025",
+        "round_name": null,
+        "value": 1860,
+        "type": "single",
+        "attempt_index": 1,
+        "attempts": [
+          2349,
+          1860,
+          1824,
+          2469,
+          2117
         ],
         "regional_single_record": null,
         "regional_average_record": null,
@@ -64166,6 +65059,26 @@
         "worst_index": 3
       },
       {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
+        "competition_id": "TurninginCorning2025",
+        "round_name": null,
+        "value": 1935,
+        "type": "single",
+        "attempt_index": 1,
+        "attempts": [
+          4785,
+          1935,
+          1985,
+          2329,
+          2526
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 1,
+        "worst_index": 0
+      },
+      {
         "person_name": "Kwok Pak Hei",
         "wcaid": "2017HEIK03",
         "competition_id": "Hong Kong Championship 2025",
@@ -64404,6 +65317,26 @@
         "regional_average_record": null,
         "best_index": 0,
         "worst_index": 4
+      },
+      {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
+        "competition_id": "TurninginCorning2025",
+        "round_name": null,
+        "value": 1985,
+        "type": "single",
+        "attempt_index": 2,
+        "attempts": [
+          4785,
+          1935,
+          1985,
+          2329,
+          2526
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 1,
+        "worst_index": 0
       },
       {
         "person_name": "Kwok Pak Hei",
@@ -64863,6 +65796,26 @@
         "regional_single_record": null,
         "regional_average_record": null,
         "best_index": 1,
+        "worst_index": 3
+      },
+      {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
+        "competition_id": "ElmiraMiracle2025",
+        "round_name": null,
+        "value": 2117,
+        "type": "single",
+        "attempt_index": 4,
+        "attempts": [
+          2349,
+          1860,
+          1824,
+          2469,
+          2117
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 2,
         "worst_index": 3
       },
       {
@@ -65526,6 +66479,26 @@
         "worst_index": 3
       },
       {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
+        "competition_id": "TurninginCorning2025",
+        "round_name": null,
+        "value": 2329,
+        "type": "single",
+        "attempt_index": 3,
+        "attempts": [
+          4785,
+          1935,
+          1985,
+          2329,
+          2526
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 1,
+        "worst_index": 0
+      },
+      {
         "person_name": "Ip Pak Tou Zachary",
         "wcaid": "2023TOUZ01",
         "competition_id": "Hong Kong Cube Day 2024",
@@ -65564,6 +66537,26 @@
         "regional_average_record": null,
         "best_index": 1,
         "worst_index": 0
+      },
+      {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
+        "competition_id": "ElmiraMiracle2025",
+        "round_name": null,
+        "value": 2349,
+        "type": "single",
+        "attempt_index": 0,
+        "attempts": [
+          2349,
+          1860,
+          1824,
+          2469,
+          2117
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 2,
+        "worst_index": 3
       },
       {
         "person_name": "Yu Wai Sum",
@@ -65846,6 +66839,26 @@
         "worst_index": 2
       },
       {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
+        "competition_id": "ElmiraMiracle2025",
+        "round_name": null,
+        "value": 2469,
+        "type": "single",
+        "attempt_index": 3,
+        "attempts": [
+          2349,
+          1860,
+          1824,
+          2469,
+          2117
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 2,
+        "worst_index": 3
+      },
+      {
         "person_name": "Yu Wai Sum",
         "wcaid": "2019SUMY01",
         "competition_id": "Shenzhen Cubing 10th Anniversary 2019",
@@ -65924,6 +66937,26 @@
         "regional_average_record": null,
         "best_index": 4,
         "worst_index": 1
+      },
+      {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
+        "competition_id": "TurninginCorning2025",
+        "round_name": null,
+        "value": 2526,
+        "type": "single",
+        "attempt_index": 4,
+        "attempts": [
+          4785,
+          1935,
+          1985,
+          2329,
+          2526
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 1,
+        "worst_index": 0
       },
       {
         "person_name": "Liu Shing Chak",
@@ -67066,6 +68099,26 @@
         "worst_index": 1
       },
       {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
+        "competition_id": "TurninginCorning2025",
+        "round_name": null,
+        "value": 4785,
+        "type": "single",
+        "attempt_index": 0,
+        "attempts": [
+          4785,
+          1935,
+          1985,
+          2329,
+          2526
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 1,
+        "worst_index": 0
+      },
+      {
         "person_name": "Ho Cheuk Yiu",
         "wcaid": "2019YIUH01",
         "competition_id": "Hong Kong Cube Day 2019",
@@ -67639,6 +68692,25 @@
         "worst_index": 3
       },
       {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
+        "competition_id": "ElmiraMiracle2025",
+        "round_name": null,
+        "value": 2109,
+        "type": "average",
+        "attempts": [
+          2349,
+          1860,
+          1824,
+          2469,
+          2117
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 2,
+        "worst_index": 3
+      },
+      {
         "person_name": "Matthew Advani",
         "wcaid": "2023ADVA01",
         "competition_id": "Rubik's WCA Asian Championship 2024",
@@ -67765,6 +68837,25 @@
           2054,
           2464,
           2285
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 1,
+        "worst_index": 0
+      },
+      {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
+        "competition_id": "TurninginCorning2025",
+        "round_name": null,
+        "value": 2280,
+        "type": "average",
+        "attempts": [
+          4785,
+          1935,
+          1985,
+          2329,
+          2526
         ],
         "regional_single_record": null,
         "regional_average_record": null,
@@ -68590,6 +69681,26 @@
         "worst_index": 2
       },
       {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
+        "competition_id": "ElmiraMiracle2025",
+        "round_name": null,
+        "value": 6382,
+        "type": "single",
+        "attempt_index": 2,
+        "attempts": [
+          7981,
+          6593,
+          6382,
+          7517,
+          7140
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 2,
+        "worst_index": 0
+      },
+      {
         "person_name": "Lai Pak Kiu",
         "wcaid": "2024KIUL01",
         "competition_id": "Hong Kong Championship 2025",
@@ -68632,6 +69743,26 @@
       {
         "person_name": "Alvin Cheng Hiu Yeung",
         "wcaid": "2019YEUN01",
+        "competition_id": "ElmiraMiracle2025",
+        "round_name": null,
+        "value": 6593,
+        "type": "single",
+        "attempt_index": 1,
+        "attempts": [
+          7981,
+          6593,
+          6382,
+          7517,
+          7140
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 2,
+        "worst_index": 0
+      },
+      {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
         "competition_id": "Gros Jouets à Montréal 2025",
         "round_name": null,
         "value": 6661,
@@ -68668,6 +69799,26 @@
         "regional_average_record": null,
         "best_index": 4,
         "worst_index": 3
+      },
+      {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
+        "competition_id": "TurninginCorning2025",
+        "round_name": null,
+        "value": 6865,
+        "type": "single",
+        "attempt_index": 1,
+        "attempts": [
+          7033,
+          6865,
+          7964,
+          7666,
+          7892
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 1,
+        "worst_index": 2
       },
       {
         "person_name": "Alvin Cheng Hiu Yeung",
@@ -68732,6 +69883,26 @@
       {
         "person_name": "Alvin Cheng Hiu Yeung",
         "wcaid": "2019YEUN01",
+        "competition_id": "TurninginCorning2025",
+        "round_name": null,
+        "value": 7033,
+        "type": "single",
+        "attempt_index": 0,
+        "attempts": [
+          7033,
+          6865,
+          7964,
+          7666,
+          7892
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 1,
+        "worst_index": 2
+      },
+      {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
         "competition_id": "Gros Jouets à Montréal 2025",
         "round_name": null,
         "value": 7105,
@@ -68768,6 +69939,26 @@
         "regional_average_record": null,
         "best_index": 4,
         "worst_index": 2
+      },
+      {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
+        "competition_id": "ElmiraMiracle2025",
+        "round_name": null,
+        "value": 7140,
+        "type": "single",
+        "attempt_index": 4,
+        "attempts": [
+          7981,
+          6593,
+          6382,
+          7517,
+          7140
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 2,
+        "worst_index": 0
       },
       {
         "person_name": "Liu Yik Yung",
@@ -68952,6 +70143,26 @@
       {
         "person_name": "Alvin Cheng Hiu Yeung",
         "wcaid": "2019YEUN01",
+        "competition_id": "ElmiraMiracle2025",
+        "round_name": null,
+        "value": 7517,
+        "type": "single",
+        "attempt_index": 3,
+        "attempts": [
+          7981,
+          6593,
+          6382,
+          7517,
+          7140
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 2,
+        "worst_index": 0
+      },
+      {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
         "competition_id": "Gros Jouets à Montréal 2025",
         "round_name": null,
         "value": 7537,
@@ -69048,6 +70259,26 @@
         "regional_average_record": null,
         "best_index": 4,
         "worst_index": 3
+      },
+      {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
+        "competition_id": "TurninginCorning2025",
+        "round_name": null,
+        "value": 7666,
+        "type": "single",
+        "attempt_index": 3,
+        "attempts": [
+          7033,
+          6865,
+          7964,
+          7666,
+          7892
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 1,
+        "worst_index": 2
       },
       {
         "person_name": "Alvin Cheng Hiu Yeung",
@@ -69152,6 +70383,26 @@
       {
         "person_name": "Alvin Cheng Hiu Yeung",
         "wcaid": "2019YEUN01",
+        "competition_id": "TurninginCorning2025",
+        "round_name": null,
+        "value": 7892,
+        "type": "single",
+        "attempt_index": 4,
+        "attempts": [
+          7033,
+          6865,
+          7964,
+          7666,
+          7892
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 1,
+        "worst_index": 2
+      },
+      {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
         "competition_id": "Cube Camp in Nakhon Nayok 2024",
         "round_name": null,
         "value": 7949,
@@ -69168,6 +70419,46 @@
         "regional_average_record": null,
         "best_index": 4,
         "worst_index": 2
+      },
+      {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
+        "competition_id": "TurninginCorning2025",
+        "round_name": null,
+        "value": 7964,
+        "type": "single",
+        "attempt_index": 2,
+        "attempts": [
+          7033,
+          6865,
+          7964,
+          7666,
+          7892
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 1,
+        "worst_index": 2
+      },
+      {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
+        "competition_id": "ElmiraMiracle2025",
+        "round_name": null,
+        "value": 7981,
+        "type": "single",
+        "attempt_index": 0,
+        "attempts": [
+          7981,
+          6593,
+          6382,
+          7517,
+          7140
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 2,
+        "worst_index": 0
       },
       {
         "person_name": "Alvin Cheng Hiu Yeung",
@@ -69454,6 +70745,25 @@
       {
         "person_name": "Alvin Cheng Hiu Yeung",
         "wcaid": "2019YEUN01",
+        "competition_id": "ElmiraMiracle2025",
+        "round_name": null,
+        "value": 7083,
+        "type": "average",
+        "attempts": [
+          7981,
+          6593,
+          6382,
+          7517,
+          7140
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 2,
+        "worst_index": 0
+      },
+      {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
         "competition_id": "Gros Jouets à Montréal 2025",
         "round_name": null,
         "value": 7134,
@@ -69549,6 +70859,25 @@
       {
         "person_name": "Alvin Cheng Hiu Yeung",
         "wcaid": "2019YEUN01",
+        "competition_id": "TurninginCorning2025",
+        "round_name": null,
+        "value": 7530,
+        "type": "average",
+        "attempts": [
+          7033,
+          6865,
+          7964,
+          7666,
+          7892
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 1,
+        "worst_index": 2
+      },
+      {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
         "competition_id": "Cube Camp in Nakhon Nayok 2024",
         "round_name": null,
         "value": 7567,
@@ -69607,6 +70936,26 @@
   },
   "555bf": {
     "single": [
+      {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
+        "competition_id": "TurninginCorning2025",
+        "round_name": null,
+        "value": 24035,
+        "type": "single",
+        "attempt_index": 0,
+        "attempts": [
+          24035,
+          -1,
+          -1,
+          0,
+          0
+        ],
+        "regional_single_record": "NR",
+        "regional_average_record": null,
+        "best_index": 0,
+        "worst_index": 2
+      },
       {
         "person_name": "Alvin Cheng Hiu Yeung",
         "wcaid": "2019YEUN01",
@@ -69735,6 +71084,26 @@
       {
         "person_name": "Alvin Cheng Hiu Yeung",
         "wcaid": "2019YEUN01",
+        "competition_id": "ElmiraMiracle2025",
+        "round_name": null,
+        "value": 12005,
+        "type": "single",
+        "attempt_index": 0,
+        "attempts": [
+          12005,
+          12779,
+          12755,
+          0,
+          0
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 0,
+        "worst_index": 1
+      },
+      {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
         "competition_id": "Gros Jouets à Montréal 2025",
         "round_name": null,
         "value": 12020,
@@ -69811,6 +71180,46 @@
         "regional_average_record": null,
         "best_index": 1,
         "worst_index": 0
+      },
+      {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
+        "competition_id": "ElmiraMiracle2025",
+        "round_name": null,
+        "value": 12755,
+        "type": "single",
+        "attempt_index": 2,
+        "attempts": [
+          12005,
+          12779,
+          12755,
+          0,
+          0
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 0,
+        "worst_index": 1
+      },
+      {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
+        "competition_id": "ElmiraMiracle2025",
+        "round_name": null,
+        "value": 12779,
+        "type": "single",
+        "attempt_index": 1,
+        "attempts": [
+          12005,
+          12779,
+          12755,
+          0,
+          0
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 0,
+        "worst_index": 1
       },
       {
         "person_name": "Alvin Cheng Hiu Yeung",
@@ -70157,6 +71566,25 @@
       {
         "person_name": "Alvin Cheng Hiu Yeung",
         "wcaid": "2019YEUN01",
+        "competition_id": "ElmiraMiracle2025",
+        "round_name": null,
+        "value": 12513,
+        "type": "average",
+        "attempts": [
+          12005,
+          12779,
+          12755,
+          0,
+          0
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 0,
+        "worst_index": 1
+      },
+      {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
         "competition_id": "Gros Jouets à Montréal 2025",
         "round_name": null,
         "value": 12684,
@@ -70354,6 +71782,26 @@
       {
         "person_name": "Alvin Cheng Hiu Yeung",
         "wcaid": "2019YEUN01",
+        "competition_id": "ElmiraMiracle2025",
+        "round_name": null,
+        "value": 18819,
+        "type": "single",
+        "attempt_index": 1,
+        "attempts": [
+          21128,
+          18819,
+          19024,
+          0,
+          0
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 1,
+        "worst_index": 0
+      },
+      {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
         "competition_id": "Gros Jouets à Montréal 2025",
         "round_name": null,
         "value": 19002,
@@ -70363,6 +71811,26 @@
           21575,
           19002,
           20291,
+          0,
+          0
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 1,
+        "worst_index": 0
+      },
+      {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
+        "competition_id": "ElmiraMiracle2025",
+        "round_name": null,
+        "value": 19024,
+        "type": "single",
+        "attempt_index": 2,
+        "attempts": [
+          21128,
+          18819,
+          19024,
           0,
           0
         ],
@@ -70594,6 +72062,26 @@
       {
         "person_name": "Alvin Cheng Hiu Yeung",
         "wcaid": "2019YEUN01",
+        "competition_id": "ElmiraMiracle2025",
+        "round_name": null,
+        "value": 21128,
+        "type": "single",
+        "attempt_index": 0,
+        "attempts": [
+          21128,
+          18819,
+          19024,
+          0,
+          0
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 1,
+        "worst_index": 0
+      },
+      {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
         "competition_id": "Hong Kong Big Cube Day 2023",
         "round_name": null,
         "value": 21199,
@@ -70773,6 +72261,25 @@
       }
     ],
     "average": [
+      {
+        "person_name": "Alvin Cheng Hiu Yeung",
+        "wcaid": "2019YEUN01",
+        "competition_id": "ElmiraMiracle2025",
+        "round_name": null,
+        "value": 19657,
+        "type": "average",
+        "attempts": [
+          21128,
+          18819,
+          19024,
+          0,
+          0
+        ],
+        "regional_single_record": null,
+        "regional_average_record": null,
+        "best_index": 1,
+        "worst_index": 0
+      },
       {
         "person_name": "Alvin Cheng Hiu Yeung",
         "wcaid": "2019YEUN01",
