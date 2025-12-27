@@ -37,8 +37,6 @@ OUTPUT_DIR = os.environ.get("OUTPUT_DIR", "data")
 if WRITE_LOCAL_JSON:
     os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-# --- helpers adapted from your original script ---
-
 def unslug_name_from_filename(fn):
     base = os.path.splitext(fn)[0]
     if base.lower().endswith("-merged"):
