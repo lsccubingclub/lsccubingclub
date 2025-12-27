@@ -3,8 +3,8 @@
   "results": [
     {
       "id": 2793517,
-      "pos": 111,
       "round_id": 147307,
+      "pos": 111,
       "best": 2226,
       "average": 2536,
       "name": "Cheung Yan Chung (張殷誦)",
@@ -26,8 +26,5 @@
       "regional_single_record": null,
       "regional_average_record": null
     }
-  ],
-  "person": {
-    "name": "Cheung Yan Chung"
-  }
+  ]
 }

@@ -3,8 +3,8 @@
   "results": [
     {
       "id": 2793435,
-      "pos": 29,
       "round_id": 147307,
+      "pos": 29,
       "best": 1213,
       "average": 1288,
       "name": "Yu Wai Sum (余瑋深)",
@@ -28,8 +28,8 @@
     },
     {
       "id": 2793582,
-      "pos": 36,
       "round_id": 147308,
+      "pos": 36,
       "best": 1374,
       "average": 1476,
       "name": "Yu Wai Sum (余瑋深)",
@@ -53,8 +53,8 @@
     },
     {
       "id": 2793771,
-      "pos": 31,
       "round_id": 147316,
+      "pos": 31,
       "best": 2351,
       "average": 2598,
       "name": "Yu Wai Sum (余瑋深)",
@@ -78,8 +78,8 @@
     },
     {
       "id": 2793977,
-      "pos": 24,
       "round_id": 147320,
+      "pos": 24,
       "best": 718,
       "average": 835,
       "name": "Yu Wai Sum (余瑋深)",
@@ -103,8 +103,8 @@
     },
     {
       "id": 3286202,
-      "pos": 45,
       "round_id": 261067,
+      "pos": 45,
       "best": 985,
       "average": 1134,
       "name": "Yu Wai Sum (余瑋深)",
@@ -128,8 +128,8 @@
     },
     {
       "id": 3286650,
-      "pos": 68,
       "round_id": 261068,
+      "pos": 68,
       "best": 1149,
       "average": 1241,
       "name": "Yu Wai Sum (余瑋深)",
@@ -153,8 +153,8 @@
     },
     {
       "id": 3286851,
-      "pos": 49,
       "round_id": 261069,
+      "pos": 49,
       "best": 1083,
       "average": 1213,
       "name": "Yu Wai Sum (余瑋深)",
@@ -178,8 +178,8 @@
     },
     {
       "id": 3287119,
-      "pos": 46,
       "round_id": 261087,
+      "pos": 46,
       "best": 1913,
       "average": 2242,
       "name": "Yu Wai Sum (余瑋深)",
@@ -203,8 +203,8 @@
     },
     {
       "id": 3287283,
-      "pos": 74,
       "round_id": 261088,
+      "pos": 74,
       "best": 2451,
       "average": 2762,
       "name": "Yu Wai Sum (余瑋深)",
@@ -228,8 +228,8 @@
     },
     {
       "id": 3287437,
-      "pos": 65,
       "round_id": 261071,
+      "pos": 65,
       "best": 302,
       "average": 488,
       "name": "Yu Wai Sum (余瑋深)",
@@ -253,8 +253,8 @@
     },
     {
       "id": 3287665,
-      "pos": 56,
       "round_id": 261072,
+      "pos": 56,
       "best": 451,
       "average": 503,
       "name": "Yu Wai Sum (余瑋深)",
@@ -278,8 +278,8 @@
     },
     {
       "id": 3287747,
-      "pos": 23,
       "round_id": 261073,
+      "pos": 23,
       "best": 234,
       "average": 394,
       "name": "Yu Wai Sum (余瑋深)",
@@ -303,8 +303,8 @@
     },
     {
       "id": 3288491,
-      "pos": 79,
       "round_id": 261075,
+      "pos": 79,
       "best": 5088,
       "average": 5199,
       "name": "Yu Wai Sum (余瑋深)",
@@ -326,8 +326,5 @@
       "regional_single_record": null,
       "regional_average_record": null
     }
-  ],
-  "person": {
-    "name": "Yu Wai Sum"
-  }
+  ]
 }

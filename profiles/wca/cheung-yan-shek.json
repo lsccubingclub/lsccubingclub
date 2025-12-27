@@ -3,13 +3,13 @@
   "results": [
     {
       "id": 2793853,
-      "pos": 39,
       "round_id": 147313,
+      "pos": 39,
       "best": 4926,
       "average": 5381,
       "name": "Cheung Yan Shek (張殷碩)",
       "country_iso2": "HK",
-      "competition_id": "Hong Kong Cube Day 2019",
+      "competition_id": "HongKongCubeDay2019",
       "event_id": "444",
       "round_type_id": "d",
       "format_id": "a",

@@ -1,14 +1,29 @@
-# merge_lsc.py
+#!/usr/bin/env python3
 """
-merge_lsc.py
+merge_lsc_from_supabase.py
 
-Reads unified meta tab (meta!A2:H999) from the master sheet, inspects ONLY the public tabs
-named exactly "{event} - {round}public" in each competition spreadsheet, normalizes results,
-and writes/updates profiles/lsc/{nameslug}-merged.json. It merges with any existing
-profiles/wca/{nameslug}.json if present.
+Rewritten merge_lsc.py to fetch competition metadata, rounds and results from Supabase
+instead of Google Sheets.
 
-Meta parsing groups rows under the last seen Competition name to include subsequent rounds
-listed below it (blank Competition cells).
+Behavior:
+- Reads locked competitions from the `competitions` table (rows where locked is true).
+- For each competition, reads rounds from `rounds` table and results from `round_results`.
+- Matches competitors to WCA profiles (from a `wca_ids` table if present, else from local WCA cache).
+- Produces merged profile files under profiles/lsc/{nameslug}-merged.json, merging with any
+  existing profiles/wca/{nameslug}.json as before.
+
+Assumptions (adjust if your schema differs):
+- competitions table: id, name (or title), locked (boolean)
+- rounds table: id, comp_id, event_id (human name or code), round_code (e.g. '1','f'), format, advance_to_next, date
+- round_results table: id, round_id, competitor_name, attempt1..attempt5, pos, best, average, best_index, worst_index
+- Optional wca_ids table: wcaid, name
+
+Environment:
+- SUPABASE_URL
+- SUPABASE_KEY (service role or anon key with read permissions)
+
+Run:
+    SUPABASE_URL="https://xyz.supabase.co" SUPABASE_KEY="..." python merge_lsc_from_supabase.py
 """
 
 import os
@@ -17,28 +32,24 @@ import re
 import tempfile
 import time
 import logging
-from typing import Dict, Optional
+from typing import Dict, Optional, List
 
-import requests
-from bs4 import BeautifulSoup
+from supabase import create_client, Client
 
-from google.oauth2 import service_account
-from googleapiclient.discovery import build
-import config
+# Local config (same as original)
+import config  # optional; original script referenced config for cache dirs and credentials
 
-# Config / constants
 WCA_CACHE_DIR = getattr(config, "WCA_CACHE_DIR", "profiles/wca")
 LSC_CACHE_DIR = getattr(config, "LSC_CACHE_DIR", "profiles/lsc")
-MASTER_ID = config.SHEETS_MASTER_ID
-CREDENTIAL_FILE = config.GOOGLE_CREDENTIAL_FILE
-
-# If you keep WCA title caching, leave these. They aren't critical to LSC-only merges.
 WCA_TITLE_CACHE_PATH = os.environ.get("WCA_TITLE_CACHE", "data/wca_comp_titles.json")
-WCA_FETCH_USER_AGENT = os.environ.get("WCA_FETCH_USER_AGENT", "merge_lsc/1.0 (+https://example.org)")
-WCA_FETCH_RETRIES = int(os.environ.get("WCA_FETCH_RETRIES", "3"))
-WCA_FETCH_BACKOFF = float(os.environ.get("WCA_FETCH_BACKOFF", "1.0"))
-WCA_TIMEOUT = float(os.environ.get("WCA_TIMEOUT", "10"))
 
+# Supabase client
+SUPABASE_URL = 'https://bkzosvxbkhzkskaejqcb.supabase.co'
+SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJrem9zdnhia2h6a3NrYWVqcWNiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQzOTczMzIsImV4cCI6MjA3OTk3MzMzMn0.iqZZCfEtSdWksHGfbxUAOoaInu6ZpR-7mEIRtmvW9io'
+
+supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+
+# Constants and mappings (kept from original)
 EVENT_NAME_TO_CODE = {
     '3x3x3 Cube': '333', '2x2x2 Cube': '222', '4x4x4 Cube': '444', '5x5x5 Cube': '555',
     '6x6x6 Cube': '666', '7x7x7 Cube': '777', '3x3x3 Blindfolded': '333bf',
@@ -55,37 +66,9 @@ FORMAT_MAP = {
     'ao5': 'a', 'mo3': 'm', 'bo3': '3', 'bo2': '2', 'bo1': '1'
 }
 
-# Sheets API
-creds = service_account.Credentials.from_service_account_file(
-    CREDENTIAL_FILE,
-    scopes=["https://www.googleapis.com/auth/spreadsheets.readonly"]
-)
-sheets_svc = build("sheets", "v4", credentials=creds).spreadsheets()
-
-# Helpers
+# Helpers (adapted from original)
 def ensure_dir(p):
     os.makedirs(p, exist_ok=True)
-
-def read_values(spreadsheet_id, rng):
-    try:
-        resp = sheets_svc.values().get(spreadsheetId=spreadsheet_id, range=rng).execute()
-        return resp.get("values", [])
-    except Exception:
-        return []
-
-def spreadsheet_metadata(spreadsheet_id):
-    return sheets_svc.get(spreadsheetId=spreadsheet_id, fields="sheets.properties").execute()
-
-def name_to_slug(name):
-    s = (name or "").strip().lower()
-    s = re.sub(r'[^\w\s-]', '', s)
-    s = re.sub(r'[\s_]+', '-', s)
-    s = re.sub(r'-{2,}', '-', s)
-    s = s.strip('-')
-    return s or "unknown"
-
-def slugify_name_for_lookup(s):
-    return re.sub(r'[^a-z0-9]+','-', (s or "").lower()).strip('-')
 
 def atomic_write(path, obj):
     dirn = os.path.dirname(path)
@@ -102,31 +85,62 @@ def atomic_write(path, obj):
             except Exception:
                 pass
 
-def parse_attempt_value(cell, event_id):
-    if cell is None:
-        return 0
-    s = str(cell).strip()
-    if s == "":
-        return 0
-    su = s.upper()
-    if su == "DNF":
-        return -1
-    if su == "DNS":
-        return -2
-    if event_id == "333fm":
+def name_to_slug(name):
+    s = (name or "").strip().lower()
+    s = re.sub(r'[^\w\s-]', '', s)
+    s = re.sub(r'[\s_]+', '-', s)
+    s = re.sub(r'-{2,}', '-', s)
+    s = s.strip('-')
+    return s or "unknown"
+
+def load_json_if_exists(path):
+    if os.path.exists(path):
         try:
-            return int(float(s))
+            with open(path, "r", encoding="utf-8") as f:
+                return json.load(f)
         except Exception:
-            return 0
+            return None
+    return None
+
+def parse_attempt_value_from_db(v, event_id):
+    """
+    Input v is expected to be numeric (milliseconds) or special codes (-1 DNF, -2 DNS).
+    Keep behavior consistent with original parse_attempt_value which returned centiseconds.
+    If DB stores milliseconds, convert to centiseconds (divide by 10).
+    If DB already stores centiseconds, keep as-is.
+    We'll attempt to be permissive:
+      - None -> 0
+      - int/float -> round to int
+      - strings -> try parse
+    """
+    if v is None:
+        return 0
     try:
-        if ":" in s:
-            mm, rest = s.split(":", 1)
-            seconds = int(mm) * 60 + float(rest)
+        if isinstance(v, str):
+            s = v.strip()
+            if s == "":
+                return 0
+            if s.upper() == "DNF":
+                return -1
+            if s.upper() == "DNS":
+                return -2
+            # try float
+            n = float(s)
         else:
-            seconds = float(s)
-        return int(round(seconds * 100))
+            n = float(v)
     except Exception:
         return 0
+
+    # If value looks like milliseconds (large), convert to centiseconds
+    # Heuristic: if n > 100000 (1000s in ms) treat as ms; if n > 10000 treat as ms too.
+    if n > 100000 or (n > 10000 and n % 1 == 0):
+        # assume milliseconds -> convert to centiseconds
+        return int(round(n / 10.0))
+    # if n looks like seconds (e.g., 12.34) convert to centiseconds
+    if n < 1000 and n != int(n):
+        return int(round(n * 100))
+    # otherwise assume already centiseconds or integer centiseconds
+    return int(round(n))
 
 def compute_best_and_indices(attempts_list, event_id):
     positives = [a for a in attempts_list if a > 0]
@@ -150,23 +164,9 @@ def compute_best_and_indices(attempts_list, event_id):
                 break
     return best, best_index, worst_index
 
-def find_header_index(headers, name_variants):
-    hl = [str(h).strip().lower() if h is not None else "" for h in headers]
-    for v in name_variants:
-        vlow = v.lower()
-        if vlow in hl:
-            return hl.index(vlow)
-    return None
-
-def is_public_tab(tab_name):
-    if not tab_name:
-        return False
-    return tab_name.strip().lower().endswith("public")
-
 def result_fingerprint(r):
     return (
         str(r.get("competition_id") or "") + "|" +
-        str(r.get("round_tab") or r.get("round_name") or "") + "|" +
         str(r.get("event_id") or "") + "|" +
         str(r.get("pos") or "") + "|" +
         str(r.get("round_date") or "")
@@ -178,149 +178,8 @@ def wca_profile_path_for_name(name):
 def merged_path_for_name(name):
     return os.path.join(LSC_CACHE_DIR, f"{name_to_slug(name)}-merged.json")
 
-def load_json_if_exists(path):
-    if os.path.exists(path):
-        try:
-            with open(path, "r", encoding="utf-8") as f:
-                return json.load(f)
-        except Exception:
-            return None
-    return None
-
-# --- WCA competition title cache (optional, kept as-is) ---
-def _load_wca_title_cache() -> Dict[str, str]:
-    try:
-        with open(WCA_TITLE_CACHE_PATH, "r", encoding="utf-8") as f:
-            return json.load(f)
-    except Exception:
-        return {}
-
-def _save_wca_title_cache(cache: Dict[str, str]) -> None:
-    try:
-        ensure_dir(os.path.dirname(WCA_TITLE_CACHE_PATH) or ".")
-        with open(WCA_TITLE_CACHE_PATH, "w", encoding="utf-8") as f:
-            json.dump(cache, f, ensure_ascii=False, indent=2)
-    except Exception as e:
-        logging.warning("Failed saving WCA title cache: %s", e)
-
-def fetch_wca_competition_name(comp_id: str, session: Optional[requests.Session] = None) -> Optional[str]:
-    if not comp_id:
-        return None
-    url = f"https://www.worldcubeassociation.org/competitions/{comp_id}"
-    s = session or requests.Session()
-    headers = {"User-Agent": WCA_FETCH_USER_AGENT}
-    last_err = None
-    for attempt in range(1, WCA_FETCH_RETRIES + 1):
-        try:
-            resp = s.get(url, headers=headers, timeout=WCA_TIMEOUT)
-            if resp.status_code == 404:
-                return None
-            resp.raise_for_status()
-            html = resp.text
-            soup = BeautifulSoup(html, "html.parser")
-            title = (soup.title.string or "").strip() if soup.title else ""
-            if not title:
-                return None
-            name = title.split(" | ")[0].strip() if " | " in title else title.strip()
-            return name or None
-        except Exception as e:
-            last_err = e
-            time.sleep(WCA_FETCH_BACKOFF * (2 ** (attempt - 1)))
-    logging.warning("Failed to fetch WCA competition title for %s: %s", comp_id, last_err)
-    return None
-
-def refresh_comp_titles_for_comps(comps):
-    cache = _load_wca_title_cache()
-    session = requests.Session()
-    comp_ids = set()
-    for c in comps:
-        cid = c.get("title")
-        if not isinstance(cid, str) or not cid:
-            continue
-        if " " not in cid and any(ch.isalnum() for ch in cid):
-            if cid not in cache:
-                comp_ids.add(cid)
-
-    for cid in sorted(comp_ids):
-        try:
-            name = fetch_wca_competition_name(cid, session=session)
-            cache[cid] = name if name else cid
-        except Exception as e:
-            logging.warning("Error fetching competition %s: %s", cid, e)
-            cache[cid] = cid
-        _save_wca_title_cache(cache)
-        time.sleep(0.2)
-
-    for c in comps:
-        cid = c.get("title")
-        if not isinstance(cid, str) or not cid:
-            continue
-        if " " not in cid and any(ch.isalnum() for ch in cid):
-            c["title"] = cache.get(cid, cid)
-    _save_wca_title_cache(cache)
-    return comps
-
-def refresh_comp_titles_in_wca_profiles(wca_profiles_dir=WCA_CACHE_DIR):
-    cache = _load_wca_title_cache()
-    session = requests.Session()
-    comp_ids = set()
-    profile_paths = []
-    if not os.path.isdir(wca_profiles_dir):
-        return
-    for fn in os.listdir(wca_profiles_dir):
-        if not fn.lower().endswith(".json"):
-            continue
-        profile_paths.append(os.path.join(wca_profiles_dir, fn))
-    for path in profile_paths:
-        data = load_json_if_exists(path)
-        if not data:
-            continue
-        results = data.get("results") or []
-        for r in results:
-            cid = r.get("competition_id")
-            if not isinstance(cid, str) or not cid:
-                continue
-            if " " not in cid and any(ch.isalnum() for ch in cid):
-                if cid not in cache:
-                    comp_ids.add(cid)
-
-    for cid in sorted(comp_ids):
-        try:
-            name = fetch_wca_competition_name(cid, session=session)
-            cache[cid] = name if name else cid
-        except Exception as e:
-            logging.warning("Error fetching competition %s: %s", cid, e)
-            cache[cid] = cid
-        _save_wca_title_cache(cache)
-        time.sleep(0.2)
-
-    for path in profile_paths:
-        data = load_json_if_exists(path)
-        if not data:
-            continue
-        modified = False
-        results = data.get("results") or []
-        for r in results:
-            cid = r.get("competition_id")
-            if not isinstance(cid, str) or not cid:
-                continue
-            if " " not in cid and any(ch.isalnum() for ch in cid):
-                new = cache.get(cid, cid)
-                if new != cid:
-                    r["competition_id"] = new
-                    modified = True
-        if modified:
-            try:
-                atomic_write(path, data)
-            except Exception as e:
-                logging.warning("Failed writing updated profile %s: %s", path, e)
-    _save_wca_title_cache(cache)
-
-# --- New minimal helpers for requested workflow ---
+# Minimal helpers from original workflow
 def clear_merged_files():
-    """
-    Make existing -merged.json files empty (do not delete them).
-    """
     ensure_dir(LSC_CACHE_DIR)
     for fn in os.listdir(LSC_CACHE_DIR):
         if fn.endswith("-merged.json"):
@@ -331,10 +190,6 @@ def clear_merged_files():
                 logging.warning("Failed to clear merged file %s", path)
 
 def copy_wca_profiles_to_merged():
-    """
-    Copy each WCA profile JSON into a corresponding -merged.json file in LSC_CACHE_DIR.
-    Uses the same base filename but appends -merged.json.
-    """
     ensure_dir(LSC_CACHE_DIR)
     if not os.path.isdir(WCA_CACHE_DIR):
         return
@@ -352,11 +207,7 @@ def copy_wca_profiles_to_merged():
             logging.warning("Failed to copy WCA profile %s to merged %s", src, dst)
 
 def replace_competition_ids_with_names_from_cache():
-    """
-    Replace competition_id values in existing merged files using the WCA title cache (wca_comp_titles.json).
-    If a competition_id is a short WCA id (no spaces) and exists in the cache, replace it with the cached name.
-    """
-    cache = _load_wca_title_cache()
+    cache = load_json_if_exists(WCA_TITLE_CACHE_PATH) or {}
     if not cache:
         return
     for fn in os.listdir(LSC_CACHE_DIR):
@@ -379,8 +230,134 @@ def replace_competition_ids_with_names_from_cache():
             except Exception:
                 logging.warning("Failed to update competition_id in merged file %s", path)
 
-# --- Main merge helpers ---
+# -------------------------
+# Average calculation helper
+# -------------------------
+def compute_average_from_attempts(attempts: List[int], isFMC: bool, format_id: Optional[str]) -> Optional[int]:
+    if not attempts:
+        return None
+
+    # normalize length
+    arr = list(attempts)[:5] + [0] * max(0, 5 - len(attempts))
+    # helper checks
+    has_dnf = any(a == -1 for a in arr)
+    has_dns = any(a == -2 for a in arr)
+
+    # Average of 5 (ao5)
+    if format_id == 'a':
+        # require five numeric attempts (0 treated as missing)
+        # if any DNF/DNS present, average is undefined per this implementation
+        if has_dnf or has_dns:
+            return None
+        positives = [a for a in arr if a and a > 0]
+        if len(positives) < 3:
+            return None
+        # drop min and max from the five attempts (use raw arr, not positives)
+        # but ensure we have five non-zero attempts; if zeros present treat as invalid
+        if any(a == 0 for a in arr):
+            # if zeros present, but there are at least 3 positives, still compute on positives?
+            # follow conservative rule: require 5 attempts for ao5
+            return None
+        sorted_vals = sorted(arr)
+        middle = sorted_vals[1:4]
+        avg = int(round(sum(middle) / 3.0))
+        return avg
+
+    # Mean of 3 (mo3) or bo3-like formats
+    if format_id == 'm' or format_id == '3' :
+        # use first 3 attempts
+        three = arr[:3]
+        if any(a in (-1, -2) for a in three):
+            return None
+        positives = [a for a in three if a and a > 0]
+        if not positives:
+            return None
+        if isFMC:
+            avg = int(100* round(sum(positives) / len(positives)))
+        else:
+            avg = int(round(sum(positives) / len(positives)))
+        return avg
+
+    # If format_id is numeric string like '2' or '1' (best-of), return best (min positive) or single attempt
+    if format_id == '2':
+        # best of 2 -> min of two positive attempts if present
+        two = arr[:2]
+        if any(a in (-1, -2) for a in two):
+            return None
+        positives = [a for a in two if a and a > 0]
+        if not positives:
+            return None
+        return min(positives)
+    if format_id == '1':
+        a = arr[0]
+        return a if a and a > 0 else None
+
+    # Fallback: if there are 3 non-zero positive attempts, compute mean
+    positives = [a for a in arr if a and a > 0]
+    if len(positives) >= 3:
+        avg = int(round(sum(positives) / len(positives)))
+        return avg
+
+    return None
+
+# -------------------------
+# Supabase upsert helper for lsc_profile
+# -------------------------
+def _upsert_lsc_profile_to_supabase(wcaid: Optional[str], name: str, lsc_profile_obj: dict):
+    """
+    Upsert the lsc_profile JSON into wca_ids table.
+    - If wcaid is present, find row by wcaid and update lsc_profile.
+    - Otherwise try to find by exact name; if not found, insert a new row with name and lsc_profile.
+    Uses find-then-insert/update to avoid ON CONFLICT dependency.
+    """
+    # prepare payload
+    payload = {
+        "name": name,
+        "lsc_profile": lsc_profile_obj
+    }
+    if wcaid:
+        payload["wcaid"] = wcaid
+
+    # try find by wcaid first
+    existing = None
+    try:
+        if wcaid:
+            resp = supabase.table("wca_ids").select("*").eq("wcaid", wcaid).limit(1).execute()
+            rows = _resp_data_or_raise(resp, "find wca row by wcaid")
+            if rows:
+                existing = rows[0]
+        if not existing:
+            # try find by exact name
+            resp = supabase.table("wca_ids").select("*").eq("name", name).limit(1).execute()
+            rows = _resp_data_or_raise(resp, "find wca row by name")
+            if rows:
+                existing = rows[0]
+    except Exception as e:
+        logging.warning("Supabase lookup failed for wcaid=%s name=%s: %s", wcaid, name, e)
+        existing = None
+
+    try:
+        if existing and existing.get("id"):
+            # update
+            resp = supabase.table("wca_ids").update(payload).eq("id", existing["id"]).execute()
+            _resp_data_or_raise(resp, "update wca_ids lsc_profile")
+            logging.debug("Updated lsc_profile for wca_ids id=%s name=%s", existing["id"], name)
+        else:
+            # insert new row
+            resp = supabase.table("wca_ids").insert(payload).execute()
+            _resp_data_or_raise(resp, "insert wca_ids lsc_profile")
+            logging.debug("Inserted new wca_ids row for name=%s", name)
+    except Exception as e:
+        logging.warning("Failed to upsert lsc_profile for name=%s wcaid=%s: %s", name, wcaid, e)
+
+# -------------------------
+# Replace write_merged_for_name to also update DB
+# -------------------------
 def write_merged_for_name(name, matched_wcaid, lsc_results):
+    """
+    Write merged profile to disk (same as before) and upsert lsc_profile into Supabase.
+    Returns the merged object.
+    """
     ensure_dir(WCA_CACHE_DIR)
     slug_profile_path = wca_profile_path_for_name(name)
     merged_path = merged_path_for_name(name)
@@ -403,6 +380,12 @@ def write_merged_for_name(name, matched_wcaid, lsc_results):
     merged.setdefault("results", [])
     existing_fps = set(result_fingerprint(r) for r in merged["results"])
     for r in lsc_results:
+        # compute average if missing and format available
+        fmt = r.get("format_id")
+        event = r.get("event_id")
+        if r.get("average") is None:
+            avg = compute_average_from_attempts(r.get("attempts", []), (event == "333fm"), fmt)
+            r["average"] = avg
         fp = result_fingerprint(r)
         if fp not in existing_fps:
             merged["results"].append(r)
@@ -411,310 +394,300 @@ def write_merged_for_name(name, matched_wcaid, lsc_results):
     if merged.get("wcaid") is None and matched_wcaid:
         merged["wcaid"] = matched_wcaid
 
+    # write merged file to disk
     atomic_write(merged_path, merged)
 
-# --- Competition processing ---
-def process_competition(comp, rounds_for_comp, wca_list, results_by_name):
-    sheet_id = comp.get("sheet_id")
-    if not sheet_id:
-        return
+    # also upsert into Supabase wca_ids.lsc_profile
     try:
-        meta = spreadsheet_metadata(sheet_id)
+        _upsert_lsc_profile_to_supabase(merged.get("wcaid"), merged["person"].get("name"), merged)
     except Exception as e:
-        print("Failed to load spreadsheet metadata for", comp.get("title"), e)
-        return
+        logging.warning("Failed to upsert lsc_profile for %s: %s", name, e)
 
-    tabs = [s["properties"]["title"] for s in meta.get("sheets", [])]
-    if not tabs:
-        return
+    return merged
+
+# --- Supabase data access helpers ---
+
+def fetch_results_for_round(round_id) -> List[Dict]:
+    """
+    Fetch round_results for a round.
+    Expected columns: competitor_name, attempt1..attempt5, pos, best, average, best_index, worst_index
+    """
+    resp = supabase.table("round_results").select("*").eq("round_id", round_id).execute()
+    if resp.error:
+        raise RuntimeError(f"Supabase error fetching results for round {round_id}: {resp.error.message}")
+    return resp.data or []
+
+# --- Supabase data access helpers (fixed) ---
+
+def _resp_data_or_raise(resp, context_msg="Supabase request"):
+    """
+    Helper: return resp.data if present, otherwise raise with useful message.
+    Works with different supabase-py response shapes.
+    """
+    # prefer .data attribute
+    data = getattr(resp, "data", None)
+    # some versions may return a dict-like object
+    if data is None and isinstance(resp, dict):
+        data = resp.get("data")
+    # check for errors in multiple possible places
+    err = getattr(resp, "error", None) or (resp.get("error") if isinstance(resp, dict) else None)
+    status = getattr(resp, "status_code", None) or (resp.get("status_code") if isinstance(resp, dict) else None)
+    if err:
+        raise RuntimeError(f"{context_msg}: {err}")
+    # supabase-py may return None data on empty result; normalize to []
+    return data or []
+
+def fetch_wca_list_from_supabase() -> List[Dict]:
+    """
+    Try to fetch a WCA list from a table named 'wca_ids' or 'wca_list'.
+    Fallback: return empty list (the script will still create merged files from local WCA cache).
+    """
+    for tbl in ("wca_ids"):
+        try:
+            resp = supabase.table(tbl).select("wcaid,name").execute()
+        except Exception:
+            # table might not exist or permission denied; skip to next
+            continue
+        try:
+            rows = _resp_data_or_raise(resp, f"fetching {tbl}")
+        except Exception:
+            # skip this table if it errors
+            continue
+        if rows:
+            return [{"wcaid": r.get("wcaid"), "name": r.get("name")} for r in rows]
+    return []
+
+def fetch_rounds_for_comp(comp_id) -> List[Dict]:
+    """
+    Fetch rounds for a competition from rounds table.
+    Expected columns: id, comp_id, event_id, round_code, format, advance_to_next, date
+    """
+    try:
+        resp = supabase.table("rounds").select("*").eq("comp_id", comp_id).execute()
+    except Exception as e:
+        raise RuntimeError(f"Supabase request failed fetching rounds for comp {comp_id}: {e}")
+    rows = _resp_data_or_raise(resp, f"fetching rounds for comp {comp_id}")
+    return rows
+
+def fetch_results_for_round(round_id) -> List[Dict]:
+    """
+    Fetch round_results for a round.
+    Expected columns: competitor_name, attempt1..attempt5, pos, best, average, best_index, worst_index
+    """
+    try:
+        resp = supabase.table("round_results").select("*").eq("round_id", round_id).execute()
+    except Exception as e:
+        raise RuntimeError(f"Supabase request failed fetching results for round {round_id}: {e}")
+    rows = _resp_data_or_raise(resp, f"fetching round_results for round {round_id}")
+    return rows
+
+def fetch_locked_competitions_from_supabase() -> List[Dict]:
+    """
+    Fetch competitions that are marked as locked from Supabase.
+    Tries common name/title columns and returns list of dicts with id and title.
+    """
+    # Try common column names
+    for name_col in ("name", "title"):
+        try:
+            resp = supabase.table("competitions").select(f"id,{name_col},locked").eq("locked", True).execute()
+        except Exception as e:
+            raise RuntimeError(f"Supabase error fetching competitions: {e}")
+        rows = _resp_data_or_raise(resp, "fetching competitions")
+        if rows:
+            comps = []
+            for r in rows:
+                comps.append({
+                    "id": r.get("id"),
+                    "title": r.get(name_col) or r.get("title") or r.get("name"),
+                    "locked": r.get("locked", True)
+                })
+            return comps
+    # If no rows returned, return empty list
+    return []
+
+# --- Main processing logic (adapted from original) ---
+
+def process_competition_from_db(comp, rounds_for_comp, wca_list, results_by_name):
+    """
+    comp: dict with keys id and title
+    rounds_for_comp: list of round rows from DB
+    wca_list: list of {wcaid, name}
+    results_by_name: dict to populate
+    """
+    comp_id = comp.get("id")
+    comp_title = comp.get("title") or comp.get("name") or str(comp_id)
 
     # Build WCA lookup maps
-    wca_by_name = {slugify_name_for_lookup(w["name"]): w for w in wca_list if w.get("name")}
-    wca_by_id = {w["wcaid"]: w for w in wca_list if w.get("wcaid")}
+    # KEY: exact name string as-is (trimmed). No slug/normalization.
+    wca_by_name = {}
+    wca_by_id = {}
+    for w in wca_list:
+        name = (w.get("name") or "").strip()
+        wcaid = w.get("wcaid")
+        if name:
+            wca_by_name.setdefault(name, []).append(w)
+        if wcaid:
+            wca_by_id[str(wcaid)] = w
 
-    # Iterate meta rounds and target the exact "{event} - {round}public" tab
-    for rmeta in (rounds_for_comp or []):
-        event_name = (rmeta.get("event") or "").strip()
-        round_label = (rmeta.get("round_label") or "").strip()
-        full_round = rmeta.get("round") or ""
-        round_date = rmeta.get("date") or None
-        fmt = (rmeta.get("format") or "").strip().lower()
+    # For debugging: collect unmatched names
+    unmatched = set()
 
-        if not event_name and " - " in full_round:
-            # derive event/round_label from full_round if needed
-            parts = full_round.split(" - ", 1)
-            event_name = parts[0].strip()
-            round_label = parts[1].strip()
-        elif not round_label and " - " in full_round:
-            round_label = full_round.split(" - ", 1)[1].strip()
+    # Iterate rounds fetched from DB
+    for r in rounds_for_comp:
+        event_name = r.get("event_id") or r.get("event") or None
+        round_code = r.get("round_code") or r.get("round") or None
+        fmt = r.get("format") or None
+        round_date = r.get("date") or None
 
-        public_tab = f"{event_name} - {round_label}public" if event_name and round_label else None
-        if not public_tab or public_tab not in tabs:
-            # strict requirement: only fetch from the exact public tab
-            continue
+        round_label = round_code
 
-        # Read the tab
-        values = read_values(sheet_id, f"'{public_tab}'!A:Z")
-        if not values or len(values) < 2:
-            continue
-        headers = [str(h).strip() for h in values[0]]
-        rows = values[1:]
-
-        # Header indices
-        name_idx = find_header_index(headers, ["name", "full name"])
-        if name_idx is None:
-            # fallback: any column containing "name"
-            for i, h in enumerate(headers):
-                if h and "name" in str(h).lower():
-                    name_idx = i
-                    break
-        if name_idx is None:
-            continue
-
-        attempt_indices = []
-        for i, h in enumerate(headers):
-            hu = str(h).strip().upper()
-            if hu in ('1','2','3','4','5','A1','A2','A3','A4','A5','ATTEMPT 1','ATTEMPT 2','ATTEMPT1','ATTEMPT2'):
-                attempt_indices.append(i)
-        # dedupe and limit to 5
-        seen = set()
-        attempt_indices_clean = []
-        for c in attempt_indices:
-            if c not in seen:
-                seen.add(c)
-                attempt_indices_clean.append(c)
-        attempt_indices = attempt_indices_clean[:5]
-
-        best_idx = find_header_index(headers, ["best","best time"])
-        avg_idx = find_header_index(headers, ["average","avg","mean"])
-        rank_idx = find_header_index(headers, ["#","rank","position"])
-        event_col_idx = find_header_index(headers, ["event"])
-        wcaid_idx = None
-        for i, h in enumerate(headers):
-            if h and "wca" in str(h).lower():
-                wcaid_idx = i
-                break
-
-        # Meta-derived fields
-        round_name = f"{event_name} - {round_label}" if event_name and round_label else full_round or public_tab.replace("public","").strip()
-        format_id = FORMAT_MAP.get(fmt, fmt or None)
-        # round type id from round_label
-        round_type_id = ROUND_TYPE_MAP.get(round_label, (round_label[:1].lower() if round_label else None))
-        # event id from event_name (case-insensitive)
-        event_id = None
-        if event_name:
-            ev_key = event_name.strip().lower()
-            event_id = next((code for name, code in EVENT_NAME_TO_CODE.items() if name.lower() == ev_key), None)
+        round_id = r.get("id")
+        try:
+            rows = fetch_results_for_round(round_id)
+        except Exception as e:
+            logging.warning("Failed to fetch results for round %s: %s", round_id, e)
+            rows = []
 
         for row in rows:
-            pname = (row[name_idx].strip() if name_idx is not None and name_idx < len(row) and row[name_idx] else "").strip()
+            pname = (row.get("competitor_name") or "").strip()
             if not pname:
                 continue
-            normalized = slugify_name_for_lookup(pname)
+
             matched = None
             matched_wcaid = None
 
-            if wcaid_idx is not None and wcaid_idx < len(row) and row[wcaid_idx]:
-                candidate = str(row[wcaid_idx]).strip()
-                if candidate in wca_by_id:
-                    matched = wca_by_id[candidate]
-                    matched_wcaid = candidate
-            if not matched and normalized in wca_by_name:
-                matched = wca_by_name[normalized]
-                matched_wcaid = matched.get("wcaid")
+            # 1) Try explicit wcaid field in the row (if present)
+            candidate_wcaid = row.get("wcaid") or row.get("wca_id") or row.get("wca")
+            if candidate_wcaid:
+                candidate_wcaid = str(candidate_wcaid).strip()
+                if candidate_wcaid in wca_by_id:
+                    matched = wca_by_id[candidate_wcaid]
+                    matched_wcaid = candidate_wcaid
 
+            # 2) Exact name match (word-for-word). No slug/normalization.
             if not matched:
-                # skip unknown person
-                continue
+                # direct lookup by the exact trimmed name
+                if pname in wca_by_name:
+                    # if multiple entries share the exact same name, pick the first
+                    matched = wca_by_name[pname][0]
+                    matched_wcaid = matched.get("wcaid")
 
-            raw_attempts = [row[i] if i < len(row) else None for i in attempt_indices]
-            while len(raw_attempts) < 5:
-                raw_attempts.append(None)
+            # Build attempts array from attempt1..attempt5 fields
+            raw_attempts = []
+            for i in range(1, 6):
+                key = f"attempt{i}"
+                raw_attempts.append(row.get(key))
 
-            ev_for_row = event_id
-            # fallback: try event column in sheet
-            if ev_for_row is None and event_col_idx is not None and event_col_idx < len(row):
-                ev_cell = row[event_col_idx]
-                if ev_cell:
-                    ev_key = str(ev_cell).strip().lower()
-                    ev_for_row = next((code for name, code in EVENT_NAME_TO_CODE.items() if name.lower() == ev_key), None)
-
-            parsed_attempts = [parse_attempt_value(v, ev_for_row) for v in raw_attempts]
-            parsed_attempts = [int(x) for x in parsed_attempts]
+            parsed_attempts = [parse_attempt_value_from_db(v, event_name) for v in raw_attempts]
             parsed_attempts = (parsed_attempts + [0] * max(0, 5 - len(parsed_attempts)))[:5]
 
-            sheet_best = None
-            if best_idx is not None and best_idx < len(row) and row[best_idx] not in (None, ""):
-                sheet_best = parse_attempt_value(row[best_idx], ev_for_row)
+            computed_best, computed_best_index, computed_worst_index = compute_best_and_indices(parsed_attempts, event_name)
+            best_val = row.get("best")
+            if best_val is None:
+                best_val = computed_best
+            else:
+                best_val = parse_attempt_value_from_db(best_val, event_name)
 
-            sheet_avg = None
-            if avg_idx is not None and avg_idx < len(row) and row[avg_idx] not in (None, ""):
-                raw_avg = row[avg_idx]
-                if ev_for_row == "333fm":
-                    s = str(raw_avg).strip()
-                    try:
-                        if ":" in s:
-                            mm, rest = s.split(":", 1)
-                            seconds = int(mm) * 60 + float(rest)
-                        else:
-                            seconds = float(s)
-                        sheet_avg = int(round(seconds * 100))
-                    except Exception:
-                        try:
-                            sheet_avg = int(float(s)) * 100
-                        except Exception:
-                            sheet_avg = None
-                else:
-                    sheet_avg = parse_attempt_value(raw_avg, ev_for_row)
+            avg_val = row.get("average")
+            if avg_val is not None:
+                avg_val = parse_attempt_value_from_db(avg_val, event_name)
 
-            computed_best, computed_best_index, computed_worst_index = compute_best_and_indices(parsed_attempts, ev_for_row)
-            best_val = sheet_best if sheet_best is not None else computed_best
+            pos_val = row.get("pos")
             try:
-                best_index = parsed_attempts.index(best_val) if best_val is not None else None
-            except ValueError:
-                best_index = computed_best_index
-            worst_index = computed_worst_index
-            avg_val = sheet_avg if sheet_avg is not None else None
+                pos_val = int(pos_val) if pos_val is not None else None
+            except Exception:
+                pos_val = None
 
-            pos_val = None
-            if rank_idx is not None and rank_idx < len(row) and row[rank_idx] not in (None, ""):
-                try:
-                    pos_val = int(str(row[rank_idx]).strip())
-                except Exception:
-                    pos_val = None
+            # Choose canonical name for merged file: prefer matched WCA profile name, else DB name
+            canonical_name = pname
+            if matched and matched.get("name"):
+                canonical_name = matched.get("name")
 
             result_obj = {
                 "pos": pos_val,
-                "competition_id": comp.get("title"),
-                "event_id": ev_for_row,
-                "round_type_id": round_type_id,
-                "format_id": format_id,
+                "competition_id": comp_title,
+                "event_id": event_name,
+                "round_type_id": round_code,
+                "format_id": FORMAT_MAP.get(fmt, fmt or None),
                 "attempts": parsed_attempts,
                 "best": best_val,
                 "average": avg_val,
-                "best_index": best_index,
-                "worst_index": worst_index,
-                "round_tab": public_tab,    # exact tab with "public"
+                "best_index": computed_best_index,
+                "worst_index": computed_worst_index,
                 "round_date": round_date,
             }
 
             if all(a == 0 for a in parsed_attempts):
                 continue
 
-            results_by_name.setdefault(pname, {"wcaid": matched_wcaid, "results": []})
-            results_by_name[pname]["results"].append(result_obj)
+            # Ensure results_by_name uses canonical_name key
+            results_by_name.setdefault(canonical_name, {"wcaid": matched_wcaid, "results": []})
+            if results_by_name[canonical_name].get("wcaid") is None and matched_wcaid:
+                results_by_name[canonical_name]["wcaid"] = matched_wcaid
+            results_by_name[canonical_name]["results"].append(result_obj)
+
+            if not matched:
+                unmatched.add(pname)
+
+    # Log unmatched sample for debugging
+    if unmatched:
+        sample = list(unmatched)[:20]
+        logging.info("Unmatched competitor names for competition %s (sample %d): %s", comp_title, len(sample), sample)
 
 def main():
     ensure_dir(WCA_CACHE_DIR)
 
-    # --- New requested workflow (minimal changes) ---
-    # 1) Clear existing -merged.json files (write empty object, do not delete)
+    # 1) Clear existing -merged.json files
     clear_merged_files()
 
-    # 2) Copy WCA profiles into LSC merged files (base -> base-merged.json)
+    # 2) Copy WCA profiles into LSC merged files
     copy_wca_profiles_to_merged()
 
     # 3) Replace competition_id values in merged files using wca_comp_titles cache
     replace_competition_ids_with_names_from_cache()
 
-    # Optional: refresh WCA competition titles in existing profile files
+    # 4) Load WCA list (try Supabase first)
+    wca_list = fetch_wca_list_from_supabase()
+    if not wca_list:
+        # fallback: load from local WCA cache directory (profiles/wca/*.json)
+        if os.path.isdir(WCA_CACHE_DIR):
+            for fn in os.listdir(WCA_CACHE_DIR):
+                if not fn.lower().endswith(".json"):
+                    continue
+                data = load_json_if_exists(os.path.join(WCA_CACHE_DIR, fn)) or {}
+                name = data.get("person", {}).get("name") or data.get("name")
+                wcaid = data.get("wcaid")
+                if name:
+                    wca_list.append({"wcaid": wcaid, "name": name})
+
+    # 5) Fetch locked competitions from Supabase
     try:
-        refresh_comp_titles_in_wca_profiles(WCA_CACHE_DIR)
+        locked_comps = fetch_locked_competitions_from_supabase()
     except Exception as e:
-        logging.warning("Failed to refresh competition titles in WCA profiles: %s", e)
+        raise SystemExit(f"Failed to fetch locked competitions from Supabase: {e}")
 
-    # Read unified meta tab
-    meta_rows = read_values(MASTER_ID, "meta!A2:H999")
-
-    # Group meta rows under the last seen competition (to include subsequent blank-comp rows)
-    comps_map = {}
-    round_lookup = {}
-    last_comp = None
-    last_sheet_id = None
-    last_locked = False
-
-    for row in meta_rows:
-        # columns: comp | sheet_id | isLocked? | event | round | format | advance | date
-        comp = (row[0].strip() if len(row) > 0 and row[0] else "")
-        sheet_id = (row[1].strip() if len(row) > 1 and row[1] else "")
-        locked_raw = (row[2].strip() if len(row) > 2 and row[2] else "")
-        locked = (locked_raw.upper() == "TRUE")
-        event = (row[3].strip() if len(row) > 3 and row[3] else "")
-        round_label = (row[4].strip() if len(row) > 4 and row[4] else "")
-        fmt = (row[5].strip().lower() if len(row) > 5 and row[5] else "")
-        advance = (row[6].strip() if len(row) > 6 and row[6] else "")
-        date = (row[7].strip() if len(row) > 7 and row[7] else "")
-
-        # If comp and sheet_id are blank, inherit from last seen competition
-        if not comp and not sheet_id and last_comp and last_sheet_id:
-            comp = last_comp
-            sheet_id = last_sheet_id
-            locked = last_locked
-
-        # Ignore rows without a usable competition context
-        if not comp or not sheet_id:
-            continue
-
-        # If this is a new competition definition row, record it
-        if comp not in comps_map:
-            comps_map[comp] = {"title": comp, "sheet_id": sheet_id, "is_locked": locked}
-
-        # Remember as current block context
-        last_comp = comp
-        last_sheet_id = sheet_id
-        last_locked = locked
-
-        # Build a clean "Event - Round" string and also store event/round_label explicitly
-        full_round = f"{event} - {round_label}" if event and round_label else (event or round_label)
-        round_lookup.setdefault(comp, []).append({
-            "comp": comp,
-            "sheet_id": sheet_id,
-            "round": full_round,
-            "event": event,
-            "round_label": round_label,
-            "format": fmt,
-            "advance": advance,
-            "date": date
-        })
-
-    comps = list(comps_map.values())
-
-    # Optional: replace titles for WCA IDs
-    try:
-        refresh_comp_titles_for_comps(comps)
-    except Exception as e:
-        logging.warning("Failed to refresh competition titles for master comps: %s", e)
-
-    # Load WCA list
-    wca_list = []
-    wca_rows = read_values(MASTER_ID, "WCAIDs!A1:D200")
-    if wca_rows:
-        hdr = wca_rows[0]
-        wca_col = next((i for i, h in enumerate(hdr) if isinstance(h, str) and "wcaid" in h.lower()), None)
-        name_col = next((i for i, h in enumerate(hdr) if isinstance(h, str) and "name" == str(h).strip().lower()), None)
-        for r in wca_rows[1:]:
-            name = r[name_col].strip() if (name_col is not None and name_col < len(r) and r[name_col]) else ""
-            wcaid = (r[wca_col].strip() if (wca_col is not None and wca_col < len(r) and r[wca_col]) else None)
-            if name:
-                wca_list.append({"wcaid": wcaid, "name": name})
-
-    # Only scan locked competitions
-    locked_comps = [c for c in comps if c.get("is_locked") and c.get("sheet_id")]
     if not locked_comps:
-        print("No locked competitions found in meta")
+        print("No locked competitions found in Supabase (or none returned).")
         return
 
     print(f"Found {len(locked_comps)} locked competitions to scan")
 
-    global results_by_name
     results_by_name = {}
 
+    # For each competition, fetch rounds and results and process
     for comp in locked_comps:
-        comp_title = comp.get("title")
-        rm_for_comp = round_lookup.get(comp_title, [])
-        print("Scanning competition:", comp_title, "(", comp.get("sheet_id"), ") with", len(rm_for_comp), "meta entries")
-        process_competition(comp, rm_for_comp, wca_list, results_by_name)
+        comp_id = comp.get("id")
+        comp_title = comp.get("title") or comp.get("name") or str(comp_id)
+        print("Scanning competition:", comp_title, "(", comp_id, ")")
+        try:
+            rounds = fetch_rounds_for_comp(comp_id)
+        except Exception as e:
+            logging.warning("Failed to fetch rounds for competition %s: %s", comp_title, e)
+            rounds = []
 
+        process_competition_from_db(comp, rounds, wca_list, results_by_name)
+
+    # Write merged files
     for name, info in results_by_name.items():
         matched_wcaid = info.get("wcaid")
         lsc_results = info.get("results", [])

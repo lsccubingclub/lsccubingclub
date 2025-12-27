@@ -4,7 +4,7 @@
   },
   "results": [
     {
-      "pos": 19,
+      "pos": null,
       "competition_id": "LSC Cube Day 2024",
       "event_id": "333",
       "round_type_id": "1",
@@ -17,14 +17,13 @@
         2780
       ],
       "best": 2780,
-      "average": 3248,
+      "average": null,
       "best_index": 4,
       "worst_index": 0,
-      "round_tab": "3x3x3 Cube - First Roundpublic",
-      "round_date": "2024-12-12"
+      "round_date": null
     },
     {
-      "pos": 15,
+      "pos": null,
       "competition_id": "LSC Championship 2025",
       "event_id": "333",
       "round_type_id": "1",
@@ -40,11 +39,10 @@
       "average": 2576,
       "best_index": 3,
       "worst_index": 4,
-      "round_tab": "3x3x3 Cube - First Roundpublic",
-      "round_date": "2025-03-26"
+      "round_date": null
     },
     {
-      "pos": 10,
+      "pos": null,
       "competition_id": "LSC Championship 2025",
       "event_id": "222",
       "round_type_id": "1",
@@ -60,11 +58,10 @@
       "average": 895,
       "best_index": 3,
       "worst_index": 1,
-      "round_tab": "2x2x2 Cube - First Roundpublic",
-      "round_date": "2025-03-27"
+      "round_date": null
     },
     {
-      "pos": 4,
+      "pos": null,
       "competition_id": "LSC Championship 2025",
       "event_id": "pyram",
       "round_type_id": "f",
@@ -77,11 +74,10 @@
         1092
       ],
       "best": 806,
-      "average": 1133,
+      "average": null,
       "best_index": 2,
       "worst_index": 1,
-      "round_tab": "Pyraminx - Finalpublic",
-      "round_date": "2025-03-27"
+      "round_date": null
     }
   ]
 }

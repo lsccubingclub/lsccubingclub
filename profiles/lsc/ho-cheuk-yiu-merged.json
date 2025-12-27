@@ -3,8 +3,8 @@
   "results": [
     {
       "id": 2793545,
-      "pos": 139,
       "round_id": 147307,
+      "pos": 139,
       "best": 1577,
       "average": -1,
       "name": "Ho Cheuk Yiu (何卓堯)",
@@ -28,8 +28,8 @@
     },
     {
       "id": 2793645,
-      "pos": 56,
       "round_id": 147310,
+      "pos": 56,
       "best": 276,
       "average": 624,
       "name": "Ho Cheuk Yiu (何卓堯)",
@@ -53,8 +53,8 @@
     },
     {
       "id": 2793794,
-      "pos": 54,
       "round_id": 147316,
+      "pos": 54,
       "best": 4031,
       "average": 0,
       "name": "Ho Cheuk Yiu (何卓堯)",
@@ -78,8 +78,8 @@
     },
     {
       "id": 2793876,
-      "pos": 62,
       "round_id": 147313,
+      "pos": 62,
       "best": 7601,
       "average": 0,
       "name": "Ho Cheuk Yiu (何卓堯)",
@@ -103,8 +103,8 @@
     },
     {
       "id": 4984177,
-      "pos": 99,
       "round_id": 808118,
+      "pos": 99,
       "best": 1273,
       "average": 1523,
       "name": "Ho Cheuk Yiu (何卓堯)",
@@ -128,8 +128,8 @@
     },
     {
       "id": 4984575,
-      "pos": 57,
       "round_id": 808122,
+      "pos": 57,
       "best": 431,
       "average": 466,
       "name": "Ho Cheuk Yiu (何卓堯)",
@@ -153,8 +153,8 @@
     },
     {
       "id": 4984677,
-      "pos": 54,
       "round_id": 808123,
+      "pos": 54,
       "best": 424,
       "average": 524,
       "name": "Ho Cheuk Yiu (何卓堯)",
@@ -178,8 +178,8 @@
     },
     {
       "id": 5422962,
-      "pos": 79,
       "round_id": 823292,
+      "pos": 79,
       "best": 1219,
       "average": 1513,
       "name": "Ho Cheuk Yiu (何卓堯)",
@@ -203,8 +203,8 @@
     },
     {
       "id": 5423193,
-      "pos": 43,
       "round_id": 823296,
+      "pos": 43,
       "best": 306,
       "average": 446,
       "name": "Ho Cheuk Yiu (何卓堯)",
@@ -228,8 +228,8 @@
     },
     {
       "id": 5423604,
-      "pos": 46,
       "round_id": 823308,
+      "pos": 46,
       "best": 2711,
       "average": 3168,
       "name": "Ho Cheuk Yiu (何卓堯)",
@@ -253,8 +253,8 @@
     },
     {
       "id": 5423750,
-      "pos": 43,
       "round_id": 823315,
+      "pos": 43,
       "best": 401,
       "average": 999,
       "name": "Ho Cheuk Yiu (何卓堯)",
@@ -278,8 +278,8 @@
     },
     {
       "id": 7711379,
-      "pos": 74,
       "round_id": 909542,
+      "pos": 74,
       "best": 1061,
       "average": 1334,
       "name": "Ho Cheuk Yiu (何卓堯)",
@@ -303,8 +303,8 @@
     },
     {
       "id": 7711675,
-      "pos": 31,
       "round_id": 909546,
+      "pos": 31,
       "best": 329,
       "average": 388,
       "name": "Ho Cheuk Yiu (何卓堯)",
@@ -327,7 +327,7 @@
       "regional_average_record": null
     },
     {
-      "pos": 10,
+      "pos": null,
       "competition_id": "LSC Cube Day 2024",
       "event_id": "333",
       "round_type_id": "1",
@@ -343,8 +343,7 @@
       "average": 1507,
       "best_index": 1,
       "worst_index": 2,
-      "round_tab": "3x3x3 Cube - First Roundpublic",
-      "round_date": "2024-12-12"
+      "round_date": null
     }
   ],
   "person": {

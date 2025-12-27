@@ -1,7 +1,7 @@
 name: nightly-data
 on:
   schedule:
-    - cron: '0 22 * * 0,2,4' # every Mon, Wed, Fri at 6:00 HKT (22:00 UTC previous day)
+    - cron: '0 22 * * *' # every Mon, Wed, Fri at 6:00 HKT (22:00 UTC previous day)
   workflow_dispatch:
 
 permissions:
@@ -41,9 +41,9 @@ jobs:
         run: |
           mkdir -p data
           python scripts/fetch_wca_profiles.py
+          python scripts/update_wca_comp_titles.py
           python scripts/merge_lsc.py
           python scripts/generate_rankings.py
-          python scripts/prefetch_competitions.py
 
       - name: Commit and push generated data if changed
         env:

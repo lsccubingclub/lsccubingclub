@@ -4,7 +4,26 @@
   },
   "results": [
     {
-      "pos": 17,
+      "pos": null,
+      "competition_id": "LSC FMC Championship 2025",
+      "event_id": "333fm",
+      "round_type_id": "f",
+      "format_id": "3",
+      "attempts": [
+        -1,
+        -1,
+        -1,
+        0,
+        0
+      ],
+      "best": null,
+      "average": null,
+      "best_index": null,
+      "worst_index": 0,
+      "round_date": null
+    },
+    {
+      "pos": null,
       "competition_id": "LSC Championship 2025",
       "event_id": "333",
       "round_type_id": "1",
@@ -17,14 +36,13 @@
         -1
       ],
       "best": 2350,
-      "average": 3203,
+      "average": null,
       "best_index": 0,
       "worst_index": 4,
-      "round_tab": "3x3x3 Cube - First Roundpublic",
-      "round_date": "2025-03-26"
+      "round_date": null
     },
     {
-      "pos": 9,
+      "pos": null,
       "competition_id": "LSC Championship 2025",
       "event_id": "222",
       "round_type_id": "1",
@@ -37,14 +55,13 @@
         812
       ],
       "best": 571,
-      "average": 870,
+      "average": null,
       "best_index": 3,
       "worst_index": 1,
-      "round_tab": "2x2x2 Cube - First Roundpublic",
-      "round_date": "2025-03-27"
+      "round_date": null
     },
     {
-      "pos": 6,
+      "pos": null,
       "competition_id": "LSC Championship 2025",
       "event_id": "pyram",
       "round_type_id": "f",
@@ -57,31 +74,10 @@
         1312
       ],
       "best": 1208,
-      "average": 1330,
+      "average": 1329,
       "best_index": 1,
       "worst_index": 3,
-      "round_tab": "Pyraminx - Finalpublic",
-      "round_date": "2025-03-27"
-    },
-    {
-      "pos": 8,
-      "competition_id": "LSC FMC Championship 2025",
-      "event_id": "333fm",
-      "round_type_id": "f",
-      "format_id": "3",
-      "attempts": [
-        -1,
-        -1,
-        -1,
-        0,
-        0
-      ],
-      "best": -1,
-      "average": null,
-      "best_index": 0,
-      "worst_index": 0,
-      "round_tab": "3x3x3 Fewest Moves - Finalpublic",
-      "round_date": "2025-05-21"
+      "round_date": null
     }
   ]
 }

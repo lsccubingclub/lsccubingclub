@@ -412,8 +412,6 @@
                 <div style="font-weight:600; margin-bottom:6px;">Events</div>
                 <div id="comp-rounds-wrap" style="display:flex; flex-wrap:wrap; gap:8px;"></div>
               </div>
-
-              <div id="comp-highlights" style="margin-top:10px;"></div>
             </div>
 
             <div id="comp-tabs-content" style="background:#fff; border:1px solid #eee; border-radius:10px; padding:14px;">
@@ -480,22 +478,15 @@
     </section>
   </main>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    const MASTER_SHEET_ID = '1fjWyEbc7a5A3RjkFm0BEnE_lyHXCa3kYiKRd2IP9j5Q';
-    const API_KEY = 'AIzaSyA_4BKwiXfv_T9XhbdenwHuGm0k5uc89S8';
+    const SUPABASE_URL = 'https://bkzosvxbkhzkskaejqcb.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJrem9zdnhia2h6a3NrYWVqcWNiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQzOTczMzIsImV4cCI6MjA3OTk3MzMzMn0.iqZZCfEtSdWksHGfbxUAOoaInu6ZpR-7mEIRtmvW9io';
+
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     const numRx = /^-?\d+(\.\d+)?$/;
     const attRx = /^[1-5]$/;
-
-    let masterValues = [];   // A1:Z? matrix from master
-
-    const COMP_HEADER_ROW    = 0;
-    const SHEET_ID_ROW     =   1;
-    const LOCK_STATUS_ROW    = 2;
-    const FIRST_ROUND_ROW    = LOCK_STATUS_ROW + 1;
-    let compLockMap = {};
-    let compSheetMap = {};
-    let roundSheetsMap = Object.create(null);
 
     const WCA_EVENTS = [
       "3x3x3 Cube","2x2x2 Cube","4x4x4 Cube","5x5x5 Cube","6x6x6 Cube","7x7x7 Cube",
@@ -533,6 +524,17 @@
       Object.entries(EVENT_CODE_TO_NAME).map(([code, name]) => [name.toString().trim().toLowerCase(), code])
     );
 
+    const ROUND_CODE_TO_NAME = {
+    "f": "Final",
+    "3": "Third Round",
+    "2": "Second Round",
+    "1": "First Round",
+    };
+
+    const ROUND_NAME_TO_CODE = Object.fromEntries(
+    Object.entries(ROUND_CODE_TO_NAME).map(([code, name]) => [name.toString().trim().toLowerCase(), code])
+    );
+
     let __wcaCompTitleCachePromise = null;
     function loadWcaCompTitleCache() {
       if (__wcaCompTitleCachePromise) return __wcaCompTitleCachePromise;
@@ -549,8 +551,6 @@
       const isPortrait = window.matchMedia("(orientation: portrait)").matches;
       return (((isPhone || isTablet) && isPortrait) || (window.innerWidth <= 640));
     }
-
-
 
     function csToDisplay(cs) {
       if (cs === null || cs === undefined || cs === 0) return '';
@@ -637,6 +637,102 @@
 
         tdParent.appendChild(span);
       });
+    }
+
+    function computeAo5(attempts) {
+      // 1) If one or more null => return null
+      if (attempts.some(v => v === null)) return null;
+
+      // Normalize to numbers and keep original array for removals
+      const arr = attempts.slice();
+
+      // 2) If more than one DNF/DNS => return DNF (-1)
+      const penalties = arr.filter(v => v === -1 || v === -2).length;
+      if (penalties > 1) return -1;
+
+      // Collect positive (valid) times
+      const positives = arr.filter(v => Number.isFinite(v) && v > 0);
+
+      // If no positive times at all, average cannot be computed
+      if (positives.length === 0) return -1;
+
+      // 3) Delete best time (lowest positive number)
+      const bestToDrop = Math.min(...positives);
+
+      // 4) Delete worst time:
+      //    prefer DNS (-2), else DNF (-1), else highest positive
+      let worstToDrop = null;
+      if (arr.includes(-2)) worstToDrop = -2;
+      else if (arr.includes(-1)) worstToDrop = -1;
+      else {
+        const maxPos = Math.max(...positives);
+        worstToDrop = Number.isFinite(maxPos) ? maxPos : null;
+      }
+
+      // If we can't determine worst to drop, it's invalid
+      if (worstToDrop === null) return -1;
+
+      // Build remaining by removing one instance of bestToDrop and one of worstToDrop
+      const remaining = arr.slice();
+      const removeOnce = (list, value) => {
+        const idx = list.indexOf(value);
+        if (idx !== -1) list.splice(idx, 1);
+      };
+      removeOnce(remaining, bestToDrop);
+      removeOnce(remaining, worstToDrop);
+
+      // 5) Take mean of the remaining middle three
+      const middle = remaining.filter(v => Number.isFinite(v) && v > 0);
+      if (middle.length !== 3) return -1;
+
+      const sum = middle.reduce((a, b) => a + b, 0);
+      return Math.round(sum / 3);
+    }
+
+    function computeMo3(attempts, isFMC = false) {
+      const valid = attempts.filter(v => v !== null && v !== undefined && v !== 0 && v !== -1 && v !== -2);
+      const penalties = attempts.filter(v => v === -1 || v === -2).length;
+      if (penalties > 0 || valid.length < 3) return -1;
+
+      const sum = valid.reduce((a, b) => a + b, 0);
+      const avg = sum / 3;
+
+      return isFMC ? Math.round(avg * 100) : Math.round(avg);
+    }
+
+    function computeBest(attempts) {
+      const valid = attempts.filter(v => v > 0 && v !== -1 && v !== -2);
+      const min = Math.min(...valid);
+      return (min === Infinity) ? -1 : min;
+    }
+
+    function getBestIndex(attempts) {
+      const valid = attempts.map((v, i) => ({ v, i }))
+        .filter(({ v }) => v !== null && v !== undefined && v > 0 && v !== -1 && v !== -2);
+      if (!valid.length) return null;
+      return valid.reduce((best, curr) => (curr.v < best.v ? curr : best)).i;
+    }
+
+    function getWorstIndex(attempts) {
+      const scored = attempts.map((v, i) => {
+        if (v === -1) return { v: Infinity, i };      // DNF is worst
+        if (v === -2) return { v: Infinity + 1, i };  // DNS is even worse
+        if (v === null || v === undefined || v === 0 || v === '') return null;
+        return { v, i };
+      }).filter(x => x !== null);
+
+      if (!scored.length) return null;
+      return scored.reduce((worst, curr) => (curr.v > worst.v ? curr : worst)).i;
+    }
+
+    function parseFMCBest(best) {
+      if (best === null || best === undefined || best === '' || best === 0) return '';
+      if (best === -1) return 'DNF';
+      if (best === -2) return 'DNS';
+      const n = Number(best);
+      if (!Number.isFinite(n)) return String(best);
+      if (!Number.isInteger(n) && Math.abs(n) < 10) return String(Math.round(n * 100));
+      return String(Math.round(n));
     }
 
     async function patchCompetitionCells(container = document) {
@@ -733,48 +829,44 @@
       };
     }
 
-    // Show competitions view
     async function renderCompetitionsHome() {
       showView('competitions');
       document.getElementById('view-competitions').hidden = false;
       document.getElementById('competition-detail').style.display = 'none';
-      
-      await fetchMeta();
-
-      const header = Array.isArray(masterValues[COMP_HEADER_ROW]) ? masterValues[COMP_HEADER_ROW] : [];
-      const comps = header.slice(1).map(c => (c || '').toString().trim()).filter(Boolean);
 
       const listEl = document.getElementById('competitions-locked-list');
       listEl.innerHTML = '';
       listEl.style.display = '';
 
-      const items = comps.map(name => {
-        const isLocked = !!compLockMap[name];
-        const date = getCompetitionDate(name);
-        return { name, isLocked, date };
-      })
-      .filter(x => x.isLocked)
-      .sort((a, b) => {
-        // chronological ascending by date (YYYY-MM-DD or similar)
-        const da = Date.parse(a.date || '1970-01-01');
-        const db = Date.parse(b.date || '1970-01-01');
-        return da - db;
-      });
+      // Fetch locked competitions from Supabase
+      const { data, error } = await supabaseClient
+        .from('competitions')
+        .select('id, name, date')
+        .eq('locked', true)
+        .order('date', { ascending: false });
 
-      if (items.length === 0) {
+      if (error) {
+        listEl.innerHTML = `<div style="padding:12px;color:#c00">Error loading competitions: ${error.message}</div>`;
+        return;
+      }
+
+      if (!data || data.length === 0) {
         listEl.innerHTML = '<div style="padding:12px;color:#666">No past competitions found</div>';
         return;
       }
 
-      items.forEach(({ name, date }) => {
+      data.forEach(({ name, date }) => {
         const card = document.createElement('div');
         card.style.cssText = 'background:#fff;border:1px solid #eee;border-radius:10px;padding:14px;box-shadow:0 6px 18px rgba(18,38,63,0.04);cursor:pointer;';
+        
         const t = document.createElement('div');
         t.style.cssText = 'font-weight:600; font-size:15px;';
         t.textContent = name;
+
         const d = document.createElement('div');
         d.style.cssText = 'color:#555; font-size:13px; margin-top:4px;';
-        d.textContent = date ? `${date}` : '';
+        d.textContent = date ? new Date(date).toLocaleDateString() : '';
+
         card.appendChild(t);
         card.appendChild(d);
         card.addEventListener('click', () => navigate(`/competitions/${slug(name)}`));
@@ -782,619 +874,639 @@
       });
     }
 
-    // Read one competition’s canonical date from meta (earliest round date)
-    function getCompetitionDate(compName) {
-      const sheets = roundSheetsMap[compName] || {};
-      const dates = Object.values(sheets).map(o => o && o.date).filter(Boolean);
-      if (!dates.length) return '';
-      // pick earliest date
-      return dates.sort((a, b) => Date.parse(a || '2100-01-01') - Date.parse(b || '2100-01-01'))[0];
-    }
-
-    // Competition detail view consuming prefetch JSONs
-    async function renderCompetitionDetail(compSlug) {
-      showView('competitions');
-      document.getElementById('view-competitions').hidden = false;
-      document.getElementById('competitions-locked-list').style.display = 'none';
-
-      const compName = unslug(compSlug);
-      const detailEl = document.getElementById('competition-detail');
+    async function renderAll(compName) {
       const allEl = document.getElementById('comp-all');
-      const personEl = document.getElementById('comp-person');
-      const podiumsEl = document.getElementById('comp-podiums');
+      allEl.innerHTML = '';
 
-      detailEl.style.display = '';
+      const { data: comps, error: compErr } = await supabaseClient
+        .from('competitions')
+        .select('id, name')
+        .eq('name', compName)
+        .limit(1);
 
-      // Summary
-      document.getElementById('comp-title').textContent = compName;
-
-      // Load details JSON built by the Python script
-      const base = `/data/competitions/${encodeURIComponent(slug(compName))}`;
-      let details = {};
-      try { details = await (await fetch(`${base}/details.json`, { cache: 'no-store' })).json(); } catch (e) {}
-
-      const metaEl = document.getElementById('comp-meta');
-      const venue = details.venue || '';
-      const date = details.date || getCompetitionDate(compName) || '';
-      const time = details.time || '';
-      metaEl.textContent = [venue, date, time].filter(Boolean).join(' • ');
-
-      // Offered events & rounds, advance counts
-      const offeredWrap = document.getElementById('comp-rounds-wrap');
-      offeredWrap.innerHTML = '';
-      try {
-        const offered = await (await fetch(`${base}/offered.json`, { cache: 'no-store' })).json();
-        const byEvent = offered.byEvent || {};
-        const orderedEvents = WCA_EVENTS.filter(e => byEvent[e]).concat(Object.keys(byEvent).filter(e => !WCA_EVENTS.includes(e)).sort());
-        orderedEvents.forEach(ev => {
-          const icon = document.createElement('img');
-          const code = EVENT_NAME_TO_CODE[(ev || '').toLowerCase()] || 'unknown';
-          icon.src = `/images/event_icons/${code}.png`;
-          icon.alt = ev;
-          icon.style.cssText = 'width:24px;height:24px;object-fit:contain;';
-          const label = document.createElement('div');
-          offeredWrap.appendChild(icon);
-        });
-      } catch (e) {}
-
-      // Highlights (podiums of main event)
-      const hl = document.getElementById('comp-highlights');
-      hl.innerHTML = '';
-      if (details.main_event && details.podiums && details.podiums[details.main_event]) {
-        const mainEvent = details.main_event;
-        const hTitle = document.createElement('div');
-        hTitle.style.cssText = 'font-weight:600; margin-top:8px;';
-        hTitle.textContent = `Highlights: ${mainEvent} podium`;
-        hl.appendChild(hTitle);
-
-        const tbl = document.createElement('table');
-        tbl.style.cssText = 'margin-top:6px; border-collapse:collapse; width:100%;';
-        const thead = document.createElement('thead');
-        thead.innerHTML = '<tr>' +
-          '<th style="text-align:left; padding:8px;">#</th>' +
-          '<th style="text-align:left; padding:8px;">Name</th>' +
-          '<th style="text-align:right; padding:8px;">Best</th>' +
-          '<th style="text-align:right; padding:8px;">Average</th>' + 
-          '<th class="solves-header" style="padding:8px;">Solves</th>' +
-          '</tr>';
-        tbl.appendChild(thead);
-        const tbody = document.createElement('tbody');
-        (details.podiums[main_event] || []).forEach((row) => {
-          const tr = document.createElement('tr');
-          const td1 = document.createElement('td'); td1.style.cssText = 'padding:6px;'; td1.textContent = row.place;
-          const td2 = document.createElement('td'); td2.style.cssText = 'padding:6px;'; td2.textContent = row.name;
-          const td3 = document.createElement('td'); td3.style.cssText = 'padding:6px; text-align:right;'; td3.textContent = row.result;
-          tr.appendChild(td1); tr.appendChild(td2); tr.appendChild(td3);
-          tbody.appendChild(tr);
-        });
-        tbl.appendChild(tbody);
-        hl.appendChild(tbl);
+      if (compErr || !comps || comps.length === 0) {
+        allEl.innerHTML = `<div style="padding:12px;color:#c00">Competition not found: ${compName}</div>`;
+        return;
       }
 
-      // Tabs content: fetch generated JSONs
-      let allJson = {}, personsJson = {}, podiumsJson = {};
-      try { allJson = await (await fetch(`${base}/all.json`, { cache: 'no-store' })).json(); } catch (e) {}
-      try { personsJson = await (await fetch(`${base}/persons.json`, { cache: 'no-store' })).json(); } catch (e) {}
-      try { podiumsJson = await (await fetch(`${base}/podiums.json`, { cache: 'no-store' })).json(); } catch (e) {}
+      const compId = comps[0].id;
 
-      function renderAll() {
-        allEl.innerHTML = '';
-        const eventsObj = allJson.events || {};
-        const offeredEvents = Object.keys(eventsObj || {});
-        const ordered = WCA_EVENTS.filter(e => offeredEvents.includes(e))
-          .concat(offeredEvents.filter(e => !WCA_EVENTS.includes(e)).sort());
+      const { data: rounds, error: roundsErr } = await supabaseClient
+        .from('rounds')
+        .select('id, event_id, round_code, format')
+        .eq('comp_id', compId);
 
-        if (!ordered.length) {
-          allEl.innerHTML = '<div style="padding:8px; color:#666">No results</div>';
-          return;
-        }
-
-        // event icons row (clickable to scroll)
-        const iconsRow = document.createElement('div');
-        iconsRow.className = 'comp-all-events';
-        ordered.forEach(ev => {
-          const evBtn = document.createElement('div');
-          evBtn.className = 'ev';
-          const code = EVENT_NAME_TO_CODE[(ev || '').toLowerCase()] || 'unknown';
-          evBtn.innerHTML = `<img src="/images/event_icons/${code}.png" alt="${escapeHtml(ev)}" style="width:36px;height:36px;object-fit:contain;">`;
-          evBtn.addEventListener('click', () => {
-            const target = allEl.querySelector(`[data-event="${CSS.escape(ev)}"]`);
-            if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          });
-          iconsRow.appendChild(evBtn);
-        });
-        allEl.appendChild(iconsRow);
-
-        function roundHeaderText(eventName, roundLabel) {
-          return `${eventName} ${roundLabel}`.trim();
-        }
-
-        ordered.forEach(eventName => {
-          const rounds = allJson.events[eventName] || [];
-          if (!rounds || !rounds.length) return;
-
-          rounds.forEach(roundObj => {
-            const rnLabel = roundObj.round || '';
-            const hr = document.createElement('div');
-            hr.style.cssText = 'margin-top:18px; margin-bottom:8px; font-weight:700; font-size:1.5rem;';
-            hr.textContent = roundHeaderText(eventName, rnLabel);
-            // mark anchor so icons row can locate by event (first event header per event)
-            hr.setAttribute('data-event', eventName);
-            allEl.appendChild(hr);
-
-            const fmt = (roundFormatMap[compName] && roundFormatMap[compName][`${eventName} - ${rnLabel}`]) || (roundObj.format || 'ao5');
-            const isAo5 = (fmt || '').toLowerCase().startsWith('ao');
-
-            const tblWrap = document.createElement('div');
-            tblWrap.style.cssText = 'overflow-x:auto; -webkit-overflow-scrolling:touch; margin-top:6px;';
-
-            const tbl = document.createElement('table');
-            tbl.style.cssText = 'display:inline-table; white-space:nowrap; margin-top:6px; width:100%;';
-            const thead = document.createElement('thead');
-            thead.innerHTML = '<tr>' +
-              '<th style="text-align:left; padding:8px;">#</th>' +
-              '<th style="text-align:left; padding:8px;">Name</th>' +
-              '<th style="text-align:right; padding:8px;">Best</th>' +
-              '<th style="text-align:right; padding:8px;">Average</th>' +
-              '<th class="solves-header" style="padding:8px;">Solves</th>' +
-              '</tr>';
-            tbl.appendChild(thead);
-            const tbody = document.createElement('tbody');
-
-            (roundObj.rows || []).forEach((row, idx) => {
-              const tr = document.createElement('tr');
-              const td1 = document.createElement('td'); td1.style.cssText = 'padding:8px; font-weight:600;'; td1.textContent = idx + 1;
-              const td2 = document.createElement('td'); td2.style.cssText = 'padding:8px;'; td2.textContent = row.name || '';
-              tr.appendChild(td1); tr.appendChild(td2);
-
-              const isFMC = isFewestMovesEvent(eventName || '');
-
-              const tdBest = document.createElement('td');
-              tdBest.style.cssText = 'padding:8px; text-align:right;';
-
-              if (isFMC) {
-                function toFmcIntString(raw) {
-                  if (raw === null || raw === undefined || raw === '' || raw === 0) return '';
-                  if (raw === -1) return 'DNF';
-                  if (raw === -2) return 'DNS';
-                  const n = Number(raw);
-                  if (!Number.isFinite(n)) return String(raw);
-                  if (!Number.isInteger(n) && Math.abs(n) < 10) return String(Math.round(n * 100));
-                  return String(Math.round(n));
-                }
-
-                if (row.best !== undefined && row.best !== null && row.best !== '') {
-                  tdBest.textContent = toFmcIntString(row.best);
-                } else if (Array.isArray(row.attempts) && row.attempts.length) {
-                  const numeric = (row.attempts || []).map(a => {
-                    if (a === null || a === undefined || a === 0 || a === '') return null;
-                    if (a === -1) return -1;
-                    if (a === -2) return -2;
-                    return Number(a);
-                  }).filter(v => v !== null && v !== undefined && !Number.isNaN(v));
-                  if (!numeric.length) {
-                    tdBest.textContent = '';
-                  } else {
-                    const nonSpecial = numeric.filter(v => v !== -1 && v !== -2);
-                    if (nonSpecial.length === 0) {
-                      tdBest.textContent = numeric.includes(-1) ? 'DNF' : (numeric.includes(-2) ? 'DNS' : '');
-                    } else {
-                      const min = Math.min.apply(null, nonSpecial);
-                      tdBest.textContent = toFmcIntString(min);
-                    }
-                  }
-                } else {
-                  tdBest.textContent = '';
-                }
-              } else {
-                tdBest.textContent = (row.best !== undefined && row.best !== null) ? csToDisplay(row.best)
-                  : (Array.isArray(row.attempts) && row.attempts.length ? (() => {
-                      const numeric = (row.attempts || []).filter(v => v !== null && v !== undefined && v !== 0 && v !== -1 && v !== -2);
-                      if (!numeric.length) return '';
-                      const min = Math.min.apply(null, numeric);
-                      return csToDisplay(min);
-                    })() : '');
-              }
-
-              tr.appendChild(tdBest);
-
-              const avgVal = (row.average !== undefined && row.average !== null) ? row.average
-                : (row.mean !== undefined && row.mean !== null) ? row.mean: null;
-              const tdAvg = document.createElement('td');
-              tdAvg.style.cssText = 'padding:8px; text-align:right;';
-              tdAvg.textContent = avgVal !== null ? csToDisplay(avgVal) : '';
-              tr.appendChild(tdAvg);
-
-              const tdSolves = document.createElement('td');
-              tdSolves.style.cssText = 'padding:8px 6px; text-align:left;';
-              renderSolvesCell(tdSolves, Array.isArray(row.attempts) ? row.attempts : [], row.best_index, row.worst_index, eventName);
-              tr.appendChild(tdSolves);
-              tbody.appendChild(tr);
-            });
-
-            tbl.appendChild(tbody);
-            tblWrap.appendChild(tbl);
-            allEl.appendChild(tblWrap);
-
-            // Add larger spacing between rounds of different events
-            const spacer = document.createElement('div');
-            spacer.style.height = '8px';
-            allEl.appendChild(spacer);
-          });
-        });
+      if (roundsErr) {
+        allEl.innerHTML = `<div style="padding:12px;color:#c00">Error loading rounds: ${roundsErr.message}</div>`;
+        return;
       }
 
-      function renderByPerson() {
-        const target = document.getElementById('comp-person');
-        target.innerHTML = '';
-        const persons = (personsJson && personsJson.persons) ? personsJson.persons : [];
-        if (!persons.length) {
-          target.innerHTML = '<div style="padding:8px;color:#666">No results</div>';
-          return;
-        }
+      const roundIds = rounds.map(r => r.id);
 
-        // Round priority: higher => should appear earlier
-        const ROUND_PRIORITY = {
-          'final': 4,
-          'third round': 3,
-          'second round': 2,
-          'first round': 1
-        };
+      const { data: results, error: resultsErr } = await supabaseClient
+        .from('round_results')
+        .select('*')
+        .in('round_id', roundIds);
 
-        // Helper: normalize event name for matching
-        function norm(s) {
-          return (s || '').toString().trim().toLowerCase();
-        }
+      if (resultsErr) {
+        allEl.innerHTML = `<div style="padding:12px;color:#c00">Error loading results: ${resultsErr.message}</div>`;
+        return;
+      }
 
-        // Helper: create table cell text using existing logic for Best / Average / Solves
-        function createResultRowCells(r) {
-          // Event cell (text) will be filled by caller (first row per event shows name, subsequent rows blank)
-          const tdEvent = document.createElement('td');
-          tdEvent.style.padding = '8px';
+      const roundsByEvent = {};
+      rounds.forEach(r => {
+        if (!roundsByEvent[r.event_id]) roundsByEvent[r.event_id] = [];
+        roundsByEvent[r.event_id].push(r);
+      });
 
-          const tdRound = document.createElement('td');
-          tdRound.style.padding = '8px';
-          tdRound.textContent = r.round || '';
+      const offeredEvents = Object.keys(roundsByEvent);
+      const ordered = WCA_EVENTS.filter(e => offeredEvents.includes(e))
+        .concat(offeredEvents.filter(e => !WCA_EVENTS.includes(e)).sort());
 
-          const tdPos = document.createElement('td');
-          tdPos.style.padding = '8px';
-          tdPos.style.textAlign = 'center';
-          tdPos.style.fontWeight = '600';
-          tdPos.textContent = (r.pos !== undefined && r.pos !== null && Number.isFinite(Number(r.pos))) ? String(r.pos) : '';
+      if (!ordered.length) {
+        allEl.innerHTML = '<div style="padding:8px; color:#666">No results</div>';
+        return;
+      }
 
-          const tdBest = document.createElement('td');
-          tdBest.style.padding = '8px';
-          tdBest.style.textAlign = 'right';
+      const iconsRow = document.createElement('div');
+      iconsRow.className = 'comp-all-events';
+      ordered.forEach(ev => {
+        const evBtn = document.createElement('div');
+        evBtn.className = 'ev';
+        evBtn.innerHTML = `<img src="/images/event_icons/${ev}.png" alt="${escapeHtml(ev)}" style="width:36px;height:36px;object-fit:contain;">`;
+        evBtn.addEventListener('click', () => {
+          const target = allEl.querySelector(`[data-event="${CSS.escape(ev)}"]`);
+          if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+        iconsRow.appendChild(evBtn);
+      });
+      allEl.appendChild(iconsRow);
 
-          // Use the row's values (avoid referencing undefined globals)
-          const best = (r.best !== undefined && r.best !== null) ? r.best : null;
-          const eventIdOrName = r.event || '';
+      function roundHeaderText(eventCode, roundCode) {
+        return `${EVENT_CODE_TO_NAME[eventCode]} ${ROUND_CODE_TO_NAME[roundCode]}`;
+      }
 
-          // compute bestDisplay for this row (show DNF/DNS for -1/-2)
-          let bestDisplay = '';
-          if (best === -1) {
-            bestDisplay = 'DNF';
-          } else if (best === -2) {
-            bestDisplay = 'DNS';
-          } else if (isFewestMovesEvent(eventIdOrName)) {
-            // Fewest moves: prefer integer moves if present (handles "29" or 0.29 cases)
-            const n = Number(best);
-            if (Number.isFinite(n)) {
-              if (Number.isInteger(n) || Math.abs(n) >= 10) bestDisplay = String(Math.round(n));
-              else bestDisplay = String(Math.round(n * 100));
+      for (const eventName of ordered) {
+        const evRounds = roundsByEvent[eventName] || [];
+        for (const round of evRounds) {
+          const roundResults = results.filter(r => r.round_id === round.id);
+          if (!roundResults.length) continue;
+
+          const fmt = (round.format || 'ao5').toLowerCase();
+          const isAo5 = fmt === 'ao5';
+          const isMo3 = fmt === 'mo3';
+          const isBo3 = fmt === 'bo3';
+          const isFMC = isFewestMovesEvent(eventName);
+
+          const rows = roundResults.map(r => {
+            const attempts = [r.attempt1, r.attempt2, r.attempt3, r.attempt4, r.attempt5];
+            const best = computeBest(attempts);
+            let avg = null;
+            let value = null;
+            let tiebreaker = null;
+
+            if (isAo5) {
+              avg = computeAo5(attempts);
+              value = (avg !== -1 && avg !== null) ? avg : Number.MAX_SAFE_INTEGER;
+              tiebreaker = best;
+            } else if (isMo3) {
+              avg = computeMo3(attempts, isFMC);
+              value = (avg !== -1 && avg !== null) ? avg : Number.MAX_SAFE_INTEGER;
+              tiebreaker = best;
+            } else if (isBo3) {
+              avg = computeMo3(attempts, isFMC);
+              value = (best !== -1 && best !== null) ? best : Number.MAX_SAFE_INTEGER;
+              tiebreaker = (avg !== -1 && avg !== null) ? avg : Number.MAX_SAFE_INTEGER;
             } else {
-              bestDisplay = (best === null || best === undefined) ? '' : String(best);
+              avg = computeAo5(attempts);
+              value = (best !== -1 && best !== null) ? best : Number.MAX_SAFE_INTEGER;
+              tiebreaker = (avg !== -1 && avg !== null) ? avg : Number.MAX_SAFE_INTEGER;
             }
-          } else {
-            // normal time formatting (centiseconds -> human string)
-            bestDisplay = csToDisplay(best);
-          }
 
-          tdBest.textContent = (best !== null && best !== undefined) ? bestDisplay : '';
+            const best_index = (isAo5 && attempts.length === 5) ? getBestIndex(attempts) : null;
+            const worst_index = (isAo5 && attempts.length === 5) ? getWorstIndex(attempts) : null;
 
-          const tdAvg = document.createElement('td');
-          tdAvg.style.padding = '8px';
-          tdAvg.style.textAlign = 'right';
-          // prefer explicit average fields if present; fallback to final/mean if used in some sheets
-          const avgRaw = (r.average !== undefined && r.average !== null)
-            ? r.average
-            : ((r.final !== undefined && r.final !== null) ? r.final : ((r.mean !== undefined && r.mean !== null) ? r.mean : null));
-
-          let avgDisplay = '';
-          if (avgRaw === -1) {
-            avgDisplay = 'DNF';
-          } else if (avgRaw === -2) {
-            avgDisplay = 'DNS';
-          } else {
-            // For most events average is a centiseconds value; format with csToDisplay.
-            // If the event is FMC and the average is stored as a small fractional or integer, csToDisplay will
-            // return the raw string for non-numeric values; but FMC averages are uncommon — keep default formatting.
-            avgDisplay = csToDisplay(avgRaw);
-          }
-          tdAvg.textContent = (avgRaw !== null && avgRaw !== undefined) ? avgDisplay : '';
-
-          const tdSolves = document.createElement('td');
-          tdSolves.style.padding = '8px';
-          tdSolves.style.textAlign = 'left';
-          renderSolvesCell(tdSolves, Array.isArray(r.attempts) ? r.attempts : [], r.best_index, r.worst_index, r.event);
-
-          return { tdEvent, tdRound, tdPos, tdBest, tdAvg, tdSolves };
-        }
-
-        // For each person, create grouped table
-        persons.forEach(p => {
-          const nameH = document.createElement('h3');
-          nameH.textContent = p.name || '';
-          nameH.style.marginTop = '21px';
-          nameH.style.fontWeight = '700';
-          target.appendChild(nameH);
-
-          const tbl = document.createElement('table');
-          tbl.style.width = '100%';
-          const thead = document.createElement('thead');
-          thead.innerHTML = '<tr>' +
-            '<th style="text-align:left;padding:8px;background:#333;color:#fff">Event</th>' +
-            '<th style="text-align:left;padding:8px;background:#333;color:#fff">Round</th>' +
-            '<th style="text-align:center;padding:8px;background:#333;color:#fff;width:64px">#</th>' +
-            '<th style="text-align:right;padding:8px;background:#333;color:#fff">Best</th>' +
-            '<th style="text-align:right;padding:8px;background:#333;color:#fff">Average</th>' +
-            '<th class="solves-header" style="padding:8px;background:#333;color:#fff">Solves</th>' +
-            '</tr>';
-          tbl.appendChild(thead);
-          const tbody = document.createElement('tbody');
-
-          const results = (p.results || []).slice();
-
-          // Group results by event name (normalized) and preserve original event display name for first occurrence
-          const byEvent = {};
-          results.forEach(r => {
-            const evKey = norm(r.event || '');
-            if (!byEvent[evKey]) byEvent[evKey] = { displayName: r.event || '', rounds: [] };
-            byEvent[evKey].rounds.push(r);
-          });
-
-          // Prepare ordered event list according to WCA_EVENTS. Unknown events come after, sorted alphabetically.
-          const evKeys = Object.keys(byEvent);
-          const orderMap = {};
-          WCA_EVENTS.forEach((ename, idx) => { orderMap[norm(ename)] = idx; });
-          evKeys.sort((a, b) => {
-            const ai = (orderMap.hasOwnProperty(a) ? orderMap[a] : Number.POSITIVE_INFINITY);
-            const bi = (orderMap.hasOwnProperty(b) ? orderMap[b] : Number.POSITIVE_INFINITY);
-            if (ai !== bi) return ai - bi;
-            // both unknown or same index: stable alphabetical fallback using display name
-            const A = (byEvent[a].displayName || a).toLowerCase();
-            const B = (byEvent[b].displayName || b).toLowerCase();
-            if (A < B) return -1;
-            if (A > B) return 1;
-            return 0;
-          });
-
-          // For each event, sort rounds: Final -> Third Round -> Second Round -> First Round (if present)
-          evKeys.forEach(evK => {
-            const evt = byEvent[evK];
-            evt.rounds.sort((r1, r2) => {
-              const r1Name = norm(r1.round || '');
-              const r2Name = norm(r2.round || '');
-              const p1 = ROUND_PRIORITY[r1Name] || 0;
-              const p2 = ROUND_PRIORITY[r2Name] || 0;
-              // higher priority first
-              if (p1 !== p2) return p2 - p1;
-              // fallback: keep original order (stable)
-              return 0;
+            return {
+              name: r.competitor_name,
+              attempts,
+              best,
+              average: avg,
+              best_index,
+              worst_index,
+              value,
+              tiebreaker
+            };
+          }).filter(r => r.value !== null && r.value !== undefined)
+            .sort((a, b) => {
+              if (a.value !== b.value) return a.value - b.value;
+              return a.tiebreaker - b.tiebreaker;
             });
 
-            // Append rows for this event. Show event name only on first row for cleaner display.
-            let first = true;
-            evt.rounds.forEach(r => {
-              const tr = document.createElement('tr');
+          const hr = document.createElement('div');
+          hr.style.cssText = 'margin-top:18px; margin-bottom:8px; font-weight:700; font-size:1.5rem;';
+          hr.textContent = roundHeaderText(eventName, round.round_code);
+          hr.setAttribute('data-event', eventName);
+          allEl.appendChild(hr);
 
-              const cells = createResultRowCells(r);
-              // event cell: show displayName only on first row
-              if (first) {
-                cells.tdEvent.textContent = evt.displayName || r.event || '';
-                first = false;
-              } else {
-                cells.tdEvent.textContent = ''; // omit for cleaner display
-              }
-              tr.appendChild(cells.tdEvent);
-
-              tr.appendChild(cells.tdRound);
-              tr.appendChild(cells.tdPos);
-              tr.appendChild(cells.tdBest);
-              tr.appendChild(cells.tdAvg);
-              tr.appendChild(cells.tdSolves);
-
-              tbody.appendChild(tr);
-            });
-          });
-
-          tbl.appendChild(tbody);
-          target.appendChild(tbl);
-        });
-      }
-                      
-
-      function renderPodiums() {
-        const target = document.getElementById('comp-podiums');
-        target.innerHTML = '';
-        const byEvent = podiumsJson.events || {};
-        const offeredEvents = Object.keys(byEvent);
-        const ordered = WCA_EVENTS.filter(e => offeredEvents.includes(e))
-          .concat(offeredEvents.filter(e => !WCA_EVENTS.includes(e)).sort());
-
-        if (!ordered.length) {
-          target.innerHTML = '<div style="padding:8px;color:#666">No podiums</div>';
-          return;
-        }
-
-        // For each event, render a single table (one table per event), no round name shown
-        ordered.forEach(ev => {
-          const rows = byEvent[ev] || [];
-          if (!rows.length) return;
-
-          // Event header (text)
-          const evHeader = document.createElement('h3');
-          evHeader.textContent = ev;
-          evHeader.style.marginTop = '16px';
-          evHeader.style.fontWeight = '700';
-          target.appendChild(evHeader);
-
+          const tblWrap = document.createElement('div');
+          tblWrap.style.cssText = 'overflow-x:auto; -webkit-overflow-scrolling:touch; margin-top:6px;';
           const tbl = document.createElement('table');
-          tbl.style.width = '100%';
+          tbl.style.cssText = 'display:inline-table; white-space:nowrap; margin-top:6px; width:100%;';
+
           const thead = document.createElement('thead');
           thead.innerHTML = '<tr>' +
-            '<th style="text-align:left;padding:8px;background:#333;color:#fff">#</th>' +
-            '<th style="text-align:left;padding:8px;background:#333;color:#fff">Name</th>' +
-            '<th style="text-align:right;padding:8px;background:#333;color:#fff">Best</th>' +
-            '<th style="text-align:right;padding:8px;background:#333;color:#fff">Average</th>' +
-            '<th class="solves-header" style="padding:8px;background:#333;color:#fff">Solves</th>' +
+            '<th style="text-align:left; padding:8px;">#</th>' +
+            '<th style="text-align:left; padding:8px;">Name</th>' +
+            '<th style="text-align:right; padding:8px;">Best</th>' +
+            '<th style="text-align:right; padding:8px;">Average</th>' +
+            '<th class="solves-header" style="padding:8px;">Solves</th>' +
             '</tr>';
           tbl.appendChild(thead);
+
           const tbody = document.createElement('tbody');
-
-          const isFMC = isFewestMovesEvent(ev || '');
-
-          rows.forEach(row => {
+          rows.forEach((row, idx) => {
             const tr = document.createElement('tr');
+            const td1 = document.createElement('td'); td1.style.cssText = 'padding:8px; font-weight:600;'; td1.textContent = idx + 1;
+            const td2 = document.createElement('td'); td2.style.cssText = 'padding:8px;'; td2.textContent = row.name || '';
+            const tdBest = document.createElement('td'); tdBest.style.cssText = 'padding:8px; text-align:right;';
+            const tdAvg = document.createElement('td'); tdAvg.style.cssText = 'padding:8px; text-align:right;';
+            const tdSolves = document.createElement('td'); tdSolves.style.cssText = 'padding:8px 6px; text-align:left;';
 
-            const tdPlace = document.createElement('td');
-            tdPlace.style.padding = '8px';
-            tdPlace.style.fontWeight = '600';
-            tdPlace.textContent = row.pos ?? '';
-            tr.appendChild(tdPlace);
+            tdBest.textContent = isFMC ? parseFMCBest(row.best) : csToDisplay(row.best);
+            tdAvg.textContent = (row.average !== null && row.average !== undefined)
+              ? csToDisplay(row.average)
+              : '';
 
-            const tdName = document.createElement('td');
-            tdName.style.padding = '8px';
-            tdName.textContent = row.name || '';
-            tr.appendChild(tdName);
+            renderSolvesCell(tdSolves, row.attempts, row.best_index, row.worst_index, eventName);
 
-            const tdBest = document.createElement('td');
-            tdBest.style.padding = '8px';
-            tdBest.style.textAlign = 'right';
-
-            // Best: derive consistent with renderAll rules
-            if (isFMC) {
-              const attempts = Array.isArray(row.attempts) ? row.attempts : [];
-              const nonSpecial = attempts.map(a => (a === -1 || a === -2 || a === 0 || a === '') ? null : Number(a)).filter(v => v !== null && Number.isFinite(v));
-              tdBest.textContent = nonSpecial.length ? String(Math.round(Math.min(...nonSpecial))) : (row.best !== undefined && row.best !== null ? String(Math.round(Number(row.best))) : '');
-            } else {
-              if (row.best !== undefined && row.best !== null) tdBest.textContent = csToDisplay(row.best);
-              else {
-                const attempts = Array.isArray(row.attempts) ? row.attempts : [];
-                const numeric = attempts.filter(v => v !== null && v !== undefined && v !== 0 && v !== -1 && v !== -2);
-                if (numeric.length) tdBest.textContent = csToDisplay(Math.min.apply(null, numeric));
-                else tdBest.textContent = '';
-              }
-            }
+            tr.appendChild(td1);
+            tr.appendChild(td2);
             tr.appendChild(tdBest);
-
-            const tdAvg = document.createElement('td');
-            tdAvg.style.padding = '8px';
-            tdAvg.style.textAlign = 'right';
-            const avgVal = (row.average !== undefined && row.average !== null) ? row.average : ((row.final !== undefined && row.final !== null) ? row.final : ((row.mean !== undefined && row.mean !== null) ? row.mean : null));
-            tdAvg.textContent = avgVal !== null ? csToDisplay(avgVal) : '';
             tr.appendChild(tdAvg);
-
-            const tdSolves = document.createElement('td');
-            tdSolves.style.padding = '8px';
-            tdSolves.style.textAlign = 'left';
-            renderSolvesCell(tdSolves, Array.isArray(row.attempts) ? row.attempts : [], row.best_index, row.worst_index, ev);
             tr.appendChild(tdSolves);
-
             tbody.appendChild(tr);
           });
 
           tbl.appendChild(tbody);
-          target.appendChild(tbl);
-        });
+          tblWrap.appendChild(tbl);
+          allEl.appendChild(tblWrap);
+
+          const spacer = document.createElement('div');
+          spacer.style.height = '8px';
+          allEl.appendChild(spacer);
+        }
+      }
+    }
+
+    async function renderByPerson(compName) {
+      const target = document.getElementById('comp-person');
+      target.innerHTML = '';
+
+      // Fetch competition
+      const { data: comps, error: compErr } = await supabaseClient
+        .from('competitions')
+        .select('id')
+        .eq('name', compName)
+        .limit(1);
+
+      if (compErr || !comps || comps.length === 0) {
+        target.innerHTML = `<div style="padding:12px;color:#c00">Competition not found: ${compName}</div>`;
+        return;
       }
 
+      const compId = comps[0].id;
 
-      function renderResults() {
-        // Build a compact winners table using winners.json (prefetch_competitions.py)
-        const target = document.getElementById('comp-results');
-        target.innerHTML = '';
+      // Fetch rounds
+      const { data: rounds, error: roundsErr } = await supabaseClient
+        .from('rounds')
+        .select('id, event_id, round_code, format')
+        .eq('comp_id', compId);
 
-        // Try to load winners.json (prefetched). If missing, fall back to podiumsJson first place.
-        let winners = {};
-        try {
-          winners = winnersJson || {};
-        } catch (e) {
-          winners = {};
+      if (roundsErr) {
+        target.innerHTML = `<div style="padding:12px;color:#c00">Error loading rounds: ${roundsErr.message}</div>`;
+        return;
+      }
+
+      const roundMap = {};
+      rounds.forEach(r => { roundMap[r.id] = r; });
+
+      const roundIds = rounds.map(r => r.id);
+
+      // Fetch round results
+      const { data: results, error: resultsErr } = await supabaseClient
+        .from('round_results')
+        .select('*')
+        .in('round_id', roundIds);
+
+      if (resultsErr) {
+        target.innerHTML = `<div style="padding:12px;color:#c00">Error loading results: ${resultsErr.message}</div>`;
+        return;
+      }
+
+      function createResultRowCells(r) {
+        // Event cell (text) will be filled by caller (first row per event shows name, subsequent rows blank)
+        const tdEvent = document.createElement('td');
+        tdEvent.style.padding = '8px';
+
+        const tdRound = document.createElement('td');
+        tdRound.style.padding = '8px';
+        tdRound.textContent = ROUND_CODE_TO_NAME[r.round] || '';
+
+        const tdPos = document.createElement('td');
+        tdPos.style.padding = '8px';
+        tdPos.style.textAlign = 'center';
+        tdPos.style.fontWeight = '600';
+        tdPos.textContent = (r.pos !== undefined && r.pos !== null && Number.isFinite(Number(r.pos))) ? String(r.pos) : '';
+
+        const tdBest = document.createElement('td');
+        tdBest.style.padding = '8px';
+        tdBest.style.textAlign = 'right';
+
+        // Use the row's values (avoid referencing undefined globals)
+        const best = (r.best !== undefined && r.best !== null) ? r.best : null;
+        const eventIdOrName = r.event || '';
+
+        // compute bestDisplay for this row (show DNF/DNS for -1/-2)
+        let bestDisplay = '';
+        if (best === -1) {
+          bestDisplay = 'DNF';
+        } else if (best === -2) {
+          bestDisplay = 'DNS';
+        } else if (isFewestMovesEvent(eventIdOrName)) {
+          // Fewest moves: prefer integer moves if present (handles "29" or 0.29 cases)
+          const n = Number(best);
+          if (Number.isFinite(n)) {
+            if (Number.isInteger(n) || Math.abs(n) >= 10) bestDisplay = String(Math.round(n));
+            else bestDisplay = String(Math.round(n * 100));
+          } else {
+            bestDisplay = (best === null || best === undefined) ? '' : String(best);
+          }
+        } else {
+          // normal time formatting (centiseconds -> human string)
+          bestDisplay = csToDisplay(best);
         }
 
-        // Build table
+        tdBest.textContent = (best !== null && best !== undefined) ? bestDisplay : '';
+
+        const tdAvg = document.createElement('td');
+        tdAvg.style.padding = '8px';
+        tdAvg.style.textAlign = 'right';
+        // prefer explicit average fields if present; fallback to final/mean if used in some sheets
+        const avgRaw = (r.average !== undefined && r.average !== null)
+          ? r.average
+          : ((r.final !== undefined && r.final !== null) ? r.final : ((r.mean !== undefined && r.mean !== null) ? r.mean : null));
+
+        let avgDisplay = '';
+        if (avgRaw === -1) {
+          avgDisplay = 'DNF';
+        } else if (avgRaw === -2) {
+          avgDisplay = 'DNS';
+        } else {
+          avgDisplay = csToDisplay(avgRaw);
+        }
+        tdAvg.textContent = (avgRaw !== null && avgRaw !== undefined) ? avgDisplay : '';
+
+        const tdSolves = document.createElement('td');
+        tdSolves.style.padding = '8px';
+        tdSolves.style.textAlign = 'left';
+        renderSolvesCell(tdSolves, Array.isArray(r.attempts) ? r.attempts : [], r.best_index, r.worst_index, r.event);
+
+        return { tdEvent, tdRound, tdPos, tdBest, tdAvg, tdSolves };
+      }
+
+      // Group results by round_id
+      const resultsByRound = {};
+      results.forEach(r => {
+        if (!resultsByRound[r.round_id]) resultsByRound[r.round_id] = [];
+        resultsByRound[r.round_id].push(r);
+      });
+
+      // Compute rankings and group by person
+      const byPerson = {};
+
+      Object.entries(resultsByRound).forEach(([roundId, roundResults]) => {
+        const round = roundMap[roundId];
+        if (!round) return;
+
+        const fmt = (round.format || 'ao5').toLowerCase();
+        const isAo5 = fmt === 'ao5';
+        const isMo3 = fmt === 'mo3';
+        const isBo3 = fmt === 'bo3';
+        const isFMC = isFewestMovesEvent(round.event_id);
+
+        const ranked = roundResults.map(r => {
+          const attempts = [r.attempt1, r.attempt2, r.attempt3, r.attempt4, r.attempt5];
+          const best = computeBest(attempts);
+          let avg = null;
+          let value = null;
+          let tiebreaker = null;
+
+          if (isAo5) {
+            avg = computeAo5(attempts);
+            value = (avg !== -1 && avg !== null) ? avg : Number.MAX_SAFE_INTEGER;
+            tiebreaker = best;
+          } else if (isMo3) {
+            avg = computeMo3(attempts, isFMC);
+            value = (avg !== -1 && avg !== null) ? avg : Number.MAX_SAFE_INTEGER;
+            tiebreaker = best;
+          } else if (isBo3) {
+            avg = computeMo3(attempts, isFMC);
+            value = (best !== -1 && best !== null) ? best : Number.MAX_SAFE_INTEGER;
+            tiebreaker = (avg !== -1 && avg !== null) ? avg : Number.MAX_SAFE_INTEGER;
+          } else {
+            avg = computeAo5(attempts);
+            value = (best !== -1 && best !== null) ? best : Number.MAX_SAFE_INTEGER;
+            tiebreaker = (avg !== -1 && avg !== null) ? avg : Number.MAX_SAFE_INTEGER;
+          }
+
+          return {
+            name: r.competitor_name || 'Unknown',
+            event: round.event_id,
+            round: round.round_code,
+            best,
+            average: avg,
+            value,
+            tiebreaker,
+            attempts,
+            best_index: getBestIndex(attempts),
+            worst_index: getWorstIndex(attempts)
+          };
+        }).filter(r => r.value !== null && r.value !== undefined)
+          .sort((a, b) => {
+            if (a.value !== b.value) return a.value - b.value;
+            return a.tiebreaker - b.tiebreaker;
+          });
+
+        // Assign position and group by person
+        ranked.forEach((r, idx) => {
+          const name = r.name;
+          if (!byPerson[name]) byPerson[name] = [];
+          byPerson[name].push({
+            ...r,
+            pos: idx + 1
+          });
+        });
+      });
+
+      const persons = Object.keys(byPerson).sort((a, b) => a.localeCompare(b)).map(name => ({
+        name,
+        results: byPerson[name]
+      }));
+
+      if (!persons.length) {
+        target.innerHTML = '<div style="padding:8px;color:#666">No results</div>';
+        return;
+      }
+
+      // Round priority: higher => should appear earlier
+      const ROUND_PRIORITY = {
+        'final': 4,
+        'third round': 3,
+        'second round': 2,
+        'first round': 1
+      };
+
+      function norm(s) {
+        return (s || '').toString().trim().toLowerCase();
+      }
+
+      persons.forEach(p => {
+        const nameH = document.createElement('h3');
+        nameH.textContent = p.name || '';
+        nameH.style.marginTop = '21px';
+        nameH.style.fontWeight = '700';
+        target.appendChild(nameH);
+
         const tbl = document.createElement('table');
         tbl.style.width = '100%';
         const thead = document.createElement('thead');
-        thead.innerHTML = '<tr><th style="text-align:left;padding:8px;">Event</th><th style="text-align:left;padding:8px;">Winner</th><th style="text-align:right;padding:8px;">Best</th><th style="text-align:right;padding:8px;">Average</th><th class="solves-header" style="padding:8px;">Solves</th></tr>';
+        thead.innerHTML = '<tr>' +
+          '<th style="text-align:left;padding:8px;background:#333;color:#fff">Event</th>' +
+          '<th style="text-align:left;padding:8px;background:#333;color:#fff">Round</th>' +
+          '<th style="text-align:center;padding:8px;background:#333;color:#fff;width:64px">#</th>' +
+          '<th style="text-align:right;padding:8px;background:#333;color:#fff">Best</th>' +
+          '<th style="text-align:right;padding:8px;background:#333;color:#fff">Average</th>' +
+          '<th class="solves-header" style="padding:8px;background:#333;color:#fff">Solves</th>' +
+          '</tr>';
         tbl.appendChild(thead);
         const tbody = document.createElement('tbody');
 
-        // If winners object empty, build from podiumsJson first-place entries
-        if (!winners || Object.keys(winners).length === 0) {
-          const byEvent = podiumsJson.events || {};
-          Object.keys(byEvent).forEach(ev => {
-            const arr = byEvent[ev] || [];
-            if (!arr.length) return;
-            const top = arr[0];
-            winners[ev] = {
-              name: top.name || '',
-              result: top.final || '',
-              solves: top.attempts || [],
-              best: top.best,
-              average: (top.average !== undefined && top.average !== null)
-                ? top.average
-                : top_mean,
-              best_index: top.best_index,
-              worst_index: top.worst_index
-            };
+        const results = (p.results || []).slice();
+        const byEvent = {};
+        results.forEach(r => {
+          const evKey = norm(r.event || '');
+          if (!byEvent[evKey]) byEvent[evKey] = { displayName: r.event || '', rounds: [] };
+          byEvent[evKey].rounds.push(r);
+        });
+
+        const evKeys = Object.keys(byEvent);
+        const orderMap = {};
+        WCA_EVENTS.forEach((ename, idx) => { orderMap[norm(ename)] = idx; });
+        evKeys.sort((a, b) => {
+          const ai = (orderMap.hasOwnProperty(a) ? orderMap[a] : Number.POSITIVE_INFINITY);
+          const bi = (orderMap.hasOwnProperty(b) ? orderMap[b] : Number.POSITIVE_INFINITY);
+          if (ai !== bi) return ai - bi;
+          const A = (byEvent[a].displayName || a).toLowerCase();
+          const B = (byEvent[b].displayName || b).toLowerCase();
+          return A.localeCompare(B);
+        });
+
+        evKeys.forEach(evK => {
+          const evt = byEvent[evK];
+          evt.rounds.sort((r1, r2) => {
+            const p1 = ROUND_PRIORITY[norm(r1.round)] || 0;
+            const p2 = ROUND_PRIORITY[norm(r2.round)] || 0;
+            return p2 - p1;
           });
-        }
 
-        function parseFMCBest(best) {
-          if (best === null || best === undefined || best === '' || best === 0) return null;
-          if (best === -1) return 'DNF';
-          if (best === -2) return 'DNS';
-          const n = Number(best);
-          if (!Number.isFinite(n)) return String(best);
-          if (!Number.isInteger(n) && Math.abs(n) < 10) return String(Math.round(n * 100));
-          return String(Math.round(n));
-        }
+          let first = true;
+          evt.rounds.forEach(r => {
+            const tr = document.createElement('tr');
+            const cells = createResultRowCells(r);
+            cells.tdEvent.textContent = first ? EVENT_CODE_TO_NAME[evt.displayName] : '';
+            first = false;
 
-        Object.keys(winners).forEach(ev => {
-          const w = winners[ev] || {};
+            tr.appendChild(cells.tdEvent);
+            tr.appendChild(cells.tdRound);
+            tr.appendChild(cells.tdPos);
+            tr.appendChild(cells.tdBest);
+            tr.appendChild(cells.tdAvg);
+            tr.appendChild(cells.tdSolves);
+            tbody.appendChild(tr);
+          });
+        });
+
+        tbl.appendChild(tbody);
+        target.appendChild(tbl);
+      });
+    }
+
+    async function renderPodiums(compName) {
+      const target = document.getElementById('comp-podiums');
+      target.innerHTML = '';
+
+      const { data: comps, error: compErr } = await supabaseClient
+        .from('competitions')
+        .select('id')
+        .eq('name', compName)
+        .limit(1);
+
+      if (compErr || !comps || comps.length === 0) {
+        target.innerHTML = `<div style="padding:12px;color:#c00">Competition not found: ${compName}</div>`;
+        return;
+      }
+
+      const compId = comps[0].id;
+
+      const { data: rounds, error: roundsErr } = await supabaseClient
+        .from('rounds')
+        .select('id, event_id, round_code, format')
+        .eq('comp_id', compId);
+
+      if (roundsErr) {
+        target.innerHTML = `<div style="padding:12px;color:#c00">Error loading rounds: ${roundsErr.message}</div>`;
+        return;
+      }
+
+      const finalRounds = rounds.filter(r => (r.round_code || '').toLowerCase() === 'f');
+      const roundIds = finalRounds.map(r => r.id);
+
+      const { data: results, error: resultsErr } = await supabaseClient
+        .from('round_results')
+        .select('*')
+        .in('round_id', roundIds);
+
+      if (resultsErr) {
+        target.innerHTML = `<div style="padding:12px;color:#c00">Error loading results: ${resultsErr.message}</div>`;
+        return;
+      }
+
+      const podiumsByEvent = {};
+      finalRounds.forEach(round => {
+        const ev = round.event_id;
+        const fmt = (round.format || 'ao5').toLowerCase();
+        const isAo5 = fmt === 'ao5';
+        const isMo3 = fmt === 'mo3';
+        const isBo3 = fmt === 'bo3';
+        const isFMC = isFewestMovesEvent(ev);
+
+        const roundResults = results.filter(r => r.round_id === round.id);
+        if (!roundResults.length) return;
+
+        const rows = roundResults.map(r => {
+          const attempts = [r.attempt1, r.attempt2, r.attempt3, r.attempt4, r.attempt5];
+          const best = computeBest(attempts);
+          let avg = null;
+          let value = null;
+          let tiebreaker = null;
+
+          if (isAo5) {
+            avg = computeAo5(attempts);
+            value = (avg !== -1 && avg !== null) ? avg : Number.MAX_SAFE_INTEGER;
+            tiebreaker = best;
+          } else if (isMo3) {
+            avg = computeMo3(attempts, isFMC);
+            value = (avg !== -1 && avg !== null) ? avg : Number.MAX_SAFE_INTEGER;
+            tiebreaker = best;
+          } else if (isBo3) {
+            avg = computeMo3(attempts, isFMC);
+            value = (best !== -1 && best !== null) ? best : Number.MAX_SAFE_INTEGER;
+            tiebreaker = (avg !== -1 && avg !== null) ? avg : Number.MAX_SAFE_INTEGER;
+          } else {
+            avg = computeAo5(attempts);
+            value = (best !== -1 && best !== null) ? best : Number.MAX_SAFE_INTEGER;
+            tiebreaker = (avg !== -1 && avg !== null) ? avg : Number.MAX_SAFE_INTEGER;
+          }
+
+          const best_index = getBestIndex(attempts);
+          const worst_index = getWorstIndex(attempts);
+
+          return {
+            name: r.competitor_name,
+            attempts,
+            best,
+            average: avg,
+            best_index,
+            worst_index,
+            value,
+            tiebreaker
+          };
+        }).filter(r => r.value !== null && r.value !== undefined)
+          .sort((a, b) => {
+            if (a.value !== b.value) return a.value - b.value;
+            return a.tiebreaker - b.tiebreaker;
+          })
+          .slice(0, 3);
+
+        if (rows.length) podiumsByEvent[ev] = rows;
+      });
+
+      const offeredEvents = Object.keys(podiumsByEvent);
+      const ordered = WCA_EVENTS.filter(e => offeredEvents.includes(e))
+        .concat(offeredEvents.filter(e => !WCA_EVENTS.includes(e)).sort());
+
+      if (!ordered.length) {
+        target.innerHTML = '<div style="padding:8px;color:#666">No podiums</div>';
+        return;
+      }
+
+      ordered.forEach(ev => {
+        const rows = podiumsByEvent[ev];
+        if (!rows.length) return;
+
+        const isFMC = isFewestMovesEvent(ev);
+
+        const evHeader = document.createElement('h3');
+        evHeader.textContent = EVENT_CODE_TO_NAME[ev];
+        evHeader.style.marginTop = '16px';
+        evHeader.style.fontWeight = '700';
+        target.appendChild(evHeader);
+
+        const tbl = document.createElement('table');
+        tbl.style.width = '100%';
+        const thead = document.createElement('thead');
+        thead.innerHTML = '<tr>' +
+          '<th style="text-align:left;padding:8px;background:#333;color:#fff">#</th>' +
+          '<th style="text-align:left;padding:8px;background:#333;color:#fff">Name</th>' +
+          '<th style="text-align:right;padding:8px;background:#333;color:#fff">Best</th>' +
+          '<th style="text-align:right;padding:8px;background:#333;color:#fff">Average</th>' +
+          '<th class="solves-header" style="padding:8px;background:#333;color:#fff">Solves</th>' +
+          '</tr>';
+        tbl.appendChild(thead);
+
+        const tbody = document.createElement('tbody');
+        rows.forEach((row, i) => {
           const tr = document.createElement('tr');
-          const tdEv = document.createElement('td');
-          tdEv.style.padding = '8px';
-          tdEv.style.fontWeight = '600';
-          // Event icon only (no name) per instruction; title contains event name for accessibility
-          const code = EVENT_NAME_TO_CODE[(ev || '').toLowerCase()] || 'unknown';
-          tdEv.innerHTML = `<img class="event-icon" src="/images/event_icons/${code}.png" alt="${ev}" title="${ev}">`;
-          tr.appendChild(tdEv);
+
+          const tdPlace = document.createElement('td');
+          tdPlace.style.padding = '8px';
+          tdPlace.style.fontWeight = '600';
+          tdPlace.textContent = i + 1;
+          tr.appendChild(tdPlace);
 
           const tdName = document.createElement('td');
           tdName.style.padding = '8px';
-          tdName.textContent = w.name || '';
+          tdName.textContent = row.name || '';
           tr.appendChild(tdName);
 
           const tdBest = document.createElement('td');
           tdBest.style.padding = '8px';
           tdBest.style.textAlign = 'right';
-          tdBest.textContent = (ev === '3x3x3 Fewest Moves')? parseFMCBest(w.best) : csToDisplay(w.best);
+          tdBest.textContent = isFMC ? parseFMCBest(row.best) : csToDisplay(row.best);
           tr.appendChild(tdBest);
 
           const tdAvg = document.createElement('td');
           tdAvg.style.padding = '8px';
           tdAvg.style.textAlign = 'right';
-          const avgVal = (w.average !== undefined && w.average !== null) ? w.average :((w.mean !== undefined && w.mean !== null) ? w.mean : null);
-          tdAvg.textContent = avgVal !== null ? csToDisplay(avgVal) : '';
+          tdAvg.textContent = (row.average !== null && row.average !== undefined)
+            ? csToDisplay(row.average)
+            : '';
           tr.appendChild(tdAvg);
 
           const tdSolves = document.createElement('td');
           tdSolves.style.padding = '8px';
           tdSolves.style.textAlign = 'left';
-          renderSolvesCell(tdSolves, Array.isArray(w.solves) ? w.solves : [], w.best_index, w.worst_index, ev);
+          renderSolvesCell(tdSolves, row.attempts, row.best_index, row.worst_index, ev);
           tr.appendChild(tdSolves);
 
           tbody.appendChild(tr);
@@ -1402,63 +1514,273 @@
 
         tbl.appendChild(tbody);
         target.appendChild(tbl);
+      });
+    }
+
+    async function renderResults(compName) {
+      const target = document.getElementById('comp-results');
+      target.innerHTML = '';
+
+      const { data: comps, error: compErr } = await supabaseClient
+        .from('competitions')
+        .select('id')
+        .eq('name', compName)
+        .limit(1);
+
+      if (compErr || !comps || comps.length === 0) {
+        target.innerHTML = `<div style="padding:12px;color:#c00">Competition not found: ${compName}</div>`;
+        return;
       }
 
+      const compId = comps[0].id;
 
-      // Tab wiring and new Results tab
-      const btnResults = document.getElementById('comp-tab-results') || document.getElementById('comp-tab-results');
+      const { data: rounds, error: roundsErr } = await supabaseClient
+        .from('rounds')
+        .select('id, event_id, round_code, format')
+        .eq('comp_id', compId);
+
+      if (roundsErr) {
+        target.innerHTML = `<div style="padding:12px;color:#c00">Error loading rounds: ${roundsErr.message}</div>`;
+        return;
+      }
+
+      const finalRounds = rounds.filter(r => (r.round_code || '').toLowerCase() === 'f');
+      const roundIds = finalRounds.map(r => r.id);
+
+      const { data: results, error: resultsErr } = await supabaseClient
+        .from('round_results')
+        .select('*')
+        .in('round_id', roundIds);
+
+      if (resultsErr) {
+        target.innerHTML = `<div style="padding:12px;color:#c00">Error loading results: ${resultsErr.message}</div>`;
+        return;
+      }
+
+      const winners = {};
+      finalRounds.forEach(round => {
+        const ev = round.event_id;
+        const fmt = (round.format || 'ao5').toLowerCase();
+        const isAo5 = fmt === 'ao5';
+        const isMo3 = fmt === 'mo3';
+        const isBo3 = fmt === 'bo3';
+        const isFMC = isFewestMovesEvent(ev);
+
+        const roundResults = results.filter(r => r.round_id === round.id);
+        if (!roundResults.length) return;
+
+        const ranked = roundResults.map(r => {
+          const attempts = [r.attempt1, r.attempt2, r.attempt3, r.attempt4, r.attempt5];
+          const best = computeBest(attempts);
+          let avg = null;
+          let value = null;
+          let tiebreaker = null;
+
+          if (isAo5) {
+            avg = computeAo5(attempts);
+            value = (avg !== -1 && avg !== null) ? avg : Number.MAX_SAFE_INTEGER;
+            tiebreaker = best;
+          } else if (isMo3) {
+            avg = computeMo3(attempts, isFMC);
+            value = (avg !== -1 && avg !== null) ? avg : Number.MAX_SAFE_INTEGER;
+            tiebreaker = best;
+          } else if (isBo3) {
+            avg = computeMo3(attempts, isFMC);
+            value = (best !== -1 && best !== null) ? best : Number.MAX_SAFE_INTEGER;
+            tiebreaker = (avg !== -1 && avg !== null) ? avg : Number.MAX_SAFE_INTEGER;
+          } else {
+            avg = computeAo5(attempts);
+            value = (best !== -1 && best !== null) ? best : Number.MAX_SAFE_INTEGER;
+            tiebreaker = (avg !== -1 && avg !== null) ? avg : Number.MAX_SAFE_INTEGER;
+          }
+
+          const best_index = getBestIndex(attempts);
+          const worst_index = getWorstIndex(attempts);
+
+          return {
+            name: r.competitor_name,
+            attempts,
+            best,
+            average: avg,
+            best_index,
+            worst_index,
+            value,
+            tiebreaker
+          };
+        }).filter(r => r.value !== null && r.value !== undefined)
+          .sort((a, b) => {
+            if (a.value !== b.value) return a.value - b.value;
+            return a.tiebreaker - b.tiebreaker;
+          });
+
+        if (ranked.length > 0) {
+          winners[ev] = ranked[0];
+        }
+      });
+
+      const tbl = document.createElement('table');
+      tbl.style.width = '100%';
+      const thead = document.createElement('thead');
+      thead.innerHTML = '<tr><th style="text-align:left;padding:8px;">Event</th><th style="text-align:left;padding:8px;">Winner</th><th style="text-align:right;padding:8px;">Best</th><th style="text-align:right;padding:8px;">Average</th><th class="solves-header" style="padding:8px;">Solves</th></tr>';
+      tbl.appendChild(thead);
+      const tbody = document.createElement('tbody');
+
+      Object.keys(winners).forEach(ev => {
+        const w = winners[ev];
+        const tr = document.createElement('tr');
+
+        const tdEv = document.createElement('td');
+        tdEv.style.padding = '8px';
+        tdEv.style.fontWeight = '600';
+        tdEv.innerHTML = `<img class="event-icon" src="/images/event_icons/${ev}.png" alt="${ev}" title="${ev}">`;
+        tr.appendChild(tdEv);
+
+        const tdName = document.createElement('td');
+        tdName.style.padding = '8px';
+        tdName.textContent = w.name || '';
+        tr.appendChild(tdName);
+
+        const tdBest = document.createElement('td');
+        tdBest.style.padding = '8px';
+        tdBest.style.textAlign = 'right';
+        tdBest.textContent = (ev === '333fm') ? parseFMCBest(w.best) : csToDisplay(w.best);
+        tr.appendChild(tdBest);
+
+        const tdAvg = document.createElement('td');
+        tdAvg.style.padding = '8px';
+        tdAvg.style.textAlign = 'right';
+        tdAvg.textContent = (w.average !== null && w.average !== undefined)
+          ? (ev === '3x3x3 Fewest Moves' ? parseFMCBest(w.average) : csToDisplay(w.average))
+          : '';
+        tr.appendChild(tdAvg);
+
+        const tdSolves = document.createElement('td');
+        tdSolves.style.padding = '8px';
+        tdSolves.style.textAlign = 'left';
+        renderSolvesCell(tdSolves, Array.isArray(w.attempts) ? w.attempts : [], w.best_index, w.worst_index, ev);
+        tr.appendChild(tdSolves);
+
+        tbody.appendChild(tr);
+      });
+
+      tbl.appendChild(tbody);
+      target.appendChild(tbl);
+    }
+
+    function wireCompetitionTabs(compName) {
+      // Replace buttons to remove old listeners
+      ['comp-tab-results', 'comp-tab-all', 'comp-tab-person', 'comp-tab-podiums'].forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        const clone = el.cloneNode(true);
+        el.parentNode.replaceChild(clone, el);
+      });
+
+      // Re-select the new clones
+      const btnResults = document.getElementById('comp-tab-results');
       const btnAll = document.getElementById('comp-tab-all');
       const btnPerson = document.getElementById('comp-tab-person');
       const btnPodiums = document.getElementById('comp-tab-podiums');
 
       function clearActiveTabs() {
-        [btnResults, btnAll, btnPerson, btnPodiums].forEach(b => { if (b) b.classList.remove('active'); });
-        // hide all content panes
+        [btnResults, btnAll, btnPerson, btnPodiums].forEach(b => b?.classList.remove('active'));
         document.getElementById('comp-results').style.display = 'none';
         document.getElementById('comp-all').style.display = 'none';
         document.getElementById('comp-person').style.display = 'none';
         document.getElementById('comp-podiums').style.display = 'none';
       }
 
-
-
-      btnResults && btnResults.addEventListener('click', async (ev) => {
+      btnResults?.addEventListener('click', async () => {
         clearActiveTabs();
         btnResults.classList.add('active');
-        await renderResults();
+        await renderResults(compName);
         document.getElementById('comp-results').style.display = '';
       });
 
-      btnAll && btnAll.addEventListener('click', (ev) => {
+      btnAll?.addEventListener('click', () => {
         clearActiveTabs();
         btnAll.classList.add('active');
         document.getElementById('comp-all').style.display = '';
-        // renderAll is defined above; reuse it
-        renderAll();
+        renderAll(compName);
       });
 
-      btnPerson && btnPerson.addEventListener('click', (ev) => {
+      btnPerson?.addEventListener('click', () => {
         clearActiveTabs();
         btnPerson.classList.add('active');
         document.getElementById('comp-person').style.display = '';
-        renderByPerson();
+        renderByPerson(compName);
       });
 
-      btnPodiums && btnPodiums.addEventListener('click', (ev) => {
+      btnPodiums?.addEventListener('click', () => {
         clearActiveTabs();
         btnPodiums.classList.add('active');
         document.getElementById('comp-podiums').style.display = '';
-        renderPodiums();
+        renderPodiums(compName);
       });
 
-      if (btnResults) {
-        clearActiveTabs();
-        btnResults.click();
-      } else {
-        clearActiveTabs();
-        document.getElementById('comp-results').style.display = '';
-        await renderResults();
+      // Default to Results tab
+      clearActiveTabs();
+      btnResults?.click();
+    }
+
+    async function renderCompetitionDetail(compSlug) {      
+      showView('competitions');
+      document.getElementById('view-competitions').hidden = false;
+      document.getElementById('competitions-locked-list').style.display = 'none';
+
+      const compName = unslug(compSlug);
+
+      const detailEl = document.getElementById('competition-detail');
+      detailEl.style.display = '';
+
+      // Summary
+      document.getElementById('comp-title').textContent = compName;
+
+      // Fetch competition metadata and rounds
+      const { data: comps, error: compErr } = await supabaseClient
+        .from('competitions')
+        .select('id, venue, date')
+        .eq('name', compName)
+        .limit(1);
+
+      if (compErr || !comps || comps.length === 0) {
+        document.getElementById('comp-meta').textContent = '';
+        return;
       }
+
+      const comp = comps[0];
+      const compId = comp.id;
+
+      // Meta: venue • date • time
+      const metaEl = document.getElementById('comp-meta');
+      const venue = comp.venue || '';
+      const date = comp.date || '';
+      metaEl.textContent = [date, venue].filter(Boolean).join(' • ');
+
+      // Offered events
+      const { data: rounds, error: roundsErr } = await supabaseClient
+        .from('rounds')
+        .select('event_id')
+        .eq('comp_id', compId);
+
+      const offeredWrap = document.getElementById('comp-rounds-wrap');
+      offeredWrap.innerHTML = '';
+
+      if (!roundsErr && rounds && rounds.length) {
+        const eventSet = new Set(rounds.map(r => r.event_id));
+        const orderedEvents = WCA_EVENTS.filter(e => eventSet.has(e))
+          .concat([...eventSet].filter(e => !WCA_EVENTS.includes(e)).sort());
+
+        orderedEvents.forEach(ev => {
+          const icon = document.createElement('img');
+          icon.src = `/images/event_icons/${ev}.png`;
+          icon.alt = ev;
+          icon.style.cssText = 'width:24px;height:24px;object-fit:contain;';
+          offeredWrap.appendChild(icon);
+        });
+      }
+
+      wireCompetitionTabs(compName);
     }
 
     // Router integration
@@ -1492,129 +1814,6 @@
       }
     }
       
-    async function fetchMeta() {
-      const tab = 'meta';
-      const range = 'A2:H100';
-      const url =
-        `https://sheets.googleapis.com/v4/spreadsheets/${MASTER_SHEET_ID}` +
-        `/values/${encodeURIComponent(tab + '!' + range)}?key=${API_KEY}`;
-
-      const res = await fetch(url);
-      const json = await res.json();
-      const rows = Array.isArray(json.values) ? json.values : [];
-
-      // Reset state
-      masterValues = [];
-      compLockMap = {};
-      compSheetMap = {};
-      roundFormatMap = {};
-      roundAdvanceMap = {};
-      roundSheetsMap = {};
-
-      // We'll group rows under the last-seen competition when comp cell is empty
-      // columns: 0: Competition name, 1: sheet ID, 2: isLocked?, 3: event, 4: round, 5: format, 6: advance, 7: date
-      const compsOrder = [];
-      const compEvents = {}; // comp -> { eventName -> [roundLabel,...] }
-      let lastComp = '';
-      let lastSheetId = '';
-      let lastLocked = false;
-
-      rows.forEach(r => {
-        const compCell = (r[0] || '').toString().trim();
-        const sheetId = (r[1] || '').toString().trim();
-        const lockedCell = (r[2] || '').toString().trim().toLowerCase();
-        const eventName = (r[3] || '').toString().trim();
-        const roundLabel = (r[4] || '').toString().trim();
-        const format = (r[5] || '').toString().trim().toLowerCase();
-        const advRaw = (r[6] || '').toString().trim();
-        const date = (r[7] || '').toString().trim();
-
-        // If row has empty comp and sheetId, inherit from last seen block
-        let comp = compCell;
-        let compSheet = sheetId;
-        let isLocked = (lockedCell === 'true' || lockedCell === 'locked');
-
-        if (!comp && !compSheet && lastComp) {
-          comp = lastComp;
-          compSheet = lastSheetId;
-          isLocked = lastLocked;
-        }
-
-        // If still missing comp or no round/event, skip (cannot attribute)
-        if (!comp || !eventName || !roundLabel) {
-          // allow rows that define a new comp with sheet id but missing event/round to set lastComp context
-          if (comp && compSheet) {
-            // record new competition context even if no event/round present
-            if (!compsOrder.includes(comp)) compsOrder.push(comp);
-            compSheetMap[comp] = compSheet || compSheetMap[comp];
-            compLockMap[comp] = compLockMap[comp] || isLocked;
-            lastComp = comp;
-            lastSheetId = compSheet;
-            lastLocked = isLocked;
-          }
-          return;
-        }
-
-        // record comp context if first time
-        if (!compsOrder.includes(comp)) compsOrder.push(comp);
-        if (compSheet) compSheetMap[comp] = compSheet;
-        compLockMap[comp] = compLockMap[comp] || isLocked;
-        roundFormatMap[comp] = roundFormatMap[comp] || {};
-        roundAdvanceMap[comp] = roundAdvanceMap[comp] || {};
-
-        const fullRound = `${eventName} - ${roundLabel}`;
-
-        roundFormatMap[comp][fullRound] = format || (roundFormatMap[comp][fullRound] || 'ao5');
-        roundAdvanceMap[comp][fullRound] = advRaw ? (Number.isFinite(Number(advRaw)) ? Number(advRaw) : null) : (roundAdvanceMap[comp][fullRound] || null);
-
-        roundSheetsMap[comp] = roundSheetsMap[comp] || {};
-        // store public/private both as the canonical fullRound for now (server + client will canonicalize to public-first when reading)
-        roundSheetsMap[comp][fullRound] = { public: fullRound, private: fullRound, date: date };
-
-        compEvents[comp] = compEvents[comp] || {};
-        compEvents[comp][eventName] = compEvents[comp][eventName] || [];
-        if (!compEvents[comp][eventName].includes(roundLabel)) compEvents[comp][eventName].push(roundLabel);
-
-        // update last-seen context for subsequent blank rows
-        lastComp = comp;
-        lastSheetId = compSheet;
-        lastLocked = isLocked;
-      });
-
-      // Rebuild a lightweight masterValues matrix so older code paths still work
-      // headerRow = ['Competition', comp1, comp2, ...]
-      const headerRow = ['Competition', ...Object.keys(compEvents)];
-      const perCompFullRounds = {};
-      Object.keys(compEvents).forEach(comp => {
-        perCompFullRounds[comp] = [];
-        Object.keys(compEvents[comp] || {}).forEach(ev => {
-          (compEvents[comp][ev] || []).forEach(rn => {
-            const full = `${ev} - ${rn}`;
-            perCompFullRounds[comp].push(full);
-          });
-        });
-      });
-
-      const maxRows = Math.max(0, ...Object.keys(perCompFullRounds).map(c => perCompFullRounds[c].length));
-      const roundRows = [];
-      for (let ri = 0; ri < maxRows; ri++) {
-        const row = [];
-        row.push('round'); // placeholder first column like old sheet
-        Object.keys(perCompFullRounds).forEach(comp => {
-          row.push(perCompFullRounds[comp][ri] || '');
-        });
-        roundRows.push(row);
-      }
-
-      masterValues = [];
-      masterValues[0] = headerRow;
-      masterValues[1] = ['sheet ID', ...Object.keys(compEvents).map(c => compSheetMap[c] || '')];
-      masterValues[2] = ['isLocked?', ...Object.keys(compEvents).map(c => compLockMap[c] ? 'TRUE' : 'FALSE')];
-      for (let i = 0; i < roundRows.length; i++) {
-        masterValues[FIRST_ROUND_ROW + i] = roundRows[i];
-      }
-    }
-
     const logo = document.getElementById('logo');
     if (logo) {
       logo.addEventListener('click', () => navigate('/'));
@@ -1670,7 +1869,6 @@
       box.style.maxWidth = '92%'; box.style.width = '420px'; box.style.padding = '16px';
       ov.appendChild(box); document.body.appendChild(ov);
     }
-
 
     function formatMultiBlind(encoded) {
       if (encoded === null || encoded === undefined) return null;
@@ -1773,10 +1971,42 @@
       let selectedMode = (parsedMode === 'results' || parsedMode === 'persons') ? parsedMode : 'persons';
       let selectedShow = (parsedShow === 100 || parsedShow === 1000) ? parsedShow : 100;
 
-      // fetch ranking data once
-      let resultsJson = {}, personsJson = {};
-      try { resultsJson = await (await fetch('/data/rankings_by_results.json')).json(); } catch(e){ resultsJson = {}; }
-      try { personsJson = await (await fetch('/data/rankings_by_person.json')).json(); } catch(e){ personsJson = {}; }
+      // fetch ranking data from Supabase
+      async function fetchRankingsFromSupabase(mode, eventId, type) {
+        const table = (mode === 'results') ? 'rankings_by_results' : 'rankings_by_person';
+        const { data, error } = await supabaseClient
+          .from(table)
+          .select('*')
+          .eq('event_id', eventId)
+          .eq('type', type);
+
+        if (error || !data) {
+          console.warn(`Error fetching ${table}:`, error);
+          return [];
+        }
+
+        return data.map(row => {
+          const attempts = [
+            row.attempt1, row.attempt2, row.attempt3, row.attempt4, row.attempt5
+          ].filter(v => v !== undefined && v !== null);
+
+          return {
+            person_name: row.person_name,
+            wcaid: row.wcaid,
+            competition_id: row.competition_id,
+            round_name: row.round_name ?? null,
+            value: row.value,
+            type: row.type,
+            attempt_index: row.attempt_index ?? null,
+            attempts,
+            regional_single_record: row.regional_single_record ?? null,
+            regional_average_record: row.regional_average_record ?? null,
+            best_index: row.best_index ?? null,
+            worst_index: row.worst_index ?? null,
+            event_id: row.event_id
+          };
+        });
+      }
 
       function attemptLabel(ev, a, kind) {
         if (a === null || a === undefined) return '';
@@ -2042,8 +2272,8 @@
 
       async function renderTableArea() {
         tableWrap.innerHTML = 'Loading…';
-        const src = (state.mode === 'persons') ? personsJson : resultsJson;
-        const list = (src && src[state.event] && Array.isArray(src[state.event][state.type]) ? src[state.event][state.type] : []).slice(0, Math.max(1, Number(state.top || 100)));
+        const fullList = await fetchRankingsFromSupabase(state.mode, state.event, state.type);
+        const list = fullList.slice(0, Math.max(1, Number(state.top || 100)));
 
         // Always show the solves column for both single and average (per your request)
         const showSolves = true;
@@ -2168,14 +2398,39 @@
       if (!container) return;
       container.innerHTML = 'Loading…';
 
-      let data;
+      let data = {};
       try {
-        const resp = await fetch('/data/records.json');
-        data = await resp.json();
+        const { data: rows, error } = await supabaseClient
+          .from('records')
+          .select('*');
+
+        if (error || !rows || !rows.length) {
+          container.innerHTML = '<div style="padding:12px;color:#666">No records found</div>';
+          return;
+        }
+
+        // Group by event_id and type
+        rows.forEach(row => {
+          const ev = row.event_id;
+          const type = row.type; // 'single' or 'average'
+          if (!data[ev]) data[ev] = {};
+          if (!data[ev][type]) data[ev][type] = [];
+
+          // Reconstruct attempts array from attempt1–5
+          const attempts = [
+            row.attempt1, row.attempt2, row.attempt3, row.attempt4, row.attempt5
+          ].filter(v => v !== undefined); // remove undefineds if any
+
+          data[ev][type].push({
+            ...row,
+            attempts
+          });
+        });
       } catch (e) {
         container.innerHTML = '<div style="padding:12px;color:#666">Failed to load records</div>';
         return;
       }
+
 
       if (!data || Object.keys(data).length === 0) {
         container.innerHTML = '<div style="padding:12px;color:#666">No records found</div>';

@@ -4,6 +4,7 @@
   "description": "",
   "main": "merge_wca_with_lsc.js",
   "dependencies": {
+    "@supabase/supabase-js": "^2.88.0",
     "cheerio": "^1.1.2",
     "cors": "^2.8.5",
     "data-uri-to-buffer": "^4.0.1",
@@ -13,9 +14,9 @@
     "node-fetch": "^2.7.0",
     "object-assign": "^4.1.1",
     "pg": "^8.16.3",
+    "slugify": "^1.6.6",
     "vary": "^1.1.2",
-    "web-streams-polyfill": "^3.3.3",
-    "@supabase/supabase-js": "^2.0.0"
+    "web-streams-polyfill": "^3.3.3"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

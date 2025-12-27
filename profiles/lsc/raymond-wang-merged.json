@@ -3,8 +3,8 @@
   "results": [
     {
       "id": 5514977,
-      "pos": 125,
       "round_id": 827952,
+      "pos": 125,
       "best": 1468,
       "average": 1592,
       "name": "Raymond Wang (王天瑞)",
@@ -26,8 +26,5 @@
       "regional_single_record": null,
       "regional_average_record": null
     }
-  ],
-  "person": {
-    "name": "Raymond Wang"
-  }
+  ]
 }

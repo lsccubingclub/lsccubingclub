@@ -3,13 +3,13 @@
   "results": [
     {
       "id": 7191122,
-      "pos": 120,
       "round_id": 893762,
+      "pos": 120,
       "best": 1571,
       "average": 1942,
       "name": "Au Yeung Ching Hin (歐陽政軒)",
       "country_iso2": "HK",
-      "competition_id": "Hong Kong Cube Day 2025",
+      "competition_id": "HongKongCubeDay2025",
       "event_id": "333",
       "round_type_id": "1",
       "format_id": "a",

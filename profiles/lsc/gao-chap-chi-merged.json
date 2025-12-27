@@ -1,0 +1,26 @@
+{
+  "person": {
+    "name": "Gao Chap Chi"
+  },
+  "results": [
+    {
+      "pos": null,
+      "competition_id": "LSC Championship 2025",
+      "event_id": "222",
+      "round_type_id": "1",
+      "format_id": "a",
+      "attempts": [
+        -1,
+        -1,
+        0,
+        0,
+        0
+      ],
+      "best": null,
+      "average": null,
+      "best_index": null,
+      "worst_index": 0,
+      "round_date": null
+    }
+  ]
+}

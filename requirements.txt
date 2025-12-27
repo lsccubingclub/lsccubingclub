@@ -7,3 +7,4 @@ python-dateutil
 google-auth-httplib2
 beautifulsoup4
 requests
+supabase
