@@ -375,9 +375,10 @@
 
     <!-- Footer -->
     <footer style="text-align:center; padding:20px; font-size:0.9em; color:#666;">
-      Created by Lai<br>
-      Last updated: 08 Dec 2025
+      Created by Moses Lai<br>
+      <p>Last updated: <span id="last-updated">Loading…</span></p>
     </footer>
+
   </main>
 
   <!-- Add a new main view for competitions -->
@@ -543,6 +544,8 @@
         .catch(()=> ({}));
       return __wcaCompTitleCachePromise;
     }
+
+    document.getElementById('last-updated').textContent = document.lastModified;
 
     function isMobileView() {
       const ua = navigator.userAgent.toLowerCase();
