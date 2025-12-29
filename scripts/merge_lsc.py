@@ -41,7 +41,7 @@ import config  # optional; original script referenced config for cache dirs and 
 
 WCA_CACHE_DIR = getattr(config, "WCA_CACHE_DIR", "profiles/wca")
 LSC_CACHE_DIR = getattr(config, "LSC_CACHE_DIR", "profiles/lsc")
-WCA_TITLE_CACHE_PATH = os.environ.get("WCA_TITLE_CACHE", "data/wca_comp_titles.json")
+WCA_TITLE_CACHE_PATH = os.environ.get("WCA_TITLE_CACHE", "wca_comp_titles.json")
 
 # Supabase client
 SUPABASE_URL = 'https://bkzosvxbkhzkskaejqcb.supabase.co'

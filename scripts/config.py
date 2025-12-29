@@ -33,7 +33,6 @@ API_KEY = "AIzaSyA_4BKwiXfv_T9XhbdenwHuGm0k5uc89S8"
 # Caching and output
 WCA_CACHE_DIR = "profiles/wca"
 LSC_CACHE_DIR = "profiles/lsc"
-OUTPUT_DIR = "data"
 
 # Aggregation defaults
 START_DATE = "2023-01-01"

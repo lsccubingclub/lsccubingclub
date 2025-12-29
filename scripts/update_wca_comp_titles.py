@@ -7,7 +7,7 @@ from pathlib import Path
 
 # --- Config ---
 WCA_PROFILES_DIR = "profiles/wca"
-TITLE_CACHE_PATH = "data/wca_comp_titles.json"
+TITLE_CACHE_PATH = "wca_comp_titles.json"
 USER_AGENT = "Mozilla/5.0 (compatible; WCA Title Fetcher)"
 RETRIES = 3
 BACKOFF = 0.5

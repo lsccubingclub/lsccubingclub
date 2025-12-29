@@ -539,7 +539,7 @@
     let __wcaCompTitleCachePromise = null;
     function loadWcaCompTitleCache() {
       if (__wcaCompTitleCachePromise) return __wcaCompTitleCachePromise;
-      __wcaCompTitleCachePromise = fetch('/data/wca_comp_titles.json', { cache: 'no-store' })
+      __wcaCompTitleCachePromise = fetch('wca_comp_titles.json', { cache: 'no-store' })
         .then(r => r.ok ? r.json() : {})
         .catch(()=> ({}));
       return __wcaCompTitleCachePromise;
