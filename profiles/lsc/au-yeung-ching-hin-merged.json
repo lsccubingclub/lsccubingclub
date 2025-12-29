@@ -28,25 +28,6 @@
     },
     {
       "pos": null,
-      "competition_id": "LSC Cube Day 2024",
-      "event_id": "333",
-      "round_type_id": "1",
-      "format_id": "a",
-      "attempts": [
-        2253,
-        1836,
-        1756,
-        3109,
-        1650
-      ],
-      "best": 1650,
-      "average": 1948,
-      "best_index": 4,
-      "worst_index": 3,
-      "round_date": null
-    },
-    {
-      "pos": null,
       "competition_id": "LSC Championship 2025",
       "event_id": "333",
       "round_type_id": "1",
@@ -62,6 +43,25 @@
       "average": 1913,
       "best_index": 0,
       "worst_index": 2,
+      "round_date": null
+    },
+    {
+      "pos": null,
+      "competition_id": "LSC Cube Day 2024",
+      "event_id": "333",
+      "round_type_id": "1",
+      "format_id": "a",
+      "attempts": [
+        2253,
+        1836,
+        1756,
+        3109,
+        1650
+      ],
+      "best": 1650,
+      "average": 1948,
+      "best_index": 4,
+      "worst_index": 3,
       "round_date": null
     }
   ],

@@ -5,20 +5,39 @@
   "results": [
     {
       "pos": null,
-      "competition_id": "LSC FMC Championship 2025",
-      "event_id": "333fm",
-      "round_type_id": "f",
-      "format_id": "3",
+      "competition_id": "LSC Championship 2025",
+      "event_id": "333",
+      "round_type_id": "1",
+      "format_id": "a",
       "attempts": [
-        -2,
-        -2,
-        40,
-        0,
-        0
+        2976,
+        -1,
+        1237,
+        -1,
+        -1
       ],
-      "best": 40,
+      "best": 1237,
       "average": -1,
       "best_index": 2,
+      "worst_index": 1,
+      "round_date": null
+    },
+    {
+      "pos": null,
+      "competition_id": "LSC All-Stars 2025",
+      "event_id": "333",
+      "round_type_id": "f",
+      "format_id": "a",
+      "attempts": [
+        1531,
+        1113,
+        1157,
+        954,
+        1204
+      ],
+      "best": 954,
+      "average": 1158,
+      "best_index": 3,
       "worst_index": 0,
       "round_date": null
     },
@@ -43,40 +62,40 @@
     },
     {
       "pos": null,
-      "competition_id": "LSC All-Stars 2025",
+      "competition_id": "LSC Cube Day 2024",
       "event_id": "333",
       "round_type_id": "f",
       "format_id": "a",
       "attempts": [
-        1531,
-        1113,
-        1157,
-        954,
-        1204
+        1452,
+        1270,
+        1118,
+        1292,
+        1401
       ],
-      "best": 954,
-      "average": 1158,
-      "best_index": 3,
+      "best": 1118,
+      "average": 1321,
+      "best_index": 2,
       "worst_index": 0,
       "round_date": null
     },
     {
       "pos": null,
-      "competition_id": "LSC Championship 2025",
-      "event_id": "333",
-      "round_type_id": "1",
-      "format_id": "a",
+      "competition_id": "LSC FMC Championship 2025",
+      "event_id": "333fm",
+      "round_type_id": "f",
+      "format_id": "3",
       "attempts": [
-        2976,
-        -1,
-        1237,
-        -1,
-        -1
+        -2,
+        -2,
+        40,
+        0,
+        0
       ],
-      "best": 1237,
+      "best": 40,
       "average": -1,
       "best_index": 2,
-      "worst_index": 1,
+      "worst_index": 0,
       "round_date": null
     }
   ]

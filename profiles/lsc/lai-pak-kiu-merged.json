@@ -2003,19 +2003,114 @@
     },
     {
       "pos": null,
-      "competition_id": "LSC FMC Championship 2025",
-      "event_id": "333fm",
-      "round_type_id": "f",
-      "format_id": "3",
+      "competition_id": "LSC Championship 2025",
+      "event_id": "333",
+      "round_type_id": "1",
+      "format_id": "a",
       "attempts": [
-        29,
-        33,
-        35,
-        0,
-        0
+        702,
+        777,
+        839,
+        871,
+        672
       ],
-      "best": 29,
-      "average": 3233,
+      "best": 672,
+      "average": 773,
+      "best_index": 4,
+      "worst_index": 3,
+      "round_date": null
+    },
+    {
+      "pos": null,
+      "competition_id": "LSC Championship 2025",
+      "event_id": "333",
+      "round_type_id": "f",
+      "format_id": "a",
+      "attempts": [
+        652,
+        -1,
+        875,
+        911,
+        798
+      ],
+      "best": 652,
+      "average": 861,
+      "best_index": 0,
+      "worst_index": 1,
+      "round_date": null
+    },
+    {
+      "pos": null,
+      "competition_id": "LSC Championship 2025",
+      "event_id": "222",
+      "round_type_id": "1",
+      "format_id": "a",
+      "attempts": [
+        365,
+        387,
+        264,
+        294,
+        361
+      ],
+      "best": 264,
+      "average": 340,
+      "best_index": 2,
+      "worst_index": 1,
+      "round_date": null
+    },
+    {
+      "pos": null,
+      "competition_id": "LSC All-Stars 2025",
+      "event_id": "333",
+      "round_type_id": "f",
+      "format_id": "a",
+      "attempts": [
+        693,
+        661,
+        692,
+        780,
+        836
+      ],
+      "best": 661,
+      "average": 722,
+      "best_index": 1,
+      "worst_index": 4,
+      "round_date": null
+    },
+    {
+      "pos": null,
+      "competition_id": "LSC Championship 2025",
+      "event_id": "222",
+      "round_type_id": "f",
+      "format_id": "a",
+      "attempts": [
+        256,
+        190,
+        254,
+        731,
+        334
+      ],
+      "best": 190,
+      "average": 281,
+      "best_index": 1,
+      "worst_index": 3,
+      "round_date": null
+    },
+    {
+      "pos": null,
+      "competition_id": "LSC Championship 2025",
+      "event_id": "pyram",
+      "round_type_id": "f",
+      "format_id": "a",
+      "attempts": [
+        835,
+        1124,
+        1690,
+        1689,
+        1389
+      ],
+      "best": 835,
+      "average": 1401,
       "best_index": 0,
       "worst_index": 2,
       "round_date": null
@@ -2041,76 +2136,38 @@
     },
     {
       "pos": null,
-      "competition_id": "LSC All-Stars 2025",
+      "competition_id": "LSC Cube Day 2024",
       "event_id": "333",
       "round_type_id": "f",
       "format_id": "a",
       "attempts": [
-        693,
-        661,
-        692,
-        780,
-        836
+        1125,
+        899,
+        875,
+        939,
+        993
       ],
-      "best": 661,
-      "average": 722,
-      "best_index": 1,
-      "worst_index": 4,
-      "round_date": null
-    },
-    {
-      "pos": null,
-      "competition_id": "LSC Championship 2025",
-      "event_id": "333",
-      "round_type_id": "1",
-      "format_id": "a",
-      "attempts": [
-        702,
-        777,
-        839,
-        871,
-        672
-      ],
-      "best": 672,
-      "average": 773,
-      "best_index": 4,
-      "worst_index": 3,
-      "round_date": null
-    },
-    {
-      "pos": null,
-      "competition_id": "LSC Championship 2025",
-      "event_id": "222",
-      "round_type_id": "1",
-      "format_id": "a",
-      "attempts": [
-        365,
-        387,
-        264,
-        294,
-        361
-      ],
-      "best": 264,
-      "average": 340,
+      "best": 875,
+      "average": 944,
       "best_index": 2,
-      "worst_index": 1,
+      "worst_index": 0,
       "round_date": null
     },
     {
       "pos": null,
-      "competition_id": "LSC Championship 2025",
-      "event_id": "pyram",
+      "competition_id": "LSC FMC Championship 2025",
+      "event_id": "333fm",
       "round_type_id": "f",
-      "format_id": "a",
+      "format_id": "3",
       "attempts": [
-        835,
-        1124,
-        1690,
-        1689,
-        1389
+        29,
+        33,
+        35,
+        0,
+        0
       ],
-      "best": 835,
-      "average": 1401,
+      "best": 29,
+      "average": 3233,
       "best_index": 0,
       "worst_index": 2,
       "round_date": null

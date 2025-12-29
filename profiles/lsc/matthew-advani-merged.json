@@ -2228,63 +2228,6 @@
     },
     {
       "pos": null,
-      "competition_id": "LSC FMC Championship 2025",
-      "event_id": "333fm",
-      "round_type_id": "f",
-      "format_id": "3",
-      "attempts": [
-        -2,
-        -2,
-        30,
-        0,
-        0
-      ],
-      "best": 30,
-      "average": -1,
-      "best_index": 2,
-      "worst_index": 0,
-      "round_date": null
-    },
-    {
-      "pos": null,
-      "competition_id": "LSC Cube Day 2024",
-      "event_id": "333",
-      "round_type_id": "1",
-      "format_id": "a",
-      "attempts": [
-        1161,
-        908,
-        1235,
-        1104,
-        1064
-      ],
-      "best": 908,
-      "average": 1110,
-      "best_index": 1,
-      "worst_index": 2,
-      "round_date": null
-    },
-    {
-      "pos": null,
-      "competition_id": "LSC All-Stars 2025",
-      "event_id": "333",
-      "round_type_id": "f",
-      "format_id": "a",
-      "attempts": [
-        744,
-        1191,
-        662,
-        918,
-        1136
-      ],
-      "best": 662,
-      "average": 933,
-      "best_index": 2,
-      "worst_index": 1,
-      "round_date": null
-    },
-    {
-      "pos": null,
       "competition_id": "LSC Championship 2025",
       "event_id": "333",
       "round_type_id": "1",
@@ -2299,6 +2242,25 @@
       "best": 912,
       "average": 978,
       "best_index": 2,
+      "worst_index": 1,
+      "round_date": null
+    },
+    {
+      "pos": null,
+      "competition_id": "LSC Championship 2025",
+      "event_id": "333",
+      "round_type_id": "f",
+      "format_id": "a",
+      "attempts": [
+        725,
+        1087,
+        1047,
+        865,
+        816
+      ],
+      "best": 725,
+      "average": 909,
+      "best_index": 0,
       "worst_index": 1,
       "round_date": null
     },
@@ -2323,6 +2285,44 @@
     },
     {
       "pos": null,
+      "competition_id": "LSC All-Stars 2025",
+      "event_id": "333",
+      "round_type_id": "f",
+      "format_id": "a",
+      "attempts": [
+        744,
+        1191,
+        662,
+        918,
+        1136
+      ],
+      "best": 662,
+      "average": 933,
+      "best_index": 2,
+      "worst_index": 1,
+      "round_date": null
+    },
+    {
+      "pos": null,
+      "competition_id": "LSC Championship 2025",
+      "event_id": "222",
+      "round_type_id": "f",
+      "format_id": "a",
+      "attempts": [
+        419,
+        530,
+        432,
+        339,
+        475
+      ],
+      "best": 339,
+      "average": 442,
+      "best_index": 3,
+      "worst_index": 1,
+      "round_date": null
+    },
+    {
+      "pos": null,
       "competition_id": "LSC Championship 2025",
       "event_id": "pyram",
       "round_type_id": "f",
@@ -2338,6 +2338,63 @@
       "average": 839,
       "best_index": 2,
       "worst_index": 4,
+      "round_date": null
+    },
+    {
+      "pos": null,
+      "competition_id": "LSC Cube Day 2024",
+      "event_id": "333",
+      "round_type_id": "1",
+      "format_id": "a",
+      "attempts": [
+        1161,
+        908,
+        1235,
+        1104,
+        1064
+      ],
+      "best": 908,
+      "average": 1110,
+      "best_index": 1,
+      "worst_index": 2,
+      "round_date": null
+    },
+    {
+      "pos": null,
+      "competition_id": "LSC Cube Day 2024",
+      "event_id": "333",
+      "round_type_id": "f",
+      "format_id": "a",
+      "attempts": [
+        1000,
+        1050,
+        1063,
+        1073,
+        1293
+      ],
+      "best": 1000,
+      "average": 1062,
+      "best_index": 0,
+      "worst_index": 4,
+      "round_date": null
+    },
+    {
+      "pos": null,
+      "competition_id": "LSC FMC Championship 2025",
+      "event_id": "333fm",
+      "round_type_id": "f",
+      "format_id": "3",
+      "attempts": [
+        -2,
+        -2,
+        30,
+        0,
+        0
+      ],
+      "best": 30,
+      "average": -1,
+      "best_index": 2,
+      "worst_index": 0,
       "round_date": null
     }
   ],
