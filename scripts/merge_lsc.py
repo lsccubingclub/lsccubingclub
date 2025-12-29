@@ -46,7 +46,6 @@ WCA_TITLE_CACHE_PATH = os.environ.get("WCA_TITLE_CACHE", "wca_comp_titles.json")
 # Supabase client
 SUPABASE_URL = 'https://bkzosvxbkhzkskaejqcb.supabase.co'
 SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJrem9zdnhia2h6a3NrYWVqcWNiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQzOTczMzIsImV4cCI6MjA3OTk3MzMzMn0.iqZZCfEtSdWksHGfbxUAOoaInu6ZpR-7mEIRtmvW9io'
-
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 # Constants and mappings (kept from original)
@@ -206,10 +205,19 @@ def copy_wca_profiles_to_merged():
         except Exception:
             logging.warning("Failed to copy WCA profile %s to merged %s", src, dst)
 
-def replace_competition_ids_with_names_from_cache():
-    cache = load_json_if_exists(WCA_TITLE_CACHE_PATH) or {}
-    if not cache:
+def replace_competition_ids_with_names_from_supabase():
+    supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+
+    try:
+        response = supabase.table('wca_comp_titles').select("comp_id, comp_name").execute()
+        if not response.data:
+            print("No data returned from Supabase.")
+            return
+        cache = {row["comp_id"]: row["comp_name"] for row in response.data}
+    except Exception as e:
+        print(f"Failed to fetch competition titles from Supabase: {e}")
         return
+
     for fn in os.listdir(LSC_CACHE_DIR):
         if not fn.endswith("-merged.json"):
             continue
@@ -644,7 +652,7 @@ def main():
     copy_wca_profiles_to_merged()
 
     # 3) Replace competition_id values in merged files using wca_comp_titles cache
-    replace_competition_ids_with_names_from_cache()
+    replace_competition_ids_with_names_from_supabase()
 
     # 4) Load WCA list (try Supabase first)
     wca_list = fetch_wca_list_from_supabase()

@@ -539,7 +539,7 @@
     let __wcaCompTitleCachePromise = null;
     function loadWcaCompTitleCache() {
       if (__wcaCompTitleCachePromise) return __wcaCompTitleCachePromise;
-      __wcaCompTitleCachePromise = fetch('wca_comp_titles.json', { cache: 'no-store' })
+      __wcaCompTitleCachePromise = fetch('/wca_comp_titles.json', { cache: 'no-store' })
         .then(r => r.ok ? r.json() : {})
         .catch(()=> ({}));
       return __wcaCompTitleCachePromise;
@@ -739,20 +739,41 @@
     }
 
     async function patchCompetitionCells(container = document) {
-      const cache = await loadWcaCompTitleCache();
-      const nameToId = {};
-      for (const [id, title] of Object.entries(cache || {})) {
-        if (typeof title === 'string' && title) nameToId[title] = id;
+      // Fetch all competition titles from Supabase
+      let nameToId = {};
+      try {
+        const { data, error } = await supabaseClient
+          .from('wca_comp_titles')
+          .select('comp_id, comp_name');
+
+        if (error) {
+          console.warn("Failed to fetch competition titles from Supabase:", error.message);
+          return;
+        }
+
+        for (const row of data) {
+          if (row.comp_name && row.comp_id) {
+            nameToId[row.comp_name.trim()] = row.comp_id;
+          }
+        }
+      } catch (e) {
+        console.warn("Error loading competition titles:", e);
+        return;
       }
+
+      // Patch DOM cells
       const cells = Array.from(container.querySelectorAll('[data-competition]'));
       cells.forEach(td => {
         try {
           if (td._patchedCompetitionLink) return;
           td._patchedCompetitionLink = true;
+
           const display = (td.getAttribute('data-competition') || td.textContent || '').toString().trim();
           if (!display) return;
+
           const matchedId = nameToId[display];
           let a;
+
           if (matchedId) {
             a = document.createElement('a');
             a.href = `https://www.worldcubeassociation.org/competitions/${encodeURIComponent(matchedId)}`;
@@ -764,7 +785,7 @@
             a.href = `/competitions/${encodeURIComponent(slug(display))}`;
             a.textContent = display;
           }
-          // preserve title tooltip if present
+
           if (td.title) a.title = td.title;
           td.innerHTML = '';
           td.appendChild(a);

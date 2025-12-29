@@ -1950,6 +1950,56 @@
       "worst_index": 2,
       "regional_single_record": null,
       "regional_average_record": null
+    },
+    {
+      "id": 7822140,
+      "round_id": 919652,
+      "pos": 7,
+      "best": 27,
+      "average": 2833,
+      "name": "Lai Pak Kiu (賴柏喬)",
+      "country_iso2": "HK",
+      "competition_id": "HongKongFMCChampionship2025",
+      "event_id": "333fm",
+      "round_type_id": "1",
+      "format_id": "m",
+      "wca_id": "2024KIUL01",
+      "attempts": [
+        27,
+        30,
+        28,
+        0,
+        0
+      ],
+      "best_index": 0,
+      "worst_index": 1,
+      "regional_single_record": null,
+      "regional_average_record": null
+    },
+    {
+      "id": 7822158,
+      "round_id": 919653,
+      "pos": 6,
+      "best": 23,
+      "average": 2800,
+      "name": "Lai Pak Kiu (賴柏喬)",
+      "country_iso2": "HK",
+      "competition_id": "HongKongFMCChampionship2025",
+      "event_id": "333fm",
+      "round_type_id": "f",
+      "format_id": "m",
+      "wca_id": "2024KIUL01",
+      "attempts": [
+        28,
+        23,
+        33,
+        0,
+        0
+      ],
+      "best_index": 1,
+      "worst_index": 2,
+      "regional_single_record": null,
+      "regional_average_record": null
     }
   ]
 }

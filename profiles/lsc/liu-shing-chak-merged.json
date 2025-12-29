@@ -1177,6 +1177,56 @@
       "regional_average_record": null
     },
     {
+      "id": 7822152,
+      "round_id": 919652,
+      "pos": 18,
+      "best": 40,
+      "average": -1,
+      "name": "Liu Shing Chak (柳丞澤)",
+      "country_iso2": "HK",
+      "competition_id": "Hong Kong FMC Championship 2025",
+      "event_id": "333fm",
+      "round_type_id": "1",
+      "format_id": "m",
+      "wca_id": "2024CHAK03",
+      "attempts": [
+        -1,
+        40,
+        45,
+        0,
+        0
+      ],
+      "best_index": 1,
+      "worst_index": 0,
+      "regional_single_record": null,
+      "regional_average_record": null
+    },
+    {
+      "id": 7822173,
+      "round_id": 919653,
+      "pos": 12,
+      "best": 41,
+      "average": 4167,
+      "name": "Liu Shing Chak (柳丞澤)",
+      "country_iso2": "HK",
+      "competition_id": "Hong Kong FMC Championship 2025",
+      "event_id": "333fm",
+      "round_type_id": "f",
+      "format_id": "m",
+      "wca_id": "2024CHAK03",
+      "attempts": [
+        41,
+        42,
+        42,
+        0,
+        0
+      ],
+      "best_index": 0,
+      "worst_index": 2,
+      "regional_single_record": null,
+      "regional_average_record": null
+    },
+    {
       "pos": null,
       "competition_id": "LSC FMC Championship 2025",
       "event_id": "333fm",

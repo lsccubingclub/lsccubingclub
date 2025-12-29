@@ -2325,6 +2325,106 @@
       "worst_index": 2,
       "regional_single_record": null,
       "regional_average_record": "NR"
+    },
+    {
+      "id": 7820961,
+      "round_id": 918961,
+      "pos": 48,
+      "best": 3336,
+      "average": 4017,
+      "name": "Liu Yik Yung (劉益融)",
+      "country_iso2": "HK",
+      "competition_id": "Zhengzhou Zeal 2025",
+      "event_id": "444",
+      "round_type_id": "d",
+      "format_id": "a",
+      "wca_id": "2023YUNG02",
+      "attempts": [
+        4055,
+        4065,
+        4691,
+        3336,
+        3931
+      ],
+      "best_index": 3,
+      "worst_index": 2,
+      "regional_single_record": null,
+      "regional_average_record": null
+    },
+    {
+      "id": 7821074,
+      "round_id": 918963,
+      "pos": 37,
+      "best": 6341,
+      "average": 7155,
+      "name": "Liu Yik Yung (劉益融)",
+      "country_iso2": "HK",
+      "competition_id": "Zhengzhou Zeal 2025",
+      "event_id": "555",
+      "round_type_id": "d",
+      "format_id": "a",
+      "wca_id": "2023YUNG02",
+      "attempts": [
+        8371,
+        6609,
+        7093,
+        7764,
+        6341
+      ],
+      "best_index": 4,
+      "worst_index": 0,
+      "regional_single_record": null,
+      "regional_average_record": null
+    },
+    {
+      "id": 7821431,
+      "round_id": 918971,
+      "pos": 3,
+      "best": 587,
+      "average": 742,
+      "name": "Liu Yik Yung (劉益融)",
+      "country_iso2": "HK",
+      "competition_id": "Zhengzhou Zeal 2025",
+      "event_id": "sq1",
+      "round_type_id": "d",
+      "format_id": "a",
+      "wca_id": "2023YUNG02",
+      "attempts": [
+        1332,
+        762,
+        621,
+        843,
+        587
+      ],
+      "best_index": 4,
+      "worst_index": 0,
+      "regional_single_record": null,
+      "regional_average_record": null
+    },
+    {
+      "id": 7821491,
+      "round_id": 918972,
+      "pos": 1,
+      "best": 665,
+      "average": 736,
+      "name": "Liu Yik Yung (劉益融)",
+      "country_iso2": "HK",
+      "competition_id": "Zhengzhou Zeal 2025",
+      "event_id": "sq1",
+      "round_type_id": "f",
+      "format_id": "a",
+      "wca_id": "2023YUNG02",
+      "attempts": [
+        669,
+        665,
+        1205,
+        766,
+        773
+      ],
+      "best_index": 1,
+      "worst_index": 2,
+      "regional_single_record": null,
+      "regional_average_record": null
     }
   ]
 }

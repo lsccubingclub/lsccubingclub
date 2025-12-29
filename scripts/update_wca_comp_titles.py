@@ -1,35 +1,23 @@
 import os
-import json
 import time
 import requests
+import json
 from bs4 import BeautifulSoup
-from pathlib import Path
+from supabase import create_client, Client
 
 # --- Config ---
 WCA_PROFILES_DIR = "profiles/wca"
-TITLE_CACHE_PATH = "wca_comp_titles.json"
 USER_AGENT = "Mozilla/5.0 (compatible; WCA Title Fetcher)"
 RETRIES = 3
 BACKOFF = 0.5
 TIMEOUT = 5
 
+# Supabase config
+SUPABASE_URL = 'https://bkzosvxbkhzkskaejqcb.supabase.co'
+SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJrem9zdnhia2h6a3NrYWVqcWNiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQzOTczMzIsImV4cCI6MjA3OTk3MzMzMn0.iqZZCfEtSdWksHGfbxUAOoaInu6ZpR-7mEIRtmvW9io'
+SUPABASE_TABLE = "wca_comp_titles"
+
 # --- Helpers ---
-def ensure_dir(path):
-    if not os.path.exists(path):
-        os.makedirs(path)
-
-def load_json_if_exists(path):
-    if os.path.isfile(path):
-        with open(path, "r", encoding="utf-8") as f:
-            return json.load(f)
-    return None
-
-def atomic_write(path, data):
-    tmp_path = str(path) + ".tmp"
-    with open(tmp_path, "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=2)
-    os.replace(tmp_path, path)
-
 def fetch_wca_title(comp_id, session=None):
     url = f"https://www.worldcubeassociation.org/competitions/{comp_id}"
     s = session or requests.Session()
@@ -50,6 +38,32 @@ def fetch_wca_title(comp_id, session=None):
     print(f"Failed to fetch title for {comp_id}: {last_err}")
     return None
 
+def push_to_supabase(rows):
+    supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+    print(f"Clearing existing rows in '{SUPABASE_TABLE}'...")
+
+    try:
+        delete_res = supabase.table(SUPABASE_TABLE).delete().neq("comp_id", "").execute()
+        if not delete_res.data:
+            print("Error clearing table: No data returned.")
+            return
+        print("Cleared existing rows.")
+    except Exception as e:
+        print(f"Failed to clear table: {e}")
+        return
+
+    print(f"Pushing {len(rows)} entries to Supabase...")
+    try:
+        for i in range(0, len(rows), 100):
+            chunk = rows[i:i+100]
+            res = supabase.table(SUPABASE_TABLE).upsert(chunk).execute()
+            if not res.data:
+                print("Error uploading chunk.")
+            else:
+                print(f"Uploaded {len(chunk)} rows.")
+    except Exception as e:
+        print(f"Failed to push to Supabase: {e}")
+
 # --- Main ---
 def main():
     print("Scanning WCA profiles for competition IDs...")
@@ -58,8 +72,10 @@ def main():
         if not fn.lower().endswith(".json"):
             continue
         path = os.path.join(WCA_PROFILES_DIR, fn)
-        data = load_json_if_exists(path)
-        if not data:
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+        except Exception:
             continue
         for r in data.get("results", []):
             cid = r.get("competition_id")
@@ -68,28 +84,19 @@ def main():
 
     print(f"Found {len(comp_ids)} unique competition IDs")
 
-    cache = load_json_if_exists(TITLE_CACHE_PATH) or {}
     session = requests.Session()
-    updated = False
+    rows = []
 
     for cid in sorted(comp_ids):
-        if cid in cache:
-            continue
         print(f"Fetching title for {cid}...")
         name = fetch_wca_title(cid, session)
         if name:
-            cache[cid] = name
+            rows.append({"comp_id": cid, "comp_name": name})
         else:
-            cache[cid] = cid  # fallback
-        updated = True
+            rows.append({"comp_id": cid, "comp_name": cid})  # fallback
         time.sleep(0.2)
 
-    if updated:
-        ensure_dir(os.path.dirname(TITLE_CACHE_PATH))
-        atomic_write(TITLE_CACHE_PATH, cache)
-        print(f"Updated {TITLE_CACHE_PATH} with {len(cache)} entries.")
-    else:
-        print("No new titles needed updating.")
+    push_to_supabase(rows)
 
 if __name__ == "__main__":
     main()
