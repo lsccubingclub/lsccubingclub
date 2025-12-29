@@ -131,6 +131,27 @@ def replace_competition_ids_with_names_from_supabase():
             atomic_write(path, data)
             print(f"✔ Updated: {fn}")
 
+def copy_wca_profiles_without_lsc_results():
+    print("Copying WCA profiles without LSC results...")
+    ensure_dir(WCA_CACHE_DIR)
+    ensure_dir(LSC_CACHE_DIR)
+
+    for fn in os.listdir(WCA_CACHE_DIR):
+        if not fn.endswith(".json"):
+            continue
+        slug = os.path.splitext(fn)[0]
+        merged_fn = f"{slug}-merged.json"
+        merged_path = os.path.join(LSC_CACHE_DIR, merged_fn)
+        if os.path.exists(merged_path):
+            continue  # already created during LSC merge
+
+        wca_path = os.path.join(WCA_CACHE_DIR, fn)
+        data = load_json_if_exists(wca_path)
+        if not data:
+            continue
+
+        print(f"→ Copying WCA profile: {slug}")
+        atomic_write(merged_path, data)
 
 def main():
     ensure_dir(WCA_CACHE_DIR)
@@ -203,8 +224,13 @@ def main():
         atomic_write(merged_path, merged)
 
     print(f"Wrote {len(results_by_name)} merged profiles to {LSC_CACHE_DIR}")
+
+    copy_wca_profiles_without_lsc_results()
+    print("WCA profiles without LSC results copied.")
+
     replace_competition_ids_with_names_from_supabase()
     print("WCA Competition IDs replaced with competition names.")
+
     print("Done.")
 
 if __name__ == "__main__":
