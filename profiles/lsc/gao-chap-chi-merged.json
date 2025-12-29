@@ -17,7 +17,7 @@
         0
       ],
       "best": null,
-      "average": null,
+      "average": -1,
       "best_index": null,
       "worst_index": 0,
       "round_date": null

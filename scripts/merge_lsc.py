@@ -33,11 +33,8 @@ import tempfile
 import time
 import logging
 from typing import Dict, Optional, List
-
 from supabase import create_client, Client
-
-# Local config (same as original)
-import config  # optional; original script referenced config for cache dirs and credentials
+import config
 
 WCA_CACHE_DIR = getattr(config, "WCA_CACHE_DIR", "profiles/wca")
 LSC_CACHE_DIR = getattr(config, "LSC_CACHE_DIR", "profiles/lsc")
@@ -238,79 +235,80 @@ def replace_competition_ids_with_names_from_supabase():
             except Exception:
                 logging.warning("Failed to update competition_id in merged file %s", path)
 
-# -------------------------
-# Average calculation helper
-# -------------------------
-def compute_average_from_attempts(attempts: List[int], isFMC: bool, format_id: Optional[str]) -> Optional[int]:
+def compute_average_from_attempts(attempts: List[Optional[int]], isFMC: bool, format_id: Optional[str]) -> Optional[int]:
     if not attempts:
         return None
 
-    # normalize length
-    arr = list(attempts)[:5] + [0] * max(0, 5 - len(attempts))
-    # helper checks
-    has_dnf = any(a == -1 for a in arr)
-    has_dns = any(a == -2 for a in arr)
+    arr = attempts[:5]  # Use up to 5 attempts
 
-    # Average of 5 (ao5)
-    if format_id == 'a':
-        # require five numeric attempts (0 treated as missing)
-        # if any DNF/DNS present, average is undefined per this implementation
-        if has_dnf or has_dns:
+    if format_id == 'a':  # Ao5
+        if any(a is None for a in arr):
             return None
-        positives = [a for a in arr if a and a > 0]
-        if len(positives) < 3:
-            return None
-        # drop min and max from the five attempts (use raw arr, not positives)
-        # but ensure we have five non-zero attempts; if zeros present treat as invalid
-        if any(a == 0 for a in arr):
-            # if zeros present, but there are at least 3 positives, still compute on positives?
-            # follow conservative rule: require 5 attempts for ao5
-            return None
-        sorted_vals = sorted(arr)
-        middle = sorted_vals[1:4]
-        avg = int(round(sum(middle) / 3.0))
-        return avg
 
-    # Mean of 3 (mo3) or bo3-like formats
-    if format_id == 'm' or format_id == '3' :
-        # use first 3 attempts
-        three = arr[:3]
-        if any(a in (-1, -2) for a in three):
-            return None
-        positives = [a for a in three if a and a > 0]
+        penalties = sum(1 for a in arr if a in (-1, -2))
+        if penalties > 1:
+            return -1
+
+        positives = [a for a in arr if isinstance(a, (int, float)) and a > 0]
         if not positives:
-            return None
-        if isFMC:
-            avg = int(100* round(sum(positives) / len(positives)))
-        else:
-            avg = int(round(sum(positives) / len(positives)))
-        return avg
+            return -1
 
-    # If format_id is numeric string like '2' or '1' (best-of), return best (min positive) or single attempt
-    if format_id == '2':
-        # best of 2 -> min of two positive attempts if present
+        best_to_drop = min(positives)
+
+        if -2 in arr:
+            worst_to_drop = -2
+        elif -1 in arr:
+            worst_to_drop = -1
+        else:
+            worst_to_drop = max(positives) if positives else None
+
+        if worst_to_drop is None:
+            return -1
+
+        remaining = arr[:]
+        try:
+            remaining.remove(best_to_drop)
+        except ValueError:
+            pass
+        try:
+            remaining.remove(worst_to_drop)
+        except ValueError:
+            pass
+
+        middle = [v for v in remaining if isinstance(v, (int, float)) and v > 0]
+        if len(middle) != 3:
+            return -1
+
+        return round(sum(middle) / 3)
+
+    elif format_id in ('m', '3'):  # Mo3
+        valid = [v for v in arr[:3] if v not in (None, 0, -1, -2)]
+        penalties = sum(1 for v in arr[:3] if v in (-1, -2))
+        if penalties > 0 or len(valid) < 3:
+            return -1
+
+        avg = sum(valid) / 3
+        return round(avg * 100) if isFMC else round(avg)
+
+    elif format_id == '2':  # Best of 2
         two = arr[:2]
         if any(a in (-1, -2) for a in two):
             return None
         positives = [a for a in two if a and a > 0]
-        if not positives:
-            return None
-        return min(positives)
-    if format_id == '1':
+        return min(positives) if positives else None
+
+    elif format_id == '1':  # Single
         a = arr[0]
         return a if a and a > 0 else None
 
-    # Fallback: if there are 3 non-zero positive attempts, compute mean
-    positives = [a for a in arr if a and a > 0]
+    # Fallback: if 3 valid attempts, compute mean
+    positives = [a for a in arr if isinstance(a, (int, float)) and a > 0]
     if len(positives) >= 3:
-        avg = int(round(sum(positives) / len(positives)))
-        return avg
+        return round(sum(positives) / len(positives))
 
     return None
 
-# -------------------------
-# Supabase upsert helper for lsc_profile
-# -------------------------
+
 def _upsert_lsc_profile_to_supabase(wcaid: Optional[str], name: str, lsc_profile_obj: dict):
     """
     Upsert the lsc_profile JSON into wca_ids table.

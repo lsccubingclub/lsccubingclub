@@ -2240,7 +2240,7 @@
         0
       ],
       "best": 30,
-      "average": null,
+      "average": -1,
       "best_index": 2,
       "worst_index": 0,
       "round_date": null
@@ -2316,7 +2316,7 @@
         462
       ],
       "best": 316,
-      "average": null,
+      "average": 405,
       "best_index": 1,
       "worst_index": 3,
       "round_date": null

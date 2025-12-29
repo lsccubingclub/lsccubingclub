@@ -17,7 +17,7 @@
         0
       ],
       "best": 38,
-      "average": null,
+      "average": -1,
       "best_index": 1,
       "worst_index": 0,
       "round_date": null
@@ -36,7 +36,7 @@
         2066
       ],
       "best": 1150,
-      "average": null,
+      "average": 1588,
       "best_index": 1,
       "worst_index": 0,
       "round_date": null
