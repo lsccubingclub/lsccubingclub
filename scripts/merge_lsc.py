@@ -32,18 +32,42 @@ def atomic_write(path, obj):
     os.replace(tmp, path)
 
 def parse_attempt(v):
-    if v is None: return 0
+    if v is None:
+        return 0
+
+    # Handle strings
+    if isinstance(v, str):
+        s = v.strip()
+        up = s.upper()
+        if up == "DNF":
+            return -1
+        if up == "DNS":
+            return -2
+        try:
+            # Try numeric parse from string
+            num = float(s)
+        except:
+            return 0
+        v = num
+
+    # Handle numeric types
     try:
-        if isinstance(v, str):
-            if v.upper() == "DNF": return -1
-            if v.upper() == "DNS": return -2
-            v = float(v.strip())
-        else:
-            v = float(v)
-    except: return 0
-    if v > 100000 or (v > 10000 and v % 1 == 0): return int(round(v / 10))
-    if v < 1000 and v != int(v): return int(round(v * 100))
-    return int(round(v))
+        # Floats that are not integers are assumed to be seconds -> convert to centiseconds
+        if isinstance(v, float) and not v.is_integer():
+            return int(round(v * 100))
+
+        # Integers (or floats that are effectively integers)
+        iv = int(round(v))
+
+        # Heuristic: if it's extremely large, it's likely milliseconds; convert to centiseconds
+        # e.g., 123456 ms -> 12345 cs
+        if iv >= 100000:
+            return iv // 10
+
+        # Otherwise, treat as already-centiseconds and keep as-is
+        return iv
+    except:
+        return 0
 
 def compute_best_and_indices(attempts):
     positives = [a for a in attempts if a > 0]

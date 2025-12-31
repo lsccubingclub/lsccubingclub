@@ -1,0 +1,5332 @@
+{
+  "Alvin Cheng Hiu Yeung": {
+    "pyram_single": {
+      "rank": 1,
+      "value": 268
+    },
+    "pyram_average": {
+      "rank": 1,
+      "value": 425
+    },
+    "333bf_single": {
+      "rank": 1,
+      "value": 2214
+    },
+    "333bf_average": {
+      "rank": 1,
+      "value": 2554
+    },
+    "sq1_single": {
+      "rank": 2,
+      "value": 762
+    },
+    "sq1_average": {
+      "rank": 2,
+      "value": 1084
+    },
+    "555bf_single": {
+      "rank": 1,
+      "value": 24035
+    },
+    "333mbf_single": {
+      "rank": 1,
+      "value": 860321003
+    },
+    "444bf_single": {
+      "rank": 1,
+      "value": 10206
+    },
+    "444bf_average": {
+      "rank": 1,
+      "value": 11950
+    },
+    "clock_single": {
+      "rank": 3,
+      "value": 492
+    },
+    "clock_average": {
+      "rank": 2,
+      "value": 562
+    },
+    "skewb_single": {
+      "rank": 2,
+      "value": 300
+    },
+    "skewb_average": {
+      "rank": 2,
+      "value": 557
+    },
+    "333fm_single": {
+      "rank": 1,
+      "value": 20
+    },
+    "333fm_average": {
+      "rank": 1,
+      "value": 2200
+    },
+    "555_single": {
+      "rank": 1,
+      "value": 6162
+    },
+    "555_average": {
+      "rank": 1,
+      "value": 7083
+    },
+    "666_single": {
+      "rank": 1,
+      "value": 12005
+    },
+    "666_average": {
+      "rank": 1,
+      "value": 12513
+    },
+    "777_single": {
+      "rank": 1,
+      "value": 18201
+    },
+    "777_average": {
+      "rank": 1,
+      "value": 19657
+    },
+    "minx_single": {
+      "rank": 1,
+      "value": 4340
+    },
+    "minx_average": {
+      "rank": 1,
+      "value": 5081
+    },
+    "333_single": {
+      "rank": 8,
+      "value": 905
+    },
+    "333_average": {
+      "rank": 6,
+      "value": 994
+    },
+    "222_single": {
+      "rank": 10,
+      "value": 274
+    },
+    "222_average": {
+      "rank": 7,
+      "value": 383
+    },
+    "444_single": {
+      "rank": 3,
+      "value": 3427
+    },
+    "444_average": {
+      "rank": 2,
+      "value": 3771
+    },
+    "333oh_single": {
+      "rank": 6,
+      "value": 1717
+    },
+    "333oh_average": {
+      "rank": 6,
+      "value": 2022
+    }
+  },
+  "Liu Shing Chak": {
+    "pyram_single": {
+      "rank": 2,
+      "value": 302
+    },
+    "pyram_average": {
+      "rank": 2,
+      "value": 470
+    },
+    "333bf_single": {
+      "rank": 4,
+      "value": 10315
+    },
+    "333bf_average": {
+      "rank": 4,
+      "value": null
+    },
+    "sq1_single": {
+      "rank": 5,
+      "value": 1748
+    },
+    "sq1_average": {
+      "rank": 5,
+      "value": 2198
+    },
+    "555bf_single": {
+      "rank": 2,
+      "value": null
+    },
+    "333mbf_single": {
+      "rank": 3,
+      "value": null
+    },
+    "444bf_single": {
+      "rank": 4,
+      "value": null
+    },
+    "444bf_average": {
+      "rank": 2,
+      "value": null
+    },
+    "clock_single": {
+      "rank": 5,
+      "value": 518
+    },
+    "clock_average": {
+      "rank": 4,
+      "value": 698
+    },
+    "skewb_single": {
+      "rank": 7,
+      "value": 537
+    },
+    "skewb_average": {
+      "rank": 4,
+      "value": 682
+    },
+    "333fm_single": {
+      "rank": 3,
+      "value": 30
+    },
+    "333fm_average": {
+      "rank": 3,
+      "value": 4033
+    },
+    "555_single": {
+      "rank": 5,
+      "value": null
+    },
+    "555_average": {
+      "rank": 4,
+      "value": null
+    },
+    "666_single": {
+      "rank": 3,
+      "value": null
+    },
+    "666_average": {
+      "rank": 2,
+      "value": null
+    },
+    "777_single": {
+      "rank": 2,
+      "value": null
+    },
+    "777_average": {
+      "rank": 2,
+      "value": null
+    },
+    "minx_single": {
+      "rank": 5,
+      "value": 12988
+    },
+    "minx_average": {
+      "rank": 4,
+      "value": null
+    },
+    "333_single": {
+      "rank": 7,
+      "value": 836
+    },
+    "333_average": {
+      "rank": 9,
+      "value": 1113
+    },
+    "222_single": {
+      "rank": 3,
+      "value": 155
+    },
+    "222_average": {
+      "rank": 1,
+      "value": 250
+    },
+    "444_single": {
+      "rank": 6,
+      "value": 4122
+    },
+    "444_average": {
+      "rank": 6,
+      "value": 4692
+    },
+    "333oh_single": {
+      "rank": 10,
+      "value": 2526
+    },
+    "333oh_average": {
+      "rank": 11,
+      "value": null
+    }
+  },
+  "Matthew Advani": {
+    "pyram_single": {
+      "rank": 3,
+      "value": 377
+    },
+    "pyram_average": {
+      "rank": 4,
+      "value": 737
+    },
+    "333bf_single": {
+      "rank": 3,
+      "value": 7628
+    },
+    "333bf_average": {
+      "rank": 3,
+      "value": 16916
+    },
+    "sq1_single": {
+      "rank": 6,
+      "value": 2018
+    },
+    "sq1_average": {
+      "rank": 6,
+      "value": 2626
+    },
+    "555bf_single": {
+      "rank": 2,
+      "value": null
+    },
+    "333mbf_single": {
+      "rank": 3,
+      "value": null
+    },
+    "444bf_single": {
+      "rank": 3,
+      "value": 112400
+    },
+    "444bf_average": {
+      "rank": 2,
+      "value": null
+    },
+    "clock_single": {
+      "rank": 1,
+      "value": 263
+    },
+    "clock_average": {
+      "rank": 1,
+      "value": 362
+    },
+    "skewb_single": {
+      "rank": 3,
+      "value": 394
+    },
+    "skewb_average": {
+      "rank": 3,
+      "value": 647
+    },
+    "333fm_single": {
+      "rank": 4,
+      "value": 30
+    },
+    "333fm_average": {
+      "rank": 4,
+      "value": null
+    },
+    "555_single": {
+      "rank": 4,
+      "value": 9636
+    },
+    "555_average": {
+      "rank": 4,
+      "value": null
+    },
+    "666_single": {
+      "rank": 3,
+      "value": null
+    },
+    "666_average": {
+      "rank": 2,
+      "value": null
+    },
+    "777_single": {
+      "rank": 2,
+      "value": null
+    },
+    "777_average": {
+      "rank": 2,
+      "value": null
+    },
+    "minx_single": {
+      "rank": 2,
+      "value": 6945
+    },
+    "minx_average": {
+      "rank": 3,
+      "value": 8652
+    },
+    "333_single": {
+      "rank": 2,
+      "value": 662
+    },
+    "333_average": {
+      "rank": 3,
+      "value": 869
+    },
+    "222_single": {
+      "rank": 6,
+      "value": 231
+    },
+    "222_average": {
+      "rank": 6,
+      "value": 351
+    },
+    "444_single": {
+      "rank": 4,
+      "value": 3709
+    },
+    "444_average": {
+      "rank": 4,
+      "value": 4399
+    },
+    "333oh_single": {
+      "rank": 3,
+      "value": 1384
+    },
+    "333oh_average": {
+      "rank": 2,
+      "value": 1566
+    }
+  },
+  "Ho Cheuk Yiu": {
+    "pyram_single": {
+      "rank": 4,
+      "value": 401
+    },
+    "pyram_average": {
+      "rank": 9,
+      "value": 999
+    },
+    "333bf_single": {
+      "rank": 6,
+      "value": null
+    },
+    "333bf_average": {
+      "rank": 4,
+      "value": null
+    },
+    "sq1_single": {
+      "rank": 7,
+      "value": null
+    },
+    "sq1_average": {
+      "rank": 7,
+      "value": null
+    },
+    "555bf_single": {
+      "rank": 2,
+      "value": null
+    },
+    "333mbf_single": {
+      "rank": 3,
+      "value": null
+    },
+    "444bf_single": {
+      "rank": 4,
+      "value": null
+    },
+    "444bf_average": {
+      "rank": 2,
+      "value": null
+    },
+    "clock_single": {
+      "rank": 9,
+      "value": null
+    },
+    "clock_average": {
+      "rank": 7,
+      "value": null
+    },
+    "skewb_single": {
+      "rank": 11,
+      "value": null
+    },
+    "skewb_average": {
+      "rank": 11,
+      "value": null
+    },
+    "333fm_single": {
+      "rank": 10,
+      "value": null
+    },
+    "333fm_average": {
+      "rank": 4,
+      "value": null
+    },
+    "555_single": {
+      "rank": 5,
+      "value": null
+    },
+    "555_average": {
+      "rank": 4,
+      "value": null
+    },
+    "666_single": {
+      "rank": 3,
+      "value": null
+    },
+    "666_average": {
+      "rank": 2,
+      "value": null
+    },
+    "777_single": {
+      "rank": 2,
+      "value": null
+    },
+    "777_average": {
+      "rank": 2,
+      "value": null
+    },
+    "minx_single": {
+      "rank": 7,
+      "value": null
+    },
+    "minx_average": {
+      "rank": 4,
+      "value": null
+    },
+    "333_single": {
+      "rank": 12,
+      "value": 1061
+    },
+    "333_average": {
+      "rank": 12,
+      "value": 1334
+    },
+    "222_single": {
+      "rank": 11,
+      "value": 276
+    },
+    "222_average": {
+      "rank": 8,
+      "value": 388
+    },
+    "444_single": {
+      "rank": 12,
+      "value": 7601
+    },
+    "444_average": {
+      "rank": 10,
+      "value": null
+    },
+    "333oh_single": {
+      "rank": 11,
+      "value": 2711
+    },
+    "333oh_average": {
+      "rank": 10,
+      "value": 3168
+    }
+  },
+  "Ip Pak Tou Zachary": {
+    "pyram_single": {
+      "rank": 5,
+      "value": 510
+    },
+    "pyram_average": {
+      "rank": 3,
+      "value": 723
+    },
+    "333bf_single": {
+      "rank": 5,
+      "value": 19780
+    },
+    "333bf_average": {
+      "rank": 4,
+      "value": null
+    },
+    "sq1_single": {
+      "rank": 7,
+      "value": null
+    },
+    "sq1_average": {
+      "rank": 7,
+      "value": null
+    },
+    "555bf_single": {
+      "rank": 2,
+      "value": null
+    },
+    "333mbf_single": {
+      "rank": 3,
+      "value": null
+    },
+    "444bf_single": {
+      "rank": 4,
+      "value": null
+    },
+    "444bf_average": {
+      "rank": 2,
+      "value": null
+    },
+    "clock_single": {
+      "rank": 9,
+      "value": null
+    },
+    "clock_average": {
+      "rank": 7,
+      "value": null
+    },
+    "skewb_single": {
+      "rank": 6,
+      "value": 518
+    },
+    "skewb_average": {
+      "rank": 7,
+      "value": 815
+    },
+    "333fm_single": {
+      "rank": 7,
+      "value": 39
+    },
+    "333fm_average": {
+      "rank": 4,
+      "value": null
+    },
+    "555_single": {
+      "rank": 5,
+      "value": null
+    },
+    "555_average": {
+      "rank": 4,
+      "value": null
+    },
+    "666_single": {
+      "rank": 3,
+      "value": null
+    },
+    "666_average": {
+      "rank": 2,
+      "value": null
+    },
+    "777_single": {
+      "rank": 2,
+      "value": null
+    },
+    "777_average": {
+      "rank": 2,
+      "value": null
+    },
+    "minx_single": {
+      "rank": 4,
+      "value": 9038
+    },
+    "minx_average": {
+      "rank": 4,
+      "value": null
+    },
+    "333_single": {
+      "rank": 4,
+      "value": 792
+    },
+    "333_average": {
+      "rank": 5,
+      "value": 943
+    },
+    "222_single": {
+      "rank": 2,
+      "value": 154
+    },
+    "222_average": {
+      "rank": 2,
+      "value": 268
+    },
+    "444_single": {
+      "rank": 10,
+      "value": 5812
+    },
+    "444_average": {
+      "rank": 10,
+      "value": null
+    },
+    "333oh_single": {
+      "rank": 8,
+      "value": 1837
+    },
+    "333oh_average": {
+      "rank": 9,
+      "value": 2354
+    }
+  },
+  "Lai Pak Kiu": {
+    "pyram_single": {
+      "rank": 6,
+      "value": 590
+    },
+    "pyram_average": {
+      "rank": 10,
+      "value": 1042
+    },
+    "333bf_single": {
+      "rank": 2,
+      "value": 5564
+    },
+    "333bf_average": {
+      "rank": 2,
+      "value": 10206
+    },
+    "sq1_single": {
+      "rank": 4,
+      "value": 1312
+    },
+    "sq1_average": {
+      "rank": 4,
+      "value": 2178
+    },
+    "555bf_single": {
+      "rank": 2,
+      "value": null
+    },
+    "333mbf_single": {
+      "rank": 2,
+      "value": 930312101
+    },
+    "444bf_single": {
+      "rank": 2,
+      "value": 70600
+    },
+    "444bf_average": {
+      "rank": 2,
+      "value": null
+    },
+    "clock_single": {
+      "rank": 6,
+      "value": 818
+    },
+    "clock_average": {
+      "rank": 6,
+      "value": 1166
+    },
+    "skewb_single": {
+      "rank": 1,
+      "value": 218
+    },
+    "skewb_average": {
+      "rank": 1,
+      "value": 434
+    },
+    "333fm_single": {
+      "rank": 2,
+      "value": 23
+    },
+    "333fm_average": {
+      "rank": 2,
+      "value": 2800
+    },
+    "555_single": {
+      "rank": 3,
+      "value": 6419
+    },
+    "555_average": {
+      "rank": 3,
+      "value": 7514
+    },
+    "666_single": {
+      "rank": 3,
+      "value": null
+    },
+    "666_average": {
+      "rank": 2,
+      "value": null
+    },
+    "777_single": {
+      "rank": 2,
+      "value": null
+    },
+    "777_average": {
+      "rank": 2,
+      "value": null
+    },
+    "minx_single": {
+      "rank": 3,
+      "value": 6957
+    },
+    "minx_average": {
+      "rank": 2,
+      "value": 7906
+    },
+    "333_single": {
+      "rank": 1,
+      "value": 614
+    },
+    "333_average": {
+      "rank": 1,
+      "value": 722
+    },
+    "222_single": {
+      "rank": 4,
+      "value": 190
+    },
+    "222_average": {
+      "rank": 3,
+      "value": 281
+    },
+    "444_single": {
+      "rank": 1,
+      "value": 2579
+    },
+    "444_average": {
+      "rank": 1,
+      "value": 2908
+    },
+    "333oh_single": {
+      "rank": 1,
+      "value": 1005
+    },
+    "333oh_average": {
+      "rank": 1,
+      "value": 1304
+    }
+  },
+  "Tang Ue Tze": {
+    "pyram_single": {
+      "rank": 7,
+      "value": 636
+    },
+    "pyram_average": {
+      "rank": 6,
+      "value": 854
+    },
+    "333bf_single": {
+      "rank": 6,
+      "value": null
+    },
+    "333bf_average": {
+      "rank": 4,
+      "value": null
+    },
+    "sq1_single": {
+      "rank": 3,
+      "value": 1104
+    },
+    "sq1_average": {
+      "rank": 3,
+      "value": 1464
+    },
+    "555bf_single": {
+      "rank": 2,
+      "value": null
+    },
+    "333mbf_single": {
+      "rank": 3,
+      "value": null
+    },
+    "444bf_single": {
+      "rank": 4,
+      "value": null
+    },
+    "444bf_average": {
+      "rank": 2,
+      "value": null
+    },
+    "clock_single": {
+      "rank": 9,
+      "value": null
+    },
+    "clock_average": {
+      "rank": 7,
+      "value": null
+    },
+    "skewb_single": {
+      "rank": 5,
+      "value": 516
+    },
+    "skewb_average": {
+      "rank": 6,
+      "value": 765
+    },
+    "333fm_single": {
+      "rank": 9,
+      "value": 40
+    },
+    "333fm_average": {
+      "rank": 4,
+      "value": null
+    },
+    "555_single": {
+      "rank": 5,
+      "value": null
+    },
+    "555_average": {
+      "rank": 4,
+      "value": null
+    },
+    "666_single": {
+      "rank": 3,
+      "value": null
+    },
+    "666_average": {
+      "rank": 2,
+      "value": null
+    },
+    "777_single": {
+      "rank": 2,
+      "value": null
+    },
+    "777_average": {
+      "rank": 2,
+      "value": null
+    },
+    "minx_single": {
+      "rank": 7,
+      "value": null
+    },
+    "minx_average": {
+      "rank": 4,
+      "value": null
+    },
+    "333_single": {
+      "rank": 3,
+      "value": 727
+    },
+    "333_average": {
+      "rank": 2,
+      "value": 801
+    },
+    "222_single": {
+      "rank": 1,
+      "value": 101
+    },
+    "222_average": {
+      "rank": 4,
+      "value": 291
+    },
+    "444_single": {
+      "rank": 14,
+      "value": null
+    },
+    "444_average": {
+      "rank": 10,
+      "value": null
+    },
+    "333oh_single": {
+      "rank": 12,
+      "value": null
+    },
+    "333oh_average": {
+      "rank": 11,
+      "value": null
+    }
+  },
+  "Liu Yik Yung": {
+    "pyram_single": {
+      "rank": 8,
+      "value": 642
+    },
+    "pyram_average": {
+      "rank": 7,
+      "value": 924
+    },
+    "333bf_single": {
+      "rank": 6,
+      "value": null
+    },
+    "333bf_average": {
+      "rank": 4,
+      "value": null
+    },
+    "sq1_single": {
+      "rank": 1,
+      "value": 430
+    },
+    "sq1_average": {
+      "rank": 1,
+      "value": 640
+    },
+    "555bf_single": {
+      "rank": 2,
+      "value": null
+    },
+    "333mbf_single": {
+      "rank": 3,
+      "value": null
+    },
+    "444bf_single": {
+      "rank": 4,
+      "value": null
+    },
+    "444bf_average": {
+      "rank": 2,
+      "value": null
+    },
+    "clock_single": {
+      "rank": 2,
+      "value": 382
+    },
+    "clock_average": {
+      "rank": 3,
+      "value": 592
+    },
+    "skewb_single": {
+      "rank": 4,
+      "value": 502
+    },
+    "skewb_average": {
+      "rank": 5,
+      "value": 696
+    },
+    "333fm_single": {
+      "rank": 5,
+      "value": 33
+    },
+    "333fm_average": {
+      "rank": 4,
+      "value": null
+    },
+    "555_single": {
+      "rank": 2,
+      "value": 6168
+    },
+    "555_average": {
+      "rank": 2,
+      "value": 7087
+    },
+    "666_single": {
+      "rank": 2,
+      "value": 16108
+    },
+    "666_average": {
+      "rank": 2,
+      "value": null
+    },
+    "777_single": {
+      "rank": 2,
+      "value": null
+    },
+    "777_average": {
+      "rank": 2,
+      "value": null
+    },
+    "minx_single": {
+      "rank": 7,
+      "value": null
+    },
+    "minx_average": {
+      "rank": 4,
+      "value": null
+    },
+    "333_single": {
+      "rank": 5,
+      "value": 798
+    },
+    "333_average": {
+      "rank": 8,
+      "value": 1108
+    },
+    "222_single": {
+      "rank": 5,
+      "value": 224
+    },
+    "222_average": {
+      "rank": 5,
+      "value": 326
+    },
+    "444_single": {
+      "rank": 2,
+      "value": 3336
+    },
+    "444_average": {
+      "rank": 3,
+      "value": 4017
+    },
+    "333oh_single": {
+      "rank": 2,
+      "value": 1165
+    },
+    "333oh_average": {
+      "rank": 3,
+      "value": 1643
+    }
+  },
+  "Tsiang Wei Yan": {
+    "pyram_single": {
+      "rank": 9,
+      "value": 677
+    },
+    "pyram_average": {
+      "rank": 8,
+      "value": 935
+    },
+    "333bf_single": {
+      "rank": 6,
+      "value": null
+    },
+    "333bf_average": {
+      "rank": 4,
+      "value": null
+    },
+    "sq1_single": {
+      "rank": 7,
+      "value": null
+    },
+    "sq1_average": {
+      "rank": 7,
+      "value": null
+    },
+    "555bf_single": {
+      "rank": 2,
+      "value": null
+    },
+    "333mbf_single": {
+      "rank": 3,
+      "value": null
+    },
+    "444bf_single": {
+      "rank": 4,
+      "value": null
+    },
+    "444bf_average": {
+      "rank": 2,
+      "value": null
+    },
+    "clock_single": {
+      "rank": 7,
+      "value": 1150
+    },
+    "clock_average": {
+      "rank": 7,
+      "value": null
+    },
+    "skewb_single": {
+      "rank": 8,
+      "value": 601
+    },
+    "skewb_average": {
+      "rank": 9,
+      "value": 913
+    },
+    "333fm_single": {
+      "rank": 10,
+      "value": null
+    },
+    "333fm_average": {
+      "rank": 4,
+      "value": null
+    },
+    "555_single": {
+      "rank": 5,
+      "value": null
+    },
+    "555_average": {
+      "rank": 4,
+      "value": null
+    },
+    "666_single": {
+      "rank": 3,
+      "value": null
+    },
+    "666_average": {
+      "rank": 2,
+      "value": null
+    },
+    "777_single": {
+      "rank": 2,
+      "value": null
+    },
+    "777_average": {
+      "rank": 2,
+      "value": null
+    },
+    "minx_single": {
+      "rank": 7,
+      "value": null
+    },
+    "minx_average": {
+      "rank": 4,
+      "value": null
+    },
+    "333_single": {
+      "rank": 6,
+      "value": 809
+    },
+    "333_average": {
+      "rank": 4,
+      "value": 932
+    },
+    "222_single": {
+      "rank": 9,
+      "value": 262
+    },
+    "222_average": {
+      "rank": 11,
+      "value": 479
+    },
+    "444_single": {
+      "rank": 7,
+      "value": 4276
+    },
+    "444_average": {
+      "rank": 7,
+      "value": 5161
+    },
+    "333oh_single": {
+      "rank": 7,
+      "value": 1745
+    },
+    "333oh_average": {
+      "rank": 8,
+      "value": 2283
+    }
+  },
+  "Yu Wai Sum": {
+    "pyram_single": {
+      "rank": 10,
+      "value": 718
+    },
+    "pyram_average": {
+      "rank": 5,
+      "value": 835
+    },
+    "333bf_single": {
+      "rank": 6,
+      "value": null
+    },
+    "333bf_average": {
+      "rank": 4,
+      "value": null
+    },
+    "sq1_single": {
+      "rank": 7,
+      "value": null
+    },
+    "sq1_average": {
+      "rank": 7,
+      "value": null
+    },
+    "555bf_single": {
+      "rank": 2,
+      "value": null
+    },
+    "333mbf_single": {
+      "rank": 3,
+      "value": null
+    },
+    "444bf_single": {
+      "rank": 4,
+      "value": null
+    },
+    "444bf_average": {
+      "rank": 2,
+      "value": null
+    },
+    "clock_single": {
+      "rank": 9,
+      "value": null
+    },
+    "clock_average": {
+      "rank": 7,
+      "value": null
+    },
+    "skewb_single": {
+      "rank": 11,
+      "value": null
+    },
+    "skewb_average": {
+      "rank": 11,
+      "value": null
+    },
+    "333fm_single": {
+      "rank": 10,
+      "value": null
+    },
+    "333fm_average": {
+      "rank": 4,
+      "value": null
+    },
+    "555_single": {
+      "rank": 5,
+      "value": null
+    },
+    "555_average": {
+      "rank": 4,
+      "value": null
+    },
+    "666_single": {
+      "rank": 3,
+      "value": null
+    },
+    "666_average": {
+      "rank": 2,
+      "value": null
+    },
+    "777_single": {
+      "rank": 2,
+      "value": null
+    },
+    "777_average": {
+      "rank": 2,
+      "value": null
+    },
+    "minx_single": {
+      "rank": 7,
+      "value": null
+    },
+    "minx_average": {
+      "rank": 4,
+      "value": null
+    },
+    "333_single": {
+      "rank": 11,
+      "value": 985
+    },
+    "333_average": {
+      "rank": 10,
+      "value": 1134
+    },
+    "222_single": {
+      "rank": 7,
+      "value": 234
+    },
+    "222_average": {
+      "rank": 9,
+      "value": 394
+    },
+    "444_single": {
+      "rank": 9,
+      "value": 5088
+    },
+    "444_average": {
+      "rank": 8,
+      "value": 5199
+    },
+    "333oh_single": {
+      "rank": 9,
+      "value": 1913
+    },
+    "333oh_average": {
+      "rank": 7,
+      "value": 2242
+    }
+  },
+  "Chen Hei Yin": {
+    "pyram_single": {
+      "rank": 11,
+      "value": 806
+    },
+    "pyram_average": {
+      "rank": 11,
+      "value": 1133
+    },
+    "333bf_single": {
+      "rank": 6,
+      "value": null
+    },
+    "333bf_average": {
+      "rank": 4,
+      "value": null
+    },
+    "sq1_single": {
+      "rank": 7,
+      "value": null
+    },
+    "sq1_average": {
+      "rank": 7,
+      "value": null
+    },
+    "555bf_single": {
+      "rank": 2,
+      "value": null
+    },
+    "333mbf_single": {
+      "rank": 3,
+      "value": null
+    },
+    "444bf_single": {
+      "rank": 4,
+      "value": null
+    },
+    "444bf_average": {
+      "rank": 2,
+      "value": null
+    },
+    "clock_single": {
+      "rank": 9,
+      "value": null
+    },
+    "clock_average": {
+      "rank": 7,
+      "value": null
+    },
+    "skewb_single": {
+      "rank": 11,
+      "value": null
+    },
+    "skewb_average": {
+      "rank": 11,
+      "value": null
+    },
+    "333fm_single": {
+      "rank": 10,
+      "value": null
+    },
+    "333fm_average": {
+      "rank": 4,
+      "value": null
+    },
+    "555_single": {
+      "rank": 5,
+      "value": null
+    },
+    "555_average": {
+      "rank": 4,
+      "value": null
+    },
+    "666_single": {
+      "rank": 3,
+      "value": null
+    },
+    "666_average": {
+      "rank": 2,
+      "value": null
+    },
+    "777_single": {
+      "rank": 2,
+      "value": null
+    },
+    "777_average": {
+      "rank": 2,
+      "value": null
+    },
+    "minx_single": {
+      "rank": 7,
+      "value": null
+    },
+    "minx_average": {
+      "rank": 4,
+      "value": null
+    },
+    "333_single": {
+      "rank": 24,
+      "value": 2042
+    },
+    "333_average": {
+      "rank": 26,
+      "value": 2576
+    },
+    "222_single": {
+      "rank": 17,
+      "value": 672
+    },
+    "222_average": {
+      "rank": 18,
+      "value": 895
+    },
+    "444_single": {
+      "rank": 14,
+      "value": null
+    },
+    "444_average": {
+      "rank": 10,
+      "value": null
+    },
+    "333oh_single": {
+      "rank": 12,
+      "value": null
+    },
+    "333oh_average": {
+      "rank": 11,
+      "value": null
+    }
+  },
+  "Lau Ho Chi": {
+    "pyram_single": {
+      "rank": 12,
+      "value": 1032
+    },
+    "pyram_average": {
+      "rank": 12,
+      "value": 1259
+    },
+    "333bf_single": {
+      "rank": 6,
+      "value": null
+    },
+    "333bf_average": {
+      "rank": 4,
+      "value": null
+    },
+    "sq1_single": {
+      "rank": 7,
+      "value": null
+    },
+    "sq1_average": {
+      "rank": 7,
+      "value": null
+    },
+    "555bf_single": {
+      "rank": 2,
+      "value": null
+    },
+    "333mbf_single": {
+      "rank": 3,
+      "value": null
+    },
+    "444bf_single": {
+      "rank": 4,
+      "value": null
+    },
+    "444bf_average": {
+      "rank": 2,
+      "value": null
+    },
+    "clock_single": {
+      "rank": 4,
+      "value": 503
+    },
+    "clock_average": {
+      "rank": 5,
+      "value": 986
+    },
+    "skewb_single": {
+      "rank": 9,
+      "value": 608
+    },
+    "skewb_average": {
+      "rank": 8,
+      "value": 856
+    },
+    "333fm_single": {
+      "rank": 10,
+      "value": null
+    },
+    "333fm_average": {
+      "rank": 4,
+      "value": null
+    },
+    "555_single": {
+      "rank": 5,
+      "value": null
+    },
+    "555_average": {
+      "rank": 4,
+      "value": null
+    },
+    "666_single": {
+      "rank": 3,
+      "value": null
+    },
+    "666_average": {
+      "rank": 2,
+      "value": null
+    },
+    "777_single": {
+      "rank": 2,
+      "value": null
+    },
+    "777_average": {
+      "rank": 2,
+      "value": null
+    },
+    "minx_single": {
+      "rank": 7,
+      "value": null
+    },
+    "minx_average": {
+      "rank": 4,
+      "value": null
+    },
+    "333_single": {
+      "rank": 13,
+      "value": 1096
+    },
+    "333_average": {
+      "rank": 14,
+      "value": 1444
+    },
+    "222_single": {
+      "rank": 12,
+      "value": 288
+    },
+    "222_average": {
+      "rank": 12,
+      "value": 489
+    },
+    "444_single": {
+      "rank": 11,
+      "value": 5958
+    },
+    "444_average": {
+      "rank": 10,
+      "value": null
+    },
+    "333oh_single": {
+      "rank": 4,
+      "value": 1454
+    },
+    "333oh_average": {
+      "rank": 4,
+      "value": 1728
+    }
+  },
+  "Lam Chun Fung": {
+    "pyram_single": {
+      "rank": 13,
+      "value": 1208
+    },
+    "pyram_average": {
+      "rank": 13,
+      "value": 1329
+    },
+    "333bf_single": {
+      "rank": 6,
+      "value": null
+    },
+    "333bf_average": {
+      "rank": 4,
+      "value": null
+    },
+    "sq1_single": {
+      "rank": 7,
+      "value": null
+    },
+    "sq1_average": {
+      "rank": 7,
+      "value": null
+    },
+    "555bf_single": {
+      "rank": 2,
+      "value": null
+    },
+    "333mbf_single": {
+      "rank": 3,
+      "value": null
+    },
+    "444bf_single": {
+      "rank": 4,
+      "value": null
+    },
+    "444bf_average": {
+      "rank": 2,
+      "value": null
+    },
+    "clock_single": {
+      "rank": 9,
+      "value": null
+    },
+    "clock_average": {
+      "rank": 7,
+      "value": null
+    },
+    "skewb_single": {
+      "rank": 11,
+      "value": null
+    },
+    "skewb_average": {
+      "rank": 11,
+      "value": null
+    },
+    "333fm_single": {
+      "rank": 10,
+      "value": null
+    },
+    "333fm_average": {
+      "rank": 4,
+      "value": null
+    },
+    "555_single": {
+      "rank": 5,
+      "value": null
+    },
+    "555_average": {
+      "rank": 4,
+      "value": null
+    },
+    "666_single": {
+      "rank": 3,
+      "value": null
+    },
+    "666_average": {
+      "rank": 2,
+      "value": null
+    },
+    "777_single": {
+      "rank": 2,
+      "value": null
+    },
+    "777_average": {
+      "rank": 2,
+      "value": null
+    },
+    "minx_single": {
+      "rank": 7,
+      "value": null
+    },
+    "minx_average": {
+      "rank": 4,
+      "value": null
+    },
+    "333_single": {
+      "rank": 28,
+      "value": 2350
+    },
+    "333_average": {
+      "rank": 28,
+      "value": 3203
+    },
+    "222_single": {
+      "rank": 16,
+      "value": 571
+    },
+    "222_average": {
+      "rank": 17,
+      "value": 870
+    },
+    "444_single": {
+      "rank": 14,
+      "value": null
+    },
+    "444_average": {
+      "rank": 10,
+      "value": null
+    },
+    "333oh_single": {
+      "rank": 12,
+      "value": null
+    },
+    "333oh_average": {
+      "rank": 11,
+      "value": null
+    }
+  },
+  "Fung Sum Chun": {
+    "pyram_single": {
+      "rank": 14,
+      "value": 1308
+    },
+    "pyram_average": {
+      "rank": 14,
+      "value": 1496
+    },
+    "333bf_single": {
+      "rank": 6,
+      "value": null
+    },
+    "333bf_average": {
+      "rank": 4,
+      "value": null
+    },
+    "sq1_single": {
+      "rank": 7,
+      "value": null
+    },
+    "sq1_average": {
+      "rank": 7,
+      "value": null
+    },
+    "555bf_single": {
+      "rank": 2,
+      "value": null
+    },
+    "333mbf_single": {
+      "rank": 3,
+      "value": null
+    },
+    "444bf_single": {
+      "rank": 4,
+      "value": null
+    },
+    "444bf_average": {
+      "rank": 2,
+      "value": null
+    },
+    "clock_single": {
+      "rank": 8,
+      "value": 1949
+    },
+    "clock_average": {
+      "rank": 7,
+      "value": null
+    },
+    "skewb_single": {
+      "rank": 11,
+      "value": null
+    },
+    "skewb_average": {
+      "rank": 11,
+      "value": null
+    },
+    "333fm_single": {
+      "rank": 10,
+      "value": null
+    },
+    "333fm_average": {
+      "rank": 4,
+      "value": null
+    },
+    "555_single": {
+      "rank": 5,
+      "value": null
+    },
+    "555_average": {
+      "rank": 4,
+      "value": null
+    },
+    "666_single": {
+      "rank": 3,
+      "value": null
+    },
+    "666_average": {
+      "rank": 2,
+      "value": null
+    },
+    "777_single": {
+      "rank": 2,
+      "value": null
+    },
+    "777_average": {
+      "rank": 2,
+      "value": null
+    },
+    "minx_single": {
+      "rank": 6,
+      "value": 14191
+    },
+    "minx_average": {
+      "rank": 4,
+      "value": null
+    },
+    "333_single": {
+      "rank": 17,
+      "value": 1289
+    },
+    "333_average": {
+      "rank": 18,
+      "value": 1612
+    },
+    "222_single": {
+      "rank": 19,
+      "value": 736
+    },
+    "222_average": {
+      "rank": 16,
+      "value": 849
+    },
+    "444_single": {
+      "rank": 13,
+      "value": 10658
+    },
+    "444_average": {
+      "rank": 10,
+      "value": null
+    },
+    "333oh_single": {
+      "rank": 12,
+      "value": null
+    },
+    "333oh_average": {
+      "rank": 11,
+      "value": null
+    }
+  },
+  "Chan King Won Aidan": {
+    "pyram_single": {
+      "rank": 15,
+      "value": 3406
+    },
+    "pyram_average": {
+      "rank": 15,
+      "value": null
+    },
+    "333bf_single": {
+      "rank": 6,
+      "value": null
+    },
+    "333bf_average": {
+      "rank": 4,
+      "value": null
+    },
+    "sq1_single": {
+      "rank": 7,
+      "value": null
+    },
+    "sq1_average": {
+      "rank": 7,
+      "value": null
+    },
+    "555bf_single": {
+      "rank": 2,
+      "value": null
+    },
+    "333mbf_single": {
+      "rank": 3,
+      "value": null
+    },
+    "444bf_single": {
+      "rank": 4,
+      "value": null
+    },
+    "444bf_average": {
+      "rank": 2,
+      "value": null
+    },
+    "clock_single": {
+      "rank": 9,
+      "value": null
+    },
+    "clock_average": {
+      "rank": 7,
+      "value": null
+    },
+    "skewb_single": {
+      "rank": 11,
+      "value": null
+    },
+    "skewb_average": {
+      "rank": 11,
+      "value": null
+    },
+    "333fm_single": {
+      "rank": 10,
+      "value": null
+    },
+    "333fm_average": {
+      "rank": 4,
+      "value": null
+    },
+    "555_single": {
+      "rank": 5,
+      "value": null
+    },
+    "555_average": {
+      "rank": 4,
+      "value": null
+    },
+    "666_single": {
+      "rank": 3,
+      "value": null
+    },
+    "666_average": {
+      "rank": 2,
+      "value": null
+    },
+    "777_single": {
+      "rank": 2,
+      "value": null
+    },
+    "777_average": {
+      "rank": 2,
+      "value": null
+    },
+    "minx_single": {
+      "rank": 7,
+      "value": null
+    },
+    "minx_average": {
+      "rank": 4,
+      "value": null
+    },
+    "333_single": {
+      "rank": 27,
+      "value": 2272
+    },
+    "333_average": {
+      "rank": 27,
+      "value": 2767
+    },
+    "222_single": {
+      "rank": 18,
+      "value": 721
+    },
+    "222_average": {
+      "rank": 19,
+      "value": 942
+    },
+    "444_single": {
+      "rank": 14,
+      "value": null
+    },
+    "444_average": {
+      "rank": 10,
+      "value": null
+    },
+    "333oh_single": {
+      "rank": 12,
+      "value": null
+    },
+    "333oh_average": {
+      "rank": 11,
+      "value": null
+    }
+  },
+  "Kwok Pak Hei": {
+    "pyram_single": {
+      "rank": 16,
+      "value": null
+    },
+    "pyram_average": {
+      "rank": 15,
+      "value": null
+    },
+    "333bf_single": {
+      "rank": 6,
+      "value": null
+    },
+    "333bf_average": {
+      "rank": 4,
+      "value": null
+    },
+    "sq1_single": {
+      "rank": 7,
+      "value": null
+    },
+    "sq1_average": {
+      "rank": 7,
+      "value": null
+    },
+    "555bf_single": {
+      "rank": 2,
+      "value": null
+    },
+    "333mbf_single": {
+      "rank": 3,
+      "value": null
+    },
+    "444bf_single": {
+      "rank": 4,
+      "value": null
+    },
+    "444bf_average": {
+      "rank": 2,
+      "value": null
+    },
+    "clock_single": {
+      "rank": 9,
+      "value": null
+    },
+    "clock_average": {
+      "rank": 7,
+      "value": null
+    },
+    "skewb_single": {
+      "rank": 10,
+      "value": 612
+    },
+    "skewb_average": {
+      "rank": 10,
+      "value": 1027
+    },
+    "333fm_single": {
+      "rank": 10,
+      "value": null
+    },
+    "333fm_average": {
+      "rank": 4,
+      "value": null
+    },
+    "555_single": {
+      "rank": 5,
+      "value": null
+    },
+    "555_average": {
+      "rank": 4,
+      "value": null
+    },
+    "666_single": {
+      "rank": 3,
+      "value": null
+    },
+    "666_average": {
+      "rank": 2,
+      "value": null
+    },
+    "777_single": {
+      "rank": 2,
+      "value": null
+    },
+    "777_average": {
+      "rank": 2,
+      "value": null
+    },
+    "minx_single": {
+      "rank": 7,
+      "value": null
+    },
+    "minx_average": {
+      "rank": 4,
+      "value": null
+    },
+    "333_single": {
+      "rank": 10,
+      "value": 959
+    },
+    "333_average": {
+      "rank": 7,
+      "value": 1073
+    },
+    "222_single": {
+      "rank": 13,
+      "value": 333
+    },
+    "222_average": {
+      "rank": 10,
+      "value": 451
+    },
+    "444_single": {
+      "rank": 5,
+      "value": 4087
+    },
+    "444_average": {
+      "rank": 5,
+      "value": 4689
+    },
+    "333oh_single": {
+      "rank": 5,
+      "value": 1648
+    },
+    "333oh_average": {
+      "rank": 5,
+      "value": 1999
+    }
+  },
+  "Lai Hiu Nam": {
+    "pyram_single": {
+      "rank": 16,
+      "value": null
+    },
+    "pyram_average": {
+      "rank": 15,
+      "value": null
+    },
+    "333bf_single": {
+      "rank": 6,
+      "value": null
+    },
+    "333bf_average": {
+      "rank": 4,
+      "value": null
+    },
+    "sq1_single": {
+      "rank": 7,
+      "value": null
+    },
+    "sq1_average": {
+      "rank": 7,
+      "value": null
+    },
+    "555bf_single": {
+      "rank": 2,
+      "value": null
+    },
+    "333mbf_single": {
+      "rank": 3,
+      "value": null
+    },
+    "444bf_single": {
+      "rank": 4,
+      "value": null
+    },
+    "444bf_average": {
+      "rank": 2,
+      "value": null
+    },
+    "clock_single": {
+      "rank": 9,
+      "value": null
+    },
+    "clock_average": {
+      "rank": 7,
+      "value": null
+    },
+    "skewb_single": {
+      "rank": 11,
+      "value": null
+    },
+    "skewb_average": {
+      "rank": 11,
+      "value": null
+    },
+    "333fm_single": {
+      "rank": 6,
+      "value": 38
+    },
+    "333fm_average": {
+      "rank": 4,
+      "value": null
+    },
+    "555_single": {
+      "rank": 5,
+      "value": null
+    },
+    "555_average": {
+      "rank": 4,
+      "value": null
+    },
+    "666_single": {
+      "rank": 3,
+      "value": null
+    },
+    "666_average": {
+      "rank": 2,
+      "value": null
+    },
+    "777_single": {
+      "rank": 2,
+      "value": null
+    },
+    "777_average": {
+      "rank": 2,
+      "value": null
+    },
+    "minx_single": {
+      "rank": 7,
+      "value": null
+    },
+    "minx_average": {
+      "rank": 4,
+      "value": null
+    },
+    "333_single": {
+      "rank": 14,
+      "value": 1131
+    },
+    "333_average": {
+      "rank": 15,
+      "value": 1555
+    },
+    "222_single": {
+      "rank": 8,
+      "value": 241
+    },
+    "222_average": {
+      "rank": 14,
+      "value": 590
+    },
+    "444_single": {
+      "rank": 14,
+      "value": null
+    },
+    "444_average": {
+      "rank": 10,
+      "value": null
+    },
+    "333oh_single": {
+      "rank": 12,
+      "value": null
+    },
+    "333oh_average": {
+      "rank": 11,
+      "value": null
+    }
+  },
+  "Lai Yung Wing": {
+    "pyram_single": {
+      "rank": 16,
+      "value": null
+    },
+    "pyram_average": {
+      "rank": 15,
+      "value": null
+    },
+    "333bf_single": {
+      "rank": 6,
+      "value": null
+    },
+    "333bf_average": {
+      "rank": 4,
+      "value": null
+    },
+    "sq1_single": {
+      "rank": 7,
+      "value": null
+    },
+    "sq1_average": {
+      "rank": 7,
+      "value": null
+    },
+    "555bf_single": {
+      "rank": 2,
+      "value": null
+    },
+    "333mbf_single": {
+      "rank": 3,
+      "value": null
+    },
+    "444bf_single": {
+      "rank": 4,
+      "value": null
+    },
+    "444bf_average": {
+      "rank": 2,
+      "value": null
+    },
+    "clock_single": {
+      "rank": 9,
+      "value": null
+    },
+    "clock_average": {
+      "rank": 7,
+      "value": null
+    },
+    "skewb_single": {
+      "rank": 11,
+      "value": null
+    },
+    "skewb_average": {
+      "rank": 11,
+      "value": null
+    },
+    "333fm_single": {
+      "rank": 8,
+      "value": 40
+    },
+    "333fm_average": {
+      "rank": 4,
+      "value": null
+    },
+    "555_single": {
+      "rank": 5,
+      "value": null
+    },
+    "555_average": {
+      "rank": 4,
+      "value": null
+    },
+    "666_single": {
+      "rank": 3,
+      "value": null
+    },
+    "666_average": {
+      "rank": 2,
+      "value": null
+    },
+    "777_single": {
+      "rank": 2,
+      "value": null
+    },
+    "777_average": {
+      "rank": 2,
+      "value": null
+    },
+    "minx_single": {
+      "rank": 7,
+      "value": null
+    },
+    "minx_average": {
+      "rank": 4,
+      "value": null
+    },
+    "333_single": {
+      "rank": 9,
+      "value": 954
+    },
+    "333_average": {
+      "rank": 11,
+      "value": 1158
+    },
+    "222_single": {
+      "rank": 22,
+      "value": null
+    },
+    "222_average": {
+      "rank": 22,
+      "value": null
+    },
+    "444_single": {
+      "rank": 14,
+      "value": null
+    },
+    "444_average": {
+      "rank": 10,
+      "value": null
+    },
+    "333oh_single": {
+      "rank": 12,
+      "value": null
+    },
+    "333oh_average": {
+      "rank": 11,
+      "value": null
+    }
+  },
+  "Yiu Cheuk Fung": {
+    "pyram_single": {
+      "rank": 16,
+      "value": null
+    },
+    "pyram_average": {
+      "rank": 15,
+      "value": null
+    },
+    "333bf_single": {
+      "rank": 6,
+      "value": null
+    },
+    "333bf_average": {
+      "rank": 4,
+      "value": null
+    },
+    "sq1_single": {
+      "rank": 7,
+      "value": null
+    },
+    "sq1_average": {
+      "rank": 7,
+      "value": null
+    },
+    "555bf_single": {
+      "rank": 2,
+      "value": null
+    },
+    "333mbf_single": {
+      "rank": 3,
+      "value": null
+    },
+    "444bf_single": {
+      "rank": 4,
+      "value": null
+    },
+    "444bf_average": {
+      "rank": 2,
+      "value": null
+    },
+    "clock_single": {
+      "rank": 9,
+      "value": null
+    },
+    "clock_average": {
+      "rank": 7,
+      "value": null
+    },
+    "skewb_single": {
+      "rank": 11,
+      "value": null
+    },
+    "skewb_average": {
+      "rank": 11,
+      "value": null
+    },
+    "333fm_single": {
+      "rank": 10,
+      "value": null
+    },
+    "333fm_average": {
+      "rank": 4,
+      "value": null
+    },
+    "555_single": {
+      "rank": 5,
+      "value": null
+    },
+    "555_average": {
+      "rank": 4,
+      "value": null
+    },
+    "666_single": {
+      "rank": 3,
+      "value": null
+    },
+    "666_average": {
+      "rank": 2,
+      "value": null
+    },
+    "777_single": {
+      "rank": 2,
+      "value": null
+    },
+    "777_average": {
+      "rank": 2,
+      "value": null
+    },
+    "minx_single": {
+      "rank": 7,
+      "value": null
+    },
+    "minx_average": {
+      "rank": 4,
+      "value": null
+    },
+    "333_single": {
+      "rank": 15,
+      "value": 1132
+    },
+    "333_average": {
+      "rank": 13,
+      "value": 1358
+    },
+    "222_single": {
+      "rank": 22,
+      "value": null
+    },
+    "222_average": {
+      "rank": 22,
+      "value": null
+    },
+    "444_single": {
+      "rank": 14,
+      "value": null
+    },
+    "444_average": {
+      "rank": 10,
+      "value": null
+    },
+    "333oh_single": {
+      "rank": 12,
+      "value": null
+    },
+    "333oh_average": {
+      "rank": 11,
+      "value": null
+    }
+  },
+  "Ngai Yufung Darren": {
+    "pyram_single": {
+      "rank": 16,
+      "value": null
+    },
+    "pyram_average": {
+      "rank": 15,
+      "value": null
+    },
+    "333bf_single": {
+      "rank": 6,
+      "value": null
+    },
+    "333bf_average": {
+      "rank": 4,
+      "value": null
+    },
+    "sq1_single": {
+      "rank": 7,
+      "value": null
+    },
+    "sq1_average": {
+      "rank": 7,
+      "value": null
+    },
+    "555bf_single": {
+      "rank": 2,
+      "value": null
+    },
+    "333mbf_single": {
+      "rank": 3,
+      "value": null
+    },
+    "444bf_single": {
+      "rank": 4,
+      "value": null
+    },
+    "444bf_average": {
+      "rank": 2,
+      "value": null
+    },
+    "clock_single": {
+      "rank": 9,
+      "value": null
+    },
+    "clock_average": {
+      "rank": 7,
+      "value": null
+    },
+    "skewb_single": {
+      "rank": 11,
+      "value": null
+    },
+    "skewb_average": {
+      "rank": 11,
+      "value": null
+    },
+    "333fm_single": {
+      "rank": 10,
+      "value": null
+    },
+    "333fm_average": {
+      "rank": 4,
+      "value": null
+    },
+    "555_single": {
+      "rank": 5,
+      "value": null
+    },
+    "555_average": {
+      "rank": 4,
+      "value": null
+    },
+    "666_single": {
+      "rank": 3,
+      "value": null
+    },
+    "666_average": {
+      "rank": 2,
+      "value": null
+    },
+    "777_single": {
+      "rank": 2,
+      "value": null
+    },
+    "777_average": {
+      "rank": 2,
+      "value": null
+    },
+    "minx_single": {
+      "rank": 7,
+      "value": null
+    },
+    "minx_average": {
+      "rank": 4,
+      "value": null
+    },
+    "333_single": {
+      "rank": 16,
+      "value": 1233
+    },
+    "333_average": {
+      "rank": 16,
+      "value": 1561
+    },
+    "222_single": {
+      "rank": 22,
+      "value": null
+    },
+    "222_average": {
+      "rank": 22,
+      "value": null
+    },
+    "444_single": {
+      "rank": 14,
+      "value": null
+    },
+    "444_average": {
+      "rank": 10,
+      "value": null
+    },
+    "333oh_single": {
+      "rank": 12,
+      "value": null
+    },
+    "333oh_average": {
+      "rank": 11,
+      "value": null
+    }
+  },
+  "Kwok Chi Ho": {
+    "pyram_single": {
+      "rank": 16,
+      "value": null
+    },
+    "pyram_average": {
+      "rank": 15,
+      "value": null
+    },
+    "333bf_single": {
+      "rank": 6,
+      "value": null
+    },
+    "333bf_average": {
+      "rank": 4,
+      "value": null
+    },
+    "sq1_single": {
+      "rank": 7,
+      "value": null
+    },
+    "sq1_average": {
+      "rank": 7,
+      "value": null
+    },
+    "555bf_single": {
+      "rank": 2,
+      "value": null
+    },
+    "333mbf_single": {
+      "rank": 3,
+      "value": null
+    },
+    "444bf_single": {
+      "rank": 4,
+      "value": null
+    },
+    "444bf_average": {
+      "rank": 2,
+      "value": null
+    },
+    "clock_single": {
+      "rank": 9,
+      "value": null
+    },
+    "clock_average": {
+      "rank": 7,
+      "value": null
+    },
+    "skewb_single": {
+      "rank": 11,
+      "value": null
+    },
+    "skewb_average": {
+      "rank": 11,
+      "value": null
+    },
+    "333fm_single": {
+      "rank": 10,
+      "value": null
+    },
+    "333fm_average": {
+      "rank": 4,
+      "value": null
+    },
+    "555_single": {
+      "rank": 5,
+      "value": null
+    },
+    "555_average": {
+      "rank": 4,
+      "value": null
+    },
+    "666_single": {
+      "rank": 3,
+      "value": null
+    },
+    "666_average": {
+      "rank": 2,
+      "value": null
+    },
+    "777_single": {
+      "rank": 2,
+      "value": null
+    },
+    "777_average": {
+      "rank": 2,
+      "value": null
+    },
+    "minx_single": {
+      "rank": 7,
+      "value": null
+    },
+    "minx_average": {
+      "rank": 4,
+      "value": null
+    },
+    "333_single": {
+      "rank": 18,
+      "value": 1317
+    },
+    "333_average": {
+      "rank": 19,
+      "value": 1634
+    },
+    "222_single": {
+      "rank": 22,
+      "value": null
+    },
+    "222_average": {
+      "rank": 22,
+      "value": null
+    },
+    "444_single": {
+      "rank": 14,
+      "value": null
+    },
+    "444_average": {
+      "rank": 10,
+      "value": null
+    },
+    "333oh_single": {
+      "rank": 12,
+      "value": null
+    },
+    "333oh_average": {
+      "rank": 11,
+      "value": null
+    }
+  },
+  "Au Yeung Ching Hin": {
+    "pyram_single": {
+      "rank": 16,
+      "value": null
+    },
+    "pyram_average": {
+      "rank": 15,
+      "value": null
+    },
+    "333bf_single": {
+      "rank": 6,
+      "value": null
+    },
+    "333bf_average": {
+      "rank": 4,
+      "value": null
+    },
+    "sq1_single": {
+      "rank": 7,
+      "value": null
+    },
+    "sq1_average": {
+      "rank": 7,
+      "value": null
+    },
+    "555bf_single": {
+      "rank": 2,
+      "value": null
+    },
+    "333mbf_single": {
+      "rank": 3,
+      "value": null
+    },
+    "444bf_single": {
+      "rank": 4,
+      "value": null
+    },
+    "444bf_average": {
+      "rank": 2,
+      "value": null
+    },
+    "clock_single": {
+      "rank": 9,
+      "value": null
+    },
+    "clock_average": {
+      "rank": 7,
+      "value": null
+    },
+    "skewb_single": {
+      "rank": 11,
+      "value": null
+    },
+    "skewb_average": {
+      "rank": 11,
+      "value": null
+    },
+    "333fm_single": {
+      "rank": 10,
+      "value": null
+    },
+    "333fm_average": {
+      "rank": 4,
+      "value": null
+    },
+    "555_single": {
+      "rank": 5,
+      "value": null
+    },
+    "555_average": {
+      "rank": 4,
+      "value": null
+    },
+    "666_single": {
+      "rank": 3,
+      "value": null
+    },
+    "666_average": {
+      "rank": 2,
+      "value": null
+    },
+    "777_single": {
+      "rank": 2,
+      "value": null
+    },
+    "777_average": {
+      "rank": 2,
+      "value": null
+    },
+    "minx_single": {
+      "rank": 7,
+      "value": null
+    },
+    "minx_average": {
+      "rank": 4,
+      "value": null
+    },
+    "333_single": {
+      "rank": 19,
+      "value": 1357
+    },
+    "333_average": {
+      "rank": 21,
+      "value": 1913
+    },
+    "222_single": {
+      "rank": 22,
+      "value": null
+    },
+    "222_average": {
+      "rank": 22,
+      "value": null
+    },
+    "444_single": {
+      "rank": 14,
+      "value": null
+    },
+    "444_average": {
+      "rank": 10,
+      "value": null
+    },
+    "333oh_single": {
+      "rank": 12,
+      "value": null
+    },
+    "333oh_average": {
+      "rank": 11,
+      "value": null
+    }
+  },
+  "Raymond Wang": {
+    "pyram_single": {
+      "rank": 16,
+      "value": null
+    },
+    "pyram_average": {
+      "rank": 15,
+      "value": null
+    },
+    "333bf_single": {
+      "rank": 6,
+      "value": null
+    },
+    "333bf_average": {
+      "rank": 4,
+      "value": null
+    },
+    "sq1_single": {
+      "rank": 7,
+      "value": null
+    },
+    "sq1_average": {
+      "rank": 7,
+      "value": null
+    },
+    "555bf_single": {
+      "rank": 2,
+      "value": null
+    },
+    "333mbf_single": {
+      "rank": 3,
+      "value": null
+    },
+    "444bf_single": {
+      "rank": 4,
+      "value": null
+    },
+    "444bf_average": {
+      "rank": 2,
+      "value": null
+    },
+    "clock_single": {
+      "rank": 9,
+      "value": null
+    },
+    "clock_average": {
+      "rank": 7,
+      "value": null
+    },
+    "skewb_single": {
+      "rank": 11,
+      "value": null
+    },
+    "skewb_average": {
+      "rank": 11,
+      "value": null
+    },
+    "333fm_single": {
+      "rank": 10,
+      "value": null
+    },
+    "333fm_average": {
+      "rank": 4,
+      "value": null
+    },
+    "555_single": {
+      "rank": 5,
+      "value": null
+    },
+    "555_average": {
+      "rank": 4,
+      "value": null
+    },
+    "666_single": {
+      "rank": 3,
+      "value": null
+    },
+    "666_average": {
+      "rank": 2,
+      "value": null
+    },
+    "777_single": {
+      "rank": 2,
+      "value": null
+    },
+    "777_average": {
+      "rank": 2,
+      "value": null
+    },
+    "minx_single": {
+      "rank": 7,
+      "value": null
+    },
+    "minx_average": {
+      "rank": 4,
+      "value": null
+    },
+    "333_single": {
+      "rank": 20,
+      "value": 1468
+    },
+    "333_average": {
+      "rank": 17,
+      "value": 1592
+    },
+    "222_single": {
+      "rank": 22,
+      "value": null
+    },
+    "222_average": {
+      "rank": 22,
+      "value": null
+    },
+    "444_single": {
+      "rank": 14,
+      "value": null
+    },
+    "444_average": {
+      "rank": 10,
+      "value": null
+    },
+    "333oh_single": {
+      "rank": 12,
+      "value": null
+    },
+    "333oh_average": {
+      "rank": 11,
+      "value": null
+    }
+  },
+  "Chan Yin Hei Cyrus": {
+    "pyram_single": {
+      "rank": 16,
+      "value": null
+    },
+    "pyram_average": {
+      "rank": 15,
+      "value": null
+    },
+    "333bf_single": {
+      "rank": 6,
+      "value": null
+    },
+    "333bf_average": {
+      "rank": 4,
+      "value": null
+    },
+    "sq1_single": {
+      "rank": 7,
+      "value": null
+    },
+    "sq1_average": {
+      "rank": 7,
+      "value": null
+    },
+    "555bf_single": {
+      "rank": 2,
+      "value": null
+    },
+    "333mbf_single": {
+      "rank": 3,
+      "value": null
+    },
+    "444bf_single": {
+      "rank": 4,
+      "value": null
+    },
+    "444bf_average": {
+      "rank": 2,
+      "value": null
+    },
+    "clock_single": {
+      "rank": 9,
+      "value": null
+    },
+    "clock_average": {
+      "rank": 7,
+      "value": null
+    },
+    "skewb_single": {
+      "rank": 11,
+      "value": null
+    },
+    "skewb_average": {
+      "rank": 11,
+      "value": null
+    },
+    "333fm_single": {
+      "rank": 10,
+      "value": null
+    },
+    "333fm_average": {
+      "rank": 4,
+      "value": null
+    },
+    "555_single": {
+      "rank": 5,
+      "value": null
+    },
+    "555_average": {
+      "rank": 4,
+      "value": null
+    },
+    "666_single": {
+      "rank": 3,
+      "value": null
+    },
+    "666_average": {
+      "rank": 2,
+      "value": null
+    },
+    "777_single": {
+      "rank": 2,
+      "value": null
+    },
+    "777_average": {
+      "rank": 2,
+      "value": null
+    },
+    "minx_single": {
+      "rank": 7,
+      "value": null
+    },
+    "minx_average": {
+      "rank": 4,
+      "value": null
+    },
+    "333_single": {
+      "rank": 21,
+      "value": 1571
+    },
+    "333_average": {
+      "rank": 20,
+      "value": 1801
+    },
+    "222_single": {
+      "rank": 22,
+      "value": null
+    },
+    "222_average": {
+      "rank": 22,
+      "value": null
+    },
+    "444_single": {
+      "rank": 14,
+      "value": null
+    },
+    "444_average": {
+      "rank": 10,
+      "value": null
+    },
+    "333oh_single": {
+      "rank": 12,
+      "value": null
+    },
+    "333oh_average": {
+      "rank": 11,
+      "value": null
+    }
+  },
+  "Hung Yu Ting": {
+    "pyram_single": {
+      "rank": 16,
+      "value": null
+    },
+    "pyram_average": {
+      "rank": 15,
+      "value": null
+    },
+    "333bf_single": {
+      "rank": 6,
+      "value": null
+    },
+    "333bf_average": {
+      "rank": 4,
+      "value": null
+    },
+    "sq1_single": {
+      "rank": 7,
+      "value": null
+    },
+    "sq1_average": {
+      "rank": 7,
+      "value": null
+    },
+    "555bf_single": {
+      "rank": 2,
+      "value": null
+    },
+    "333mbf_single": {
+      "rank": 3,
+      "value": null
+    },
+    "444bf_single": {
+      "rank": 4,
+      "value": null
+    },
+    "444bf_average": {
+      "rank": 2,
+      "value": null
+    },
+    "clock_single": {
+      "rank": 9,
+      "value": null
+    },
+    "clock_average": {
+      "rank": 7,
+      "value": null
+    },
+    "skewb_single": {
+      "rank": 11,
+      "value": null
+    },
+    "skewb_average": {
+      "rank": 11,
+      "value": null
+    },
+    "333fm_single": {
+      "rank": 10,
+      "value": null
+    },
+    "333fm_average": {
+      "rank": 4,
+      "value": null
+    },
+    "555_single": {
+      "rank": 5,
+      "value": null
+    },
+    "555_average": {
+      "rank": 4,
+      "value": null
+    },
+    "666_single": {
+      "rank": 3,
+      "value": null
+    },
+    "666_average": {
+      "rank": 2,
+      "value": null
+    },
+    "777_single": {
+      "rank": 2,
+      "value": null
+    },
+    "777_average": {
+      "rank": 2,
+      "value": null
+    },
+    "minx_single": {
+      "rank": 7,
+      "value": null
+    },
+    "minx_average": {
+      "rank": 4,
+      "value": null
+    },
+    "333_single": {
+      "rank": 22,
+      "value": 1717
+    },
+    "333_average": {
+      "rank": 22,
+      "value": 2053
+    },
+    "222_single": {
+      "rank": 14,
+      "value": 427
+    },
+    "222_average": {
+      "rank": 13,
+      "value": 545
+    },
+    "444_single": {
+      "rank": 14,
+      "value": null
+    },
+    "444_average": {
+      "rank": 10,
+      "value": null
+    },
+    "333oh_single": {
+      "rank": 12,
+      "value": null
+    },
+    "333oh_average": {
+      "rank": 11,
+      "value": null
+    }
+  },
+  "Islam Muhammad Tazimul": {
+    "pyram_single": {
+      "rank": 16,
+      "value": null
+    },
+    "pyram_average": {
+      "rank": 15,
+      "value": null
+    },
+    "333bf_single": {
+      "rank": 6,
+      "value": null
+    },
+    "333bf_average": {
+      "rank": 4,
+      "value": null
+    },
+    "sq1_single": {
+      "rank": 7,
+      "value": null
+    },
+    "sq1_average": {
+      "rank": 7,
+      "value": null
+    },
+    "555bf_single": {
+      "rank": 2,
+      "value": null
+    },
+    "333mbf_single": {
+      "rank": 3,
+      "value": null
+    },
+    "444bf_single": {
+      "rank": 4,
+      "value": null
+    },
+    "444bf_average": {
+      "rank": 2,
+      "value": null
+    },
+    "clock_single": {
+      "rank": 9,
+      "value": null
+    },
+    "clock_average": {
+      "rank": 7,
+      "value": null
+    },
+    "skewb_single": {
+      "rank": 11,
+      "value": null
+    },
+    "skewb_average": {
+      "rank": 11,
+      "value": null
+    },
+    "333fm_single": {
+      "rank": 10,
+      "value": null
+    },
+    "333fm_average": {
+      "rank": 4,
+      "value": null
+    },
+    "555_single": {
+      "rank": 5,
+      "value": null
+    },
+    "555_average": {
+      "rank": 4,
+      "value": null
+    },
+    "666_single": {
+      "rank": 3,
+      "value": null
+    },
+    "666_average": {
+      "rank": 2,
+      "value": null
+    },
+    "777_single": {
+      "rank": 2,
+      "value": null
+    },
+    "777_average": {
+      "rank": 2,
+      "value": null
+    },
+    "minx_single": {
+      "rank": 7,
+      "value": null
+    },
+    "minx_average": {
+      "rank": 4,
+      "value": null
+    },
+    "333_single": {
+      "rank": 23,
+      "value": 1835
+    },
+    "333_average": {
+      "rank": 23,
+      "value": 2168
+    },
+    "222_single": {
+      "rank": 22,
+      "value": null
+    },
+    "222_average": {
+      "rank": 22,
+      "value": null
+    },
+    "444_single": {
+      "rank": 14,
+      "value": null
+    },
+    "444_average": {
+      "rank": 10,
+      "value": null
+    },
+    "333oh_single": {
+      "rank": 12,
+      "value": null
+    },
+    "333oh_average": {
+      "rank": 11,
+      "value": null
+    }
+  },
+  "Wai Cheuk Kei Derek": {
+    "pyram_single": {
+      "rank": 16,
+      "value": null
+    },
+    "pyram_average": {
+      "rank": 15,
+      "value": null
+    },
+    "333bf_single": {
+      "rank": 6,
+      "value": null
+    },
+    "333bf_average": {
+      "rank": 4,
+      "value": null
+    },
+    "sq1_single": {
+      "rank": 7,
+      "value": null
+    },
+    "sq1_average": {
+      "rank": 7,
+      "value": null
+    },
+    "555bf_single": {
+      "rank": 2,
+      "value": null
+    },
+    "333mbf_single": {
+      "rank": 3,
+      "value": null
+    },
+    "444bf_single": {
+      "rank": 4,
+      "value": null
+    },
+    "444bf_average": {
+      "rank": 2,
+      "value": null
+    },
+    "clock_single": {
+      "rank": 9,
+      "value": null
+    },
+    "clock_average": {
+      "rank": 7,
+      "value": null
+    },
+    "skewb_single": {
+      "rank": 11,
+      "value": null
+    },
+    "skewb_average": {
+      "rank": 11,
+      "value": null
+    },
+    "333fm_single": {
+      "rank": 10,
+      "value": null
+    },
+    "333fm_average": {
+      "rank": 4,
+      "value": null
+    },
+    "555_single": {
+      "rank": 5,
+      "value": null
+    },
+    "555_average": {
+      "rank": 4,
+      "value": null
+    },
+    "666_single": {
+      "rank": 3,
+      "value": null
+    },
+    "666_average": {
+      "rank": 2,
+      "value": null
+    },
+    "777_single": {
+      "rank": 2,
+      "value": null
+    },
+    "777_average": {
+      "rank": 2,
+      "value": null
+    },
+    "minx_single": {
+      "rank": 7,
+      "value": null
+    },
+    "minx_average": {
+      "rank": 4,
+      "value": null
+    },
+    "333_single": {
+      "rank": 25,
+      "value": 2079
+    },
+    "333_average": {
+      "rank": 24,
+      "value": 2418
+    },
+    "222_single": {
+      "rank": 15,
+      "value": 533
+    },
+    "222_average": {
+      "rank": 15,
+      "value": 679
+    },
+    "444_single": {
+      "rank": 14,
+      "value": null
+    },
+    "444_average": {
+      "rank": 10,
+      "value": null
+    },
+    "333oh_single": {
+      "rank": 12,
+      "value": null
+    },
+    "333oh_average": {
+      "rank": 11,
+      "value": null
+    }
+  },
+  "Cheung Yan Chung": {
+    "pyram_single": {
+      "rank": 16,
+      "value": null
+    },
+    "pyram_average": {
+      "rank": 15,
+      "value": null
+    },
+    "333bf_single": {
+      "rank": 6,
+      "value": null
+    },
+    "333bf_average": {
+      "rank": 4,
+      "value": null
+    },
+    "sq1_single": {
+      "rank": 7,
+      "value": null
+    },
+    "sq1_average": {
+      "rank": 7,
+      "value": null
+    },
+    "555bf_single": {
+      "rank": 2,
+      "value": null
+    },
+    "333mbf_single": {
+      "rank": 3,
+      "value": null
+    },
+    "444bf_single": {
+      "rank": 4,
+      "value": null
+    },
+    "444bf_average": {
+      "rank": 2,
+      "value": null
+    },
+    "clock_single": {
+      "rank": 9,
+      "value": null
+    },
+    "clock_average": {
+      "rank": 7,
+      "value": null
+    },
+    "skewb_single": {
+      "rank": 11,
+      "value": null
+    },
+    "skewb_average": {
+      "rank": 11,
+      "value": null
+    },
+    "333fm_single": {
+      "rank": 10,
+      "value": null
+    },
+    "333fm_average": {
+      "rank": 4,
+      "value": null
+    },
+    "555_single": {
+      "rank": 5,
+      "value": null
+    },
+    "555_average": {
+      "rank": 4,
+      "value": null
+    },
+    "666_single": {
+      "rank": 3,
+      "value": null
+    },
+    "666_average": {
+      "rank": 2,
+      "value": null
+    },
+    "777_single": {
+      "rank": 2,
+      "value": null
+    },
+    "777_average": {
+      "rank": 2,
+      "value": null
+    },
+    "minx_single": {
+      "rank": 7,
+      "value": null
+    },
+    "minx_average": {
+      "rank": 4,
+      "value": null
+    },
+    "333_single": {
+      "rank": 26,
+      "value": 2226
+    },
+    "333_average": {
+      "rank": 25,
+      "value": 2536
+    },
+    "222_single": {
+      "rank": 22,
+      "value": null
+    },
+    "222_average": {
+      "rank": 22,
+      "value": null
+    },
+    "444_single": {
+      "rank": 14,
+      "value": null
+    },
+    "444_average": {
+      "rank": 10,
+      "value": null
+    },
+    "333oh_single": {
+      "rank": 12,
+      "value": null
+    },
+    "333oh_average": {
+      "rank": 11,
+      "value": null
+    }
+  },
+  "Lai Cheuk Hei Hayden": {
+    "pyram_single": {
+      "rank": 16,
+      "value": null
+    },
+    "pyram_average": {
+      "rank": 15,
+      "value": null
+    },
+    "333bf_single": {
+      "rank": 6,
+      "value": null
+    },
+    "333bf_average": {
+      "rank": 4,
+      "value": null
+    },
+    "sq1_single": {
+      "rank": 7,
+      "value": null
+    },
+    "sq1_average": {
+      "rank": 7,
+      "value": null
+    },
+    "555bf_single": {
+      "rank": 2,
+      "value": null
+    },
+    "333mbf_single": {
+      "rank": 3,
+      "value": null
+    },
+    "444bf_single": {
+      "rank": 4,
+      "value": null
+    },
+    "444bf_average": {
+      "rank": 2,
+      "value": null
+    },
+    "clock_single": {
+      "rank": 9,
+      "value": null
+    },
+    "clock_average": {
+      "rank": 7,
+      "value": null
+    },
+    "skewb_single": {
+      "rank": 11,
+      "value": null
+    },
+    "skewb_average": {
+      "rank": 11,
+      "value": null
+    },
+    "333fm_single": {
+      "rank": 10,
+      "value": null
+    },
+    "333fm_average": {
+      "rank": 4,
+      "value": null
+    },
+    "555_single": {
+      "rank": 5,
+      "value": null
+    },
+    "555_average": {
+      "rank": 4,
+      "value": null
+    },
+    "666_single": {
+      "rank": 3,
+      "value": null
+    },
+    "666_average": {
+      "rank": 2,
+      "value": null
+    },
+    "777_single": {
+      "rank": 2,
+      "value": null
+    },
+    "777_average": {
+      "rank": 2,
+      "value": null
+    },
+    "minx_single": {
+      "rank": 7,
+      "value": null
+    },
+    "minx_average": {
+      "rank": 4,
+      "value": null
+    },
+    "333_single": {
+      "rank": 29,
+      "value": 2834
+    },
+    "333_average": {
+      "rank": 29,
+      "value": 3370
+    },
+    "222_single": {
+      "rank": 22,
+      "value": null
+    },
+    "222_average": {
+      "rank": 22,
+      "value": null
+    },
+    "444_single": {
+      "rank": 14,
+      "value": null
+    },
+    "444_average": {
+      "rank": 10,
+      "value": null
+    },
+    "333oh_single": {
+      "rank": 12,
+      "value": null
+    },
+    "333oh_average": {
+      "rank": 11,
+      "value": null
+    }
+  },
+  "Hou Wai Kin Alex": {
+    "pyram_single": {
+      "rank": 16,
+      "value": null
+    },
+    "pyram_average": {
+      "rank": 15,
+      "value": null
+    },
+    "333bf_single": {
+      "rank": 6,
+      "value": null
+    },
+    "333bf_average": {
+      "rank": 4,
+      "value": null
+    },
+    "sq1_single": {
+      "rank": 7,
+      "value": null
+    },
+    "sq1_average": {
+      "rank": 7,
+      "value": null
+    },
+    "555bf_single": {
+      "rank": 2,
+      "value": null
+    },
+    "333mbf_single": {
+      "rank": 3,
+      "value": null
+    },
+    "444bf_single": {
+      "rank": 4,
+      "value": null
+    },
+    "444bf_average": {
+      "rank": 2,
+      "value": null
+    },
+    "clock_single": {
+      "rank": 9,
+      "value": null
+    },
+    "clock_average": {
+      "rank": 7,
+      "value": null
+    },
+    "skewb_single": {
+      "rank": 11,
+      "value": null
+    },
+    "skewb_average": {
+      "rank": 11,
+      "value": null
+    },
+    "333fm_single": {
+      "rank": 10,
+      "value": null
+    },
+    "333fm_average": {
+      "rank": 4,
+      "value": null
+    },
+    "555_single": {
+      "rank": 5,
+      "value": null
+    },
+    "555_average": {
+      "rank": 4,
+      "value": null
+    },
+    "666_single": {
+      "rank": 3,
+      "value": null
+    },
+    "666_average": {
+      "rank": 2,
+      "value": null
+    },
+    "777_single": {
+      "rank": 2,
+      "value": null
+    },
+    "777_average": {
+      "rank": 2,
+      "value": null
+    },
+    "minx_single": {
+      "rank": 7,
+      "value": null
+    },
+    "minx_average": {
+      "rank": 4,
+      "value": null
+    },
+    "333_single": {
+      "rank": 30,
+      "value": 3174
+    },
+    "333_average": {
+      "rank": 30,
+      "value": 3634
+    },
+    "222_single": {
+      "rank": 22,
+      "value": null
+    },
+    "222_average": {
+      "rank": 22,
+      "value": null
+    },
+    "444_single": {
+      "rank": 14,
+      "value": null
+    },
+    "444_average": {
+      "rank": 10,
+      "value": null
+    },
+    "333oh_single": {
+      "rank": 12,
+      "value": null
+    },
+    "333oh_average": {
+      "rank": 11,
+      "value": null
+    }
+  },
+  "Man Pak Tin": {
+    "pyram_single": {
+      "rank": 16,
+      "value": null
+    },
+    "pyram_average": {
+      "rank": 15,
+      "value": null
+    },
+    "333bf_single": {
+      "rank": 6,
+      "value": null
+    },
+    "333bf_average": {
+      "rank": 4,
+      "value": null
+    },
+    "sq1_single": {
+      "rank": 7,
+      "value": null
+    },
+    "sq1_average": {
+      "rank": 7,
+      "value": null
+    },
+    "555bf_single": {
+      "rank": 2,
+      "value": null
+    },
+    "333mbf_single": {
+      "rank": 3,
+      "value": null
+    },
+    "444bf_single": {
+      "rank": 4,
+      "value": null
+    },
+    "444bf_average": {
+      "rank": 2,
+      "value": null
+    },
+    "clock_single": {
+      "rank": 9,
+      "value": null
+    },
+    "clock_average": {
+      "rank": 7,
+      "value": null
+    },
+    "skewb_single": {
+      "rank": 11,
+      "value": null
+    },
+    "skewb_average": {
+      "rank": 11,
+      "value": null
+    },
+    "333fm_single": {
+      "rank": 10,
+      "value": null
+    },
+    "333fm_average": {
+      "rank": 4,
+      "value": null
+    },
+    "555_single": {
+      "rank": 5,
+      "value": null
+    },
+    "555_average": {
+      "rank": 4,
+      "value": null
+    },
+    "666_single": {
+      "rank": 3,
+      "value": null
+    },
+    "666_average": {
+      "rank": 2,
+      "value": null
+    },
+    "777_single": {
+      "rank": 2,
+      "value": null
+    },
+    "777_average": {
+      "rank": 2,
+      "value": null
+    },
+    "minx_single": {
+      "rank": 7,
+      "value": null
+    },
+    "minx_average": {
+      "rank": 4,
+      "value": null
+    },
+    "333_single": {
+      "rank": 31,
+      "value": 3446
+    },
+    "333_average": {
+      "rank": 31,
+      "value": 3635
+    },
+    "222_single": {
+      "rank": 22,
+      "value": null
+    },
+    "222_average": {
+      "rank": 22,
+      "value": null
+    },
+    "444_single": {
+      "rank": 14,
+      "value": null
+    },
+    "444_average": {
+      "rank": 10,
+      "value": null
+    },
+    "333oh_single": {
+      "rank": 12,
+      "value": null
+    },
+    "333oh_average": {
+      "rank": 11,
+      "value": null
+    }
+  },
+  "Leung Hei Nam": {
+    "pyram_single": {
+      "rank": 16,
+      "value": null
+    },
+    "pyram_average": {
+      "rank": 15,
+      "value": null
+    },
+    "333bf_single": {
+      "rank": 6,
+      "value": null
+    },
+    "333bf_average": {
+      "rank": 4,
+      "value": null
+    },
+    "sq1_single": {
+      "rank": 7,
+      "value": null
+    },
+    "sq1_average": {
+      "rank": 7,
+      "value": null
+    },
+    "555bf_single": {
+      "rank": 2,
+      "value": null
+    },
+    "333mbf_single": {
+      "rank": 3,
+      "value": null
+    },
+    "444bf_single": {
+      "rank": 4,
+      "value": null
+    },
+    "444bf_average": {
+      "rank": 2,
+      "value": null
+    },
+    "clock_single": {
+      "rank": 9,
+      "value": null
+    },
+    "clock_average": {
+      "rank": 7,
+      "value": null
+    },
+    "skewb_single": {
+      "rank": 11,
+      "value": null
+    },
+    "skewb_average": {
+      "rank": 11,
+      "value": null
+    },
+    "333fm_single": {
+      "rank": 10,
+      "value": null
+    },
+    "333fm_average": {
+      "rank": 4,
+      "value": null
+    },
+    "555_single": {
+      "rank": 5,
+      "value": null
+    },
+    "555_average": {
+      "rank": 4,
+      "value": null
+    },
+    "666_single": {
+      "rank": 3,
+      "value": null
+    },
+    "666_average": {
+      "rank": 2,
+      "value": null
+    },
+    "777_single": {
+      "rank": 2,
+      "value": null
+    },
+    "777_average": {
+      "rank": 2,
+      "value": null
+    },
+    "minx_single": {
+      "rank": 7,
+      "value": null
+    },
+    "minx_average": {
+      "rank": 4,
+      "value": null
+    },
+    "333_single": {
+      "rank": 32,
+      "value": 3528
+    },
+    "333_average": {
+      "rank": 33,
+      "value": 4324
+    },
+    "222_single": {
+      "rank": 22,
+      "value": null
+    },
+    "222_average": {
+      "rank": 22,
+      "value": null
+    },
+    "444_single": {
+      "rank": 14,
+      "value": null
+    },
+    "444_average": {
+      "rank": 10,
+      "value": null
+    },
+    "333oh_single": {
+      "rank": 12,
+      "value": null
+    },
+    "333oh_average": {
+      "rank": 11,
+      "value": null
+    }
+  },
+  "Hui Yat Hei": {
+    "pyram_single": {
+      "rank": 16,
+      "value": null
+    },
+    "pyram_average": {
+      "rank": 15,
+      "value": null
+    },
+    "333bf_single": {
+      "rank": 6,
+      "value": null
+    },
+    "333bf_average": {
+      "rank": 4,
+      "value": null
+    },
+    "sq1_single": {
+      "rank": 7,
+      "value": null
+    },
+    "sq1_average": {
+      "rank": 7,
+      "value": null
+    },
+    "555bf_single": {
+      "rank": 2,
+      "value": null
+    },
+    "333mbf_single": {
+      "rank": 3,
+      "value": null
+    },
+    "444bf_single": {
+      "rank": 4,
+      "value": null
+    },
+    "444bf_average": {
+      "rank": 2,
+      "value": null
+    },
+    "clock_single": {
+      "rank": 9,
+      "value": null
+    },
+    "clock_average": {
+      "rank": 7,
+      "value": null
+    },
+    "skewb_single": {
+      "rank": 11,
+      "value": null
+    },
+    "skewb_average": {
+      "rank": 11,
+      "value": null
+    },
+    "333fm_single": {
+      "rank": 10,
+      "value": null
+    },
+    "333fm_average": {
+      "rank": 4,
+      "value": null
+    },
+    "555_single": {
+      "rank": 5,
+      "value": null
+    },
+    "555_average": {
+      "rank": 4,
+      "value": null
+    },
+    "666_single": {
+      "rank": 3,
+      "value": null
+    },
+    "666_average": {
+      "rank": 2,
+      "value": null
+    },
+    "777_single": {
+      "rank": 2,
+      "value": null
+    },
+    "777_average": {
+      "rank": 2,
+      "value": null
+    },
+    "minx_single": {
+      "rank": 7,
+      "value": null
+    },
+    "minx_average": {
+      "rank": 4,
+      "value": null
+    },
+    "333_single": {
+      "rank": 33,
+      "value": 3563
+    },
+    "333_average": {
+      "rank": 35,
+      "value": 4637
+    },
+    "222_single": {
+      "rank": 22,
+      "value": null
+    },
+    "222_average": {
+      "rank": 22,
+      "value": null
+    },
+    "444_single": {
+      "rank": 14,
+      "value": null
+    },
+    "444_average": {
+      "rank": 10,
+      "value": null
+    },
+    "333oh_single": {
+      "rank": 12,
+      "value": null
+    },
+    "333oh_average": {
+      "rank": 11,
+      "value": null
+    }
+  },
+  "Lam Cheuk Yat": {
+    "pyram_single": {
+      "rank": 16,
+      "value": null
+    },
+    "pyram_average": {
+      "rank": 15,
+      "value": null
+    },
+    "333bf_single": {
+      "rank": 6,
+      "value": null
+    },
+    "333bf_average": {
+      "rank": 4,
+      "value": null
+    },
+    "sq1_single": {
+      "rank": 7,
+      "value": null
+    },
+    "sq1_average": {
+      "rank": 7,
+      "value": null
+    },
+    "555bf_single": {
+      "rank": 2,
+      "value": null
+    },
+    "333mbf_single": {
+      "rank": 3,
+      "value": null
+    },
+    "444bf_single": {
+      "rank": 4,
+      "value": null
+    },
+    "444bf_average": {
+      "rank": 2,
+      "value": null
+    },
+    "clock_single": {
+      "rank": 9,
+      "value": null
+    },
+    "clock_average": {
+      "rank": 7,
+      "value": null
+    },
+    "skewb_single": {
+      "rank": 11,
+      "value": null
+    },
+    "skewb_average": {
+      "rank": 11,
+      "value": null
+    },
+    "333fm_single": {
+      "rank": 10,
+      "value": null
+    },
+    "333fm_average": {
+      "rank": 4,
+      "value": null
+    },
+    "555_single": {
+      "rank": 5,
+      "value": null
+    },
+    "555_average": {
+      "rank": 4,
+      "value": null
+    },
+    "666_single": {
+      "rank": 3,
+      "value": null
+    },
+    "666_average": {
+      "rank": 2,
+      "value": null
+    },
+    "777_single": {
+      "rank": 2,
+      "value": null
+    },
+    "777_average": {
+      "rank": 2,
+      "value": null
+    },
+    "minx_single": {
+      "rank": 7,
+      "value": null
+    },
+    "minx_average": {
+      "rank": 4,
+      "value": null
+    },
+    "333_single": {
+      "rank": 34,
+      "value": 3721
+    },
+    "333_average": {
+      "rank": 32,
+      "value": 4294
+    },
+    "222_single": {
+      "rank": 22,
+      "value": null
+    },
+    "222_average": {
+      "rank": 22,
+      "value": null
+    },
+    "444_single": {
+      "rank": 14,
+      "value": null
+    },
+    "444_average": {
+      "rank": 10,
+      "value": null
+    },
+    "333oh_single": {
+      "rank": 12,
+      "value": null
+    },
+    "333oh_average": {
+      "rank": 11,
+      "value": null
+    }
+  },
+  "Tam Lok Yin Zachary": {
+    "pyram_single": {
+      "rank": 16,
+      "value": null
+    },
+    "pyram_average": {
+      "rank": 15,
+      "value": null
+    },
+    "333bf_single": {
+      "rank": 6,
+      "value": null
+    },
+    "333bf_average": {
+      "rank": 4,
+      "value": null
+    },
+    "sq1_single": {
+      "rank": 7,
+      "value": null
+    },
+    "sq1_average": {
+      "rank": 7,
+      "value": null
+    },
+    "555bf_single": {
+      "rank": 2,
+      "value": null
+    },
+    "333mbf_single": {
+      "rank": 3,
+      "value": null
+    },
+    "444bf_single": {
+      "rank": 4,
+      "value": null
+    },
+    "444bf_average": {
+      "rank": 2,
+      "value": null
+    },
+    "clock_single": {
+      "rank": 9,
+      "value": null
+    },
+    "clock_average": {
+      "rank": 7,
+      "value": null
+    },
+    "skewb_single": {
+      "rank": 11,
+      "value": null
+    },
+    "skewb_average": {
+      "rank": 11,
+      "value": null
+    },
+    "333fm_single": {
+      "rank": 10,
+      "value": null
+    },
+    "333fm_average": {
+      "rank": 4,
+      "value": null
+    },
+    "555_single": {
+      "rank": 5,
+      "value": null
+    },
+    "555_average": {
+      "rank": 4,
+      "value": null
+    },
+    "666_single": {
+      "rank": 3,
+      "value": null
+    },
+    "666_average": {
+      "rank": 2,
+      "value": null
+    },
+    "777_single": {
+      "rank": 2,
+      "value": null
+    },
+    "777_average": {
+      "rank": 2,
+      "value": null
+    },
+    "minx_single": {
+      "rank": 7,
+      "value": null
+    },
+    "minx_average": {
+      "rank": 4,
+      "value": null
+    },
+    "333_single": {
+      "rank": 35,
+      "value": 3812
+    },
+    "333_average": {
+      "rank": 37,
+      "value": 4871
+    },
+    "222_single": {
+      "rank": 22,
+      "value": null
+    },
+    "222_average": {
+      "rank": 22,
+      "value": null
+    },
+    "444_single": {
+      "rank": 14,
+      "value": null
+    },
+    "444_average": {
+      "rank": 10,
+      "value": null
+    },
+    "333oh_single": {
+      "rank": 12,
+      "value": null
+    },
+    "333oh_average": {
+      "rank": 11,
+      "value": null
+    }
+  },
+  "Ying Wan Tung": {
+    "pyram_single": {
+      "rank": 16,
+      "value": null
+    },
+    "pyram_average": {
+      "rank": 15,
+      "value": null
+    },
+    "333bf_single": {
+      "rank": 6,
+      "value": null
+    },
+    "333bf_average": {
+      "rank": 4,
+      "value": null
+    },
+    "sq1_single": {
+      "rank": 7,
+      "value": null
+    },
+    "sq1_average": {
+      "rank": 7,
+      "value": null
+    },
+    "555bf_single": {
+      "rank": 2,
+      "value": null
+    },
+    "333mbf_single": {
+      "rank": 3,
+      "value": null
+    },
+    "444bf_single": {
+      "rank": 4,
+      "value": null
+    },
+    "444bf_average": {
+      "rank": 2,
+      "value": null
+    },
+    "clock_single": {
+      "rank": 9,
+      "value": null
+    },
+    "clock_average": {
+      "rank": 7,
+      "value": null
+    },
+    "skewb_single": {
+      "rank": 11,
+      "value": null
+    },
+    "skewb_average": {
+      "rank": 11,
+      "value": null
+    },
+    "333fm_single": {
+      "rank": 10,
+      "value": null
+    },
+    "333fm_average": {
+      "rank": 4,
+      "value": null
+    },
+    "555_single": {
+      "rank": 5,
+      "value": null
+    },
+    "555_average": {
+      "rank": 4,
+      "value": null
+    },
+    "666_single": {
+      "rank": 3,
+      "value": null
+    },
+    "666_average": {
+      "rank": 2,
+      "value": null
+    },
+    "777_single": {
+      "rank": 2,
+      "value": null
+    },
+    "777_average": {
+      "rank": 2,
+      "value": null
+    },
+    "minx_single": {
+      "rank": 7,
+      "value": null
+    },
+    "minx_average": {
+      "rank": 4,
+      "value": null
+    },
+    "333_single": {
+      "rank": 36,
+      "value": 3816
+    },
+    "333_average": {
+      "rank": 38,
+      "value": 5281
+    },
+    "222_single": {
+      "rank": 22,
+      "value": null
+    },
+    "222_average": {
+      "rank": 22,
+      "value": null
+    },
+    "444_single": {
+      "rank": 14,
+      "value": null
+    },
+    "444_average": {
+      "rank": 10,
+      "value": null
+    },
+    "333oh_single": {
+      "rank": 12,
+      "value": null
+    },
+    "333oh_average": {
+      "rank": 11,
+      "value": null
+    }
+  },
+  "Cheong Constantine": {
+    "pyram_single": {
+      "rank": 16,
+      "value": null
+    },
+    "pyram_average": {
+      "rank": 15,
+      "value": null
+    },
+    "333bf_single": {
+      "rank": 6,
+      "value": null
+    },
+    "333bf_average": {
+      "rank": 4,
+      "value": null
+    },
+    "sq1_single": {
+      "rank": 7,
+      "value": null
+    },
+    "sq1_average": {
+      "rank": 7,
+      "value": null
+    },
+    "555bf_single": {
+      "rank": 2,
+      "value": null
+    },
+    "333mbf_single": {
+      "rank": 3,
+      "value": null
+    },
+    "444bf_single": {
+      "rank": 4,
+      "value": null
+    },
+    "444bf_average": {
+      "rank": 2,
+      "value": null
+    },
+    "clock_single": {
+      "rank": 9,
+      "value": null
+    },
+    "clock_average": {
+      "rank": 7,
+      "value": null
+    },
+    "skewb_single": {
+      "rank": 11,
+      "value": null
+    },
+    "skewb_average": {
+      "rank": 11,
+      "value": null
+    },
+    "333fm_single": {
+      "rank": 10,
+      "value": null
+    },
+    "333fm_average": {
+      "rank": 4,
+      "value": null
+    },
+    "555_single": {
+      "rank": 5,
+      "value": null
+    },
+    "555_average": {
+      "rank": 4,
+      "value": null
+    },
+    "666_single": {
+      "rank": 3,
+      "value": null
+    },
+    "666_average": {
+      "rank": 2,
+      "value": null
+    },
+    "777_single": {
+      "rank": 2,
+      "value": null
+    },
+    "777_average": {
+      "rank": 2,
+      "value": null
+    },
+    "minx_single": {
+      "rank": 7,
+      "value": null
+    },
+    "minx_average": {
+      "rank": 4,
+      "value": null
+    },
+    "333_single": {
+      "rank": 37,
+      "value": 3887
+    },
+    "333_average": {
+      "rank": 36,
+      "value": 4837
+    },
+    "222_single": {
+      "rank": 20,
+      "value": 860
+    },
+    "222_average": {
+      "rank": 20,
+      "value": 1194
+    },
+    "444_single": {
+      "rank": 14,
+      "value": null
+    },
+    "444_average": {
+      "rank": 10,
+      "value": null
+    },
+    "333oh_single": {
+      "rank": 12,
+      "value": null
+    },
+    "333oh_average": {
+      "rank": 11,
+      "value": null
+    }
+  },
+  "Leung Yat Hin": {
+    "pyram_single": {
+      "rank": 16,
+      "value": null
+    },
+    "pyram_average": {
+      "rank": 15,
+      "value": null
+    },
+    "333bf_single": {
+      "rank": 6,
+      "value": null
+    },
+    "333bf_average": {
+      "rank": 4,
+      "value": null
+    },
+    "sq1_single": {
+      "rank": 7,
+      "value": null
+    },
+    "sq1_average": {
+      "rank": 7,
+      "value": null
+    },
+    "555bf_single": {
+      "rank": 2,
+      "value": null
+    },
+    "333mbf_single": {
+      "rank": 3,
+      "value": null
+    },
+    "444bf_single": {
+      "rank": 4,
+      "value": null
+    },
+    "444bf_average": {
+      "rank": 2,
+      "value": null
+    },
+    "clock_single": {
+      "rank": 9,
+      "value": null
+    },
+    "clock_average": {
+      "rank": 7,
+      "value": null
+    },
+    "skewb_single": {
+      "rank": 11,
+      "value": null
+    },
+    "skewb_average": {
+      "rank": 11,
+      "value": null
+    },
+    "333fm_single": {
+      "rank": 10,
+      "value": null
+    },
+    "333fm_average": {
+      "rank": 4,
+      "value": null
+    },
+    "555_single": {
+      "rank": 5,
+      "value": null
+    },
+    "555_average": {
+      "rank": 4,
+      "value": null
+    },
+    "666_single": {
+      "rank": 3,
+      "value": null
+    },
+    "666_average": {
+      "rank": 2,
+      "value": null
+    },
+    "777_single": {
+      "rank": 2,
+      "value": null
+    },
+    "777_average": {
+      "rank": 2,
+      "value": null
+    },
+    "minx_single": {
+      "rank": 7,
+      "value": null
+    },
+    "minx_average": {
+      "rank": 4,
+      "value": null
+    },
+    "333_single": {
+      "rank": 38,
+      "value": 4106
+    },
+    "333_average": {
+      "rank": 34,
+      "value": 4630
+    },
+    "222_single": {
+      "rank": 21,
+      "value": 1125
+    },
+    "222_average": {
+      "rank": 21,
+      "value": 1666
+    },
+    "444_single": {
+      "rank": 14,
+      "value": null
+    },
+    "444_average": {
+      "rank": 10,
+      "value": null
+    },
+    "333oh_single": {
+      "rank": 12,
+      "value": null
+    },
+    "333oh_average": {
+      "rank": 11,
+      "value": null
+    }
+  },
+  "Wang Zi Cheng Eason": {
+    "pyram_single": {
+      "rank": 16,
+      "value": null
+    },
+    "pyram_average": {
+      "rank": 15,
+      "value": null
+    },
+    "333bf_single": {
+      "rank": 6,
+      "value": null
+    },
+    "333bf_average": {
+      "rank": 4,
+      "value": null
+    },
+    "sq1_single": {
+      "rank": 7,
+      "value": null
+    },
+    "sq1_average": {
+      "rank": 7,
+      "value": null
+    },
+    "555bf_single": {
+      "rank": 2,
+      "value": null
+    },
+    "333mbf_single": {
+      "rank": 3,
+      "value": null
+    },
+    "444bf_single": {
+      "rank": 4,
+      "value": null
+    },
+    "444bf_average": {
+      "rank": 2,
+      "value": null
+    },
+    "clock_single": {
+      "rank": 9,
+      "value": null
+    },
+    "clock_average": {
+      "rank": 7,
+      "value": null
+    },
+    "skewb_single": {
+      "rank": 11,
+      "value": null
+    },
+    "skewb_average": {
+      "rank": 11,
+      "value": null
+    },
+    "333fm_single": {
+      "rank": 10,
+      "value": null
+    },
+    "333fm_average": {
+      "rank": 4,
+      "value": null
+    },
+    "555_single": {
+      "rank": 5,
+      "value": null
+    },
+    "555_average": {
+      "rank": 4,
+      "value": null
+    },
+    "666_single": {
+      "rank": 3,
+      "value": null
+    },
+    "666_average": {
+      "rank": 2,
+      "value": null
+    },
+    "777_single": {
+      "rank": 2,
+      "value": null
+    },
+    "777_average": {
+      "rank": 2,
+      "value": null
+    },
+    "minx_single": {
+      "rank": 7,
+      "value": null
+    },
+    "minx_average": {
+      "rank": 4,
+      "value": null
+    },
+    "333_single": {
+      "rank": 39,
+      "value": 5312
+    },
+    "333_average": {
+      "rank": 39,
+      "value": 6123
+    },
+    "222_single": {
+      "rank": 22,
+      "value": null
+    },
+    "222_average": {
+      "rank": 22,
+      "value": null
+    },
+    "444_single": {
+      "rank": 14,
+      "value": null
+    },
+    "444_average": {
+      "rank": 10,
+      "value": null
+    },
+    "333oh_single": {
+      "rank": 12,
+      "value": null
+    },
+    "333oh_average": {
+      "rank": 11,
+      "value": null
+    }
+  },
+  "Tang Joy Yen Kurt": {
+    "pyram_single": {
+      "rank": 16,
+      "value": null
+    },
+    "pyram_average": {
+      "rank": 15,
+      "value": null
+    },
+    "333bf_single": {
+      "rank": 6,
+      "value": null
+    },
+    "333bf_average": {
+      "rank": 4,
+      "value": null
+    },
+    "sq1_single": {
+      "rank": 7,
+      "value": null
+    },
+    "sq1_average": {
+      "rank": 7,
+      "value": null
+    },
+    "555bf_single": {
+      "rank": 2,
+      "value": null
+    },
+    "333mbf_single": {
+      "rank": 3,
+      "value": null
+    },
+    "444bf_single": {
+      "rank": 4,
+      "value": null
+    },
+    "444bf_average": {
+      "rank": 2,
+      "value": null
+    },
+    "clock_single": {
+      "rank": 9,
+      "value": null
+    },
+    "clock_average": {
+      "rank": 7,
+      "value": null
+    },
+    "skewb_single": {
+      "rank": 11,
+      "value": null
+    },
+    "skewb_average": {
+      "rank": 11,
+      "value": null
+    },
+    "333fm_single": {
+      "rank": 10,
+      "value": null
+    },
+    "333fm_average": {
+      "rank": 4,
+      "value": null
+    },
+    "555_single": {
+      "rank": 5,
+      "value": null
+    },
+    "555_average": {
+      "rank": 4,
+      "value": null
+    },
+    "666_single": {
+      "rank": 3,
+      "value": null
+    },
+    "666_average": {
+      "rank": 2,
+      "value": null
+    },
+    "777_single": {
+      "rank": 2,
+      "value": null
+    },
+    "777_average": {
+      "rank": 2,
+      "value": null
+    },
+    "minx_single": {
+      "rank": 7,
+      "value": null
+    },
+    "minx_average": {
+      "rank": 4,
+      "value": null
+    },
+    "333_single": {
+      "rank": 40,
+      "value": 6566
+    },
+    "333_average": {
+      "rank": 40,
+      "value": 7487
+    },
+    "222_single": {
+      "rank": 22,
+      "value": null
+    },
+    "222_average": {
+      "rank": 22,
+      "value": null
+    },
+    "444_single": {
+      "rank": 14,
+      "value": null
+    },
+    "444_average": {
+      "rank": 10,
+      "value": null
+    },
+    "333oh_single": {
+      "rank": 12,
+      "value": null
+    },
+    "333oh_average": {
+      "rank": 11,
+      "value": null
+    }
+  },
+  "Cheung Yan Shek": {
+    "pyram_single": {
+      "rank": 16,
+      "value": null
+    },
+    "pyram_average": {
+      "rank": 15,
+      "value": null
+    },
+    "333bf_single": {
+      "rank": 6,
+      "value": null
+    },
+    "333bf_average": {
+      "rank": 4,
+      "value": null
+    },
+    "sq1_single": {
+      "rank": 7,
+      "value": null
+    },
+    "sq1_average": {
+      "rank": 7,
+      "value": null
+    },
+    "555bf_single": {
+      "rank": 2,
+      "value": null
+    },
+    "333mbf_single": {
+      "rank": 3,
+      "value": null
+    },
+    "444bf_single": {
+      "rank": 4,
+      "value": null
+    },
+    "444bf_average": {
+      "rank": 2,
+      "value": null
+    },
+    "clock_single": {
+      "rank": 9,
+      "value": null
+    },
+    "clock_average": {
+      "rank": 7,
+      "value": null
+    },
+    "skewb_single": {
+      "rank": 11,
+      "value": null
+    },
+    "skewb_average": {
+      "rank": 11,
+      "value": null
+    },
+    "333fm_single": {
+      "rank": 10,
+      "value": null
+    },
+    "333fm_average": {
+      "rank": 4,
+      "value": null
+    },
+    "555_single": {
+      "rank": 5,
+      "value": null
+    },
+    "555_average": {
+      "rank": 4,
+      "value": null
+    },
+    "666_single": {
+      "rank": 3,
+      "value": null
+    },
+    "666_average": {
+      "rank": 2,
+      "value": null
+    },
+    "777_single": {
+      "rank": 2,
+      "value": null
+    },
+    "777_average": {
+      "rank": 2,
+      "value": null
+    },
+    "minx_single": {
+      "rank": 7,
+      "value": null
+    },
+    "minx_average": {
+      "rank": 4,
+      "value": null
+    },
+    "333_single": {
+      "rank": 41,
+      "value": null
+    },
+    "333_average": {
+      "rank": 41,
+      "value": null
+    },
+    "222_single": {
+      "rank": 22,
+      "value": null
+    },
+    "222_average": {
+      "rank": 22,
+      "value": null
+    },
+    "444_single": {
+      "rank": 8,
+      "value": 4926
+    },
+    "444_average": {
+      "rank": 9,
+      "value": 5381
+    },
+    "333oh_single": {
+      "rank": 12,
+      "value": null
+    },
+    "333oh_average": {
+      "rank": 11,
+      "value": null
+    }
+  }
+}

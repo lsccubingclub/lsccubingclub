@@ -316,15 +316,6 @@ def _insert_rows_chunked(table_name, rows):
         time.sleep(0.05)
     return inserted
 
-# --- Main orchestration ---
-
-def save_local_json(obj, filename):
-    if not WRITE_LOCAL_JSON:
-        return
-    path = os.path.join(OUTPUT_DIR, filename)
-    with open(path, "w", encoding="utf-8") as f:
-        json.dump(obj, f, ensure_ascii=False, indent=2)
-
 def main():
     profiles = load_merged_profiles(MERGED_DIR)
     by_event = collect_event_entries(profiles)
@@ -332,18 +323,18 @@ def main():
     rankings_by_person = build_rankings_by_person(rankings_by_results)
     records = build_records(rankings_by_results)
 
-    # Optionally write local JSON files
-    save_local_json(rankings_by_results, "rankings_by_results.json")
-    save_local_json(rankings_by_person, "rankings_by_person.json")
-    save_local_json(records, "records.json")
-
-    # Prepare rows for DB insertion with separate attempt columns
     results_rows = []
     for ev, data in rankings_by_results.items():
         for cat in ("single", "average"):
-            for e in data[cat]:
+            prev_value = None
+            prev_rank = 0
+            for idx, e in enumerate(data[cat]):
+                value = int(e.get("value")) if e.get("value") is not None else None
+                rank = prev_rank if value == prev_value else idx + 1
+                prev_value = value
+                prev_rank = rank
+
                 attempts = e.get("attempts") if isinstance(e.get("attempts"), list) else None
-                # map attempts to columns
                 a1 = attempts[0] if attempts and len(attempts) > 0 else None
                 a2 = attempts[1] if attempts and len(attempts) > 1 else None
                 a3 = attempts[2] if attempts and len(attempts) > 2 else None
@@ -351,12 +342,13 @@ def main():
                 a5 = attempts[4] if attempts and len(attempts) > 4 else None
 
                 row = {
+                    "rank": rank,
                     "event_id": ev,
                     "type": cat,
                     "person_name": e.get("person_name"),
                     "wcaid": e.get("wcaid"),
                     "competition_id": e.get("competition_id"),
-                    "value": int(e.get("value")) if e.get("value") is not None else None,
+                    "value": value,
                     "attempt_index": e.get("attempt_index"),
                     "attempt1": a1,
                     "attempt2": a2,
@@ -374,7 +366,14 @@ def main():
     person_rows = []
     for ev, data in rankings_by_person.items():
         for cat in ("single", "average"):
-            for e in data[cat]:
+            prev_value = None
+            prev_rank = 0
+            for idx, e in enumerate(data[cat]):
+                value = int(e.get("value")) if e.get("value") is not None else None
+                rank = prev_rank if value == prev_value else idx + 1
+                prev_value = value
+                prev_rank = rank
+
                 attempts = e.get("attempts") if isinstance(e.get("attempts"), list) else None
                 a1 = attempts[0] if attempts and len(attempts) > 0 else None
                 a2 = attempts[1] if attempts and len(attempts) > 1 else None
@@ -383,12 +382,13 @@ def main():
                 a5 = attempts[4] if attempts and len(attempts) > 4 else None
 
                 row = {
+                    "rank": rank,
                     "event_id": ev,
                     "type": cat,
                     "person_name": e.get("person_name"),
                     "wcaid": e.get("wcaid"),
                     "competition_id": e.get("competition_id"),
-                    "value": int(e.get("value")) if e.get("value") is not None else None,
+                    "value": value,
                     "attempt1": a1,
                     "attempt2": a2,
                     "attempt3": a3,
@@ -429,7 +429,6 @@ def main():
                 }
                 records_rows.append(row)
 
-    # Write to Supabase: clear tables then insert
     print("Clearing existing tables...")
     _delete_all_from_table("rankings_by_results")
     _delete_all_from_table("rankings_by_person")

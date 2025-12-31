@@ -10,16 +10,16 @@
       "round_type_id": "1",
       "format_id": "a",
       "attempts": [
-        1018,
+        10180,
         8239,
         0,
         0,
         0
       ],
-      "best": 1018,
+      "best": 8239,
       "average": -1,
-      "best_index": 0,
-      "worst_index": 1,
+      "best_index": 1,
+      "worst_index": 0,
       "round_date": null
     },
     {
@@ -31,14 +31,14 @@
       "attempts": [
         7704,
         6566,
-        1209,
+        12088,
         7468,
         7290
       ],
-      "best": 1209,
-      "average": 7108,
-      "best_index": 2,
-      "worst_index": 0,
+      "best": 6566,
+      "average": 7487,
+      "best_index": 1,
+      "worst_index": 2,
       "round_date": null
     }
   ]

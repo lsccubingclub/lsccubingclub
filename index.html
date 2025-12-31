@@ -376,7 +376,6 @@
     <!-- Footer -->
     <footer style="text-align:center; padding:20px; font-size:0.9em; color:#666;">
       Created by Moses Lai<br>
-      <p>Last updated: <span id="last-updated">Loading…</span></p>
     </footer>
 
   </main>
@@ -544,8 +543,6 @@
         .catch(()=> ({}));
       return __wcaCompTitleCachePromise;
     }
-
-    document.getElementById('last-updated').textContent = document.lastModified;
 
     function isMobileView() {
       const ua = navigator.userAgent.toLowerCase();
@@ -2015,6 +2012,7 @@
           ].filter(v => v !== undefined && v !== null);
 
           return {
+            rank: row.rank,
             person_name: row.person_name,
             wcaid: row.wcaid,
             competition_id: row.competition_id,
@@ -2313,7 +2311,7 @@
         }
 
         list.forEach((rowObj, idx) => {
-          const rankNum = idx + 1;
+          const rankNum = rowObj.rank;
           const rawName = rowObj.person_name || '';
           const personSlug = slugNameForPerson(rawName);
           const nameLink = `<div style="color:#1976D2;text-decoration:none">${escapeHtml(rawName)}</div>`;
