@@ -132,7 +132,7 @@ def replace_competition_ids_with_names_from_supabase():
         rows = resp.data or []
         comp_name_map = {r["comp_id"]: r["comp_name"] for r in rows if r.get("comp_id") and r.get("comp_name")}
     except Exception as e:
-        print(f"⚠️ Failed to fetch competition titles: {e}")
+        print(f"Failed to fetch competition titles: {e}")
         return
 
     print("Replacing competition_id with comp_name in merged profiles...")
@@ -180,6 +180,16 @@ def copy_wca_profiles_without_lsc_results():
 def main():
     ensure_dir(WCA_CACHE_DIR)
     ensure_dir(LSC_CACHE_DIR)
+
+    # Erase old merged JSON profiles before creating new ones
+    print("Clearing old merged profiles...")
+    for fn in os.listdir(LSC_CACHE_DIR):
+        if fn.endswith("-merged.json"):
+            try:
+                os.remove(os.path.join(LSC_CACHE_DIR, fn))
+                print(f"Removed old file: {fn}")
+            except Exception as e:
+                print(f"Failed to remove {fn}: {e}")
 
     print("Fetching all round_results...")
     rr_resp = supabase.table("round_results").select("*").execute()

@@ -394,6 +394,8 @@ def main():
                     "attempt3": a3,
                     "attempt4": a4,
                     "attempt5": a5,
+                    "best_index": e.get("best_index"),
+                    "worst_index": e.get("worst_index"),
                 }
                 person_rows.append(row)
 
